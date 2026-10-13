@@ -1,6 +1,6 @@
 import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
-import {CreditVideo, CREDIT_VIDEO_FRAMES} from './CreditVideo';
+import {CreditVideo, CREDIT_SECONDS} from './credit/CreditVideo';
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -16,7 +16,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="CreditVideo"
         component={CreditVideo}
-        durationInFrames={CREDIT_VIDEO_FRAMES}
+        durationInFrames={CREDIT_SECONDS * 30}
         fps={30}
         width={1080}
         height={1920}
