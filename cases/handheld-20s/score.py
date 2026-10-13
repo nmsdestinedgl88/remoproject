@@ -72,7 +72,6 @@ s.place(sub(55, 1.6), 18.2, 0.40, 0.0, 0.35)
 CH = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]]      # Am F C G, as pad voicing
 def chord_at(t0, i, dur, fc, gain, swell=0.6):
     s.place(pad([nf(m) for m in CH[i % 4]], dur, fc, swell), t0, gain, 0.0, 0.5)
-chord_at(1.2, 0, 2.7, 700, 0.10)                                    # under "one TV"
 chord_at(3.8, 1, 2.2, 900, 0.10)
 for k in range(5):                                                  # 4.0 – 10.0: pad + a soft pulse arpeggio
     chord_at(4.0 + 2.0 * k, k, 2.3, 1200, 0.09)
@@ -84,7 +83,6 @@ for k in range(24):
 for k in range(8):                                                  # 10.9 – 12.7: climbing pad (one note per beat)
     s.place(tri(nf(57 + k * 2), 0.4, d=0.3), 10.9 + 0.25 * k, 0.07, 0.0, 0.4)
 chord_at(12.75, 0, 1.6, 2400, 0.12, 0.3)                            # at the bottom of the dive
-chord_at(15.4, 3, 0.9, 700, 0.07, 0.4)                              # quiet breath before the hits
 chord_at(18.2, 2, 1.8, 1800, 0.12, 0.2)                             # resolve under "press start"
 for m in (60, 64, 67, 72, 76):                                      # tail: one slow arpeggio, then nothing
     pass
