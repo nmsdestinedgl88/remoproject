@@ -1,0 +1,276 @@
+================================================================================
+HIGH-FIDELITY POWERPOINT ANIMATIONS RECREATABLE IN HTML
+Descriptions and HTML Recreation Approaches
+================================================================================
+
+CATEGORY: ENTRANCE
+--------------------------------------------------------------------------------
+
+1. APPEAR
+   PowerPoint Description:
+   Object instantly becomes visible without any transition.
+
+   HTML Recreation Approach:
+   Toggle `display: none` to `block`, or `visibility: hidden` to `visible`
+   via JavaScript.
+
+--------------------------------------------------------------------------------
+
+2. FADE
+   PowerPoint Description:
+   Object smoothly transitions from transparent to opaque.
+
+   HTML Recreation Approach:
+   CSS `@keyframes` animating `opacity` from `0` to `1`.
+
+--------------------------------------------------------------------------------
+
+3. FLY IN
+   PowerPoint Description:
+   Object slides into view from a specified direction (e.g., left, top).
+
+   HTML Recreation Approach:
+   CSS `transform: translateX()` or `translateY()` combined with `opacity`.
+
+--------------------------------------------------------------------------------
+
+4. SPLIT / WIPE
+   PowerPoint Description:
+   Object is revealed progressively from one edge or via a directional sweep.
+
+   HTML Recreation Approach:
+   Animate the `clip-path` property (e.g., `inset()`).
+
+--------------------------------------------------------------------------------
+
+5. SHAPE (Circle, Box, Diamond, Plus)
+   PowerPoint Description:
+   Object grows from the center using a specific geometric shape.
+
+   HTML Recreation Approach:
+   Animate `clip-path: circle()` or `polygon()` to reveal the element.
+
+--------------------------------------------------------------------------------
+
+6. WHEEL
+   PowerPoint Description:
+   Object appears via a spinning wheel effect with a configurable number of
+   "blades".
+
+   HTML Recreation Approach:
+   Use a CSS `conic-gradient` with an animated mask or `clip-path`.
+
+--------------------------------------------------------------------------------
+
+7. GROW & TURN
+   PowerPoint Description:
+   Object spins while zooming into view.
+
+   HTML Recreation Approach:
+   Combine CSS `transform: scale()` and `rotate()` in `@keyframes`.
+
+--------------------------------------------------------------------------------
+
+8. ZOOM
+   PowerPoint Description:
+   Object scales up from a specific point or the slide center.
+
+   HTML Recreation Approach:
+   Animate the `transform: scale()` property.
+
+--------------------------------------------------------------------------------
+
+9. SWIVEL
+   PowerPoint Description:
+   Object spins around 360 degrees as it appears.
+
+   HTML Recreation Approach:
+   Use `@keyframes` with `transform: rotateY()` or `rotate()` combined with
+   `opacity`.
+
+--------------------------------------------------------------------------------
+
+10. BOUNCE
+    PowerPoint Description:
+    Object bounces into place with a physics-like easing.
+
+    HTML Recreation Approach:
+    Define `@keyframes` with multiple `translateY` steps using `cubic-bezier()`
+    for the bounce.
+
+================================================================================
+
+CATEGORY: EMPHASIS
+--------------------------------------------------------------------------------
+
+11. PULSE
+    PowerPoint Description:
+    Object briefly enlarges and shrinks to draw attention.
+
+    HTML Recreation Approach:
+    `@keyframes` animating `transform: scale()` with
+    `animation-direction: alternate`.
+
+--------------------------------------------------------------------------------
+
+12. SPIN
+    PowerPoint Description:
+    Object rotates around its center.
+
+    HTML Recreation Approach:
+    `@keyframes` with `transform: rotate()` set to `infinite`.
+
+--------------------------------------------------------------------------------
+
+13. GROW / SHRINK
+    PowerPoint Description:
+    Object increases or decreases in size.
+
+    HTML Recreation Approach:
+    Animate `transform: scale()` and use `animation-fill-mode: forwards`.
+
+--------------------------------------------------------------------------------
+
+14. TEETER
+    PowerPoint Description:
+    Object swings back and forth like a pendulum.
+
+    HTML Recreation Approach:
+    `@keyframes` with `transform: rotate()` oscillating between positive and
+    negative angles.
+
+--------------------------------------------------------------------------------
+
+15. TRANSPARENCY
+    PowerPoint Description:
+    Object fades to a specific level of opacity.
+
+    HTML Recreation Approach:
+    Animate the `opacity` property to a target value.
+
+--------------------------------------------------------------------------------
+
+16. COLOR CHANGE
+    PowerPoint Description:
+    Object's fill, font, or line color changes.
+
+    HTML Recreation Approach:
+    Animate `background-color`, `color`, or `stroke` properties.
+
+--------------------------------------------------------------------------------
+
+17. BOLD FLASH
+    PowerPoint Description:
+    Object's text briefly becomes bolder to flash.
+
+    HTML Recreation Approach:
+    Animate the `font-weight` property (e.g., `normal` to `bold` and back).
+
+================================================================================
+
+CATEGORY: EXIT
+--------------------------------------------------------------------------------
+
+18. DISAPPEAR
+    PowerPoint Description:
+    Object instantly vanishes from the slide.
+
+    HTML Recreation Approach:
+    Set `display: none` or `visibility: hidden` via JavaScript.
+
+--------------------------------------------------------------------------------
+
+19. FADE OUT
+    PowerPoint Description:
+    Object smoothly transitions from opaque to transparent.
+
+    HTML Recreation Approach:
+    Reverse of Entrance Fade: animate `opacity` from `1` to `0`.
+
+--------------------------------------------------------------------------------
+
+20. FLY OUT
+    PowerPoint Description:
+    Object slides out of view in a specified direction.
+
+    HTML Recreation Approach:
+    Reverse of Entrance Fly In: `transform: translateX()` with `opacity`.
+
+--------------------------------------------------------------------------------
+
+21. SHRINK & TURN
+    PowerPoint Description:
+    Object shrinks and rotates as it disappears.
+
+    HTML Recreation Approach:
+    `@keyframes` with `transform: scale(0) rotate()`.
+
+--------------------------------------------------------------------------------
+
+22. SINK DOWN
+    PowerPoint Description:
+    Object drops downward as it exits.
+
+    HTML Recreation Approach:
+    Animate `transform: translateY()` to a positive value.
+
+--------------------------------------------------------------------------------
+
+23. COLLAPSE
+    PowerPoint Description:
+    Object vertically collapses to nothing.
+
+    HTML Recreation Approach:
+    Animate `transform: scaleY(0)` with `transform-origin: center`.
+
+================================================================================
+
+CATEGORY: MOTION PATHS
+--------------------------------------------------------------------------------
+
+24. LINE / ARC / CURVE
+    PowerPoint Description:
+    Object moves along a straight, arced, or curved path.
+
+    HTML Recreation Approach:
+    Use CSS `offset-path: path("...")` or SVG `<animateMotion>`.
+
+--------------------------------------------------------------------------------
+
+25. CIRCLE / LOOP / FIGURE 8
+    PowerPoint Description:
+    Object moves in a continuous loop or figure-eight pattern.
+
+    HTML Recreation Approach:
+    Assign an SVG path string (e.g., a circle or `M...C...`) to `offset-path`.
+
+--------------------------------------------------------------------------------
+
+26. CUSTOM PATH
+    PowerPoint Description:
+    Object follows a user-drawn freeform path.
+
+    HTML Recreation Approach:
+    Same as above: paste the SVG path data into `offset-path`.
+
+--------------------------------------------------------------------------------
+
+27. COMPLEX SHAPES (Star, Hexagon, etc.)
+    PowerPoint Description:
+    Object moves along a predefined geometric path.
+
+    HTML Recreation Approach:
+    Use the corresponding SVG path data for the shape with `offset-path`.
+
+================================================================================
+
+NOTE ON MOTION PATHS
+--------------------------------------------------------------------------------
+The `offset-path` CSS property is the key to replicating PowerPoint's Motion
+Paths. Since PowerPoint paths and SVG paths share the same underlying syntax
+(M, L, C commands), you can often copy the path data directly from PowerPoint
+into your HTML code.
+
+================================================================================
+END OF DOCUMENT
+================================================================================

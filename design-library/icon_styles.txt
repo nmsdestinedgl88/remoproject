@@ -1,0 +1,311 @@
+================================================================================
+ICON RECREATION GUIDE
+HTML / CSS / JS-Recreatable Icons for HTML-Coded Videos
+================================================================================
+Format: [Number]. Icon Type
+        How to Recreate:
+        Animation Potential:
+================================================================================
+
+
+01. FLAT ICONS
+    How to Recreate: Pure CSS shapes using border-radius, clip-path, or
+    transform. Alternatively, inline SVG with solid fill colors and no
+    gradients or shadows.
+    Animation Potential: Color shifts, scale, fade in/out, position slides,
+    rotation, opacity pulses.
+
+--------------------------------------------------------------------------------
+
+02. LINE (OUTLINE) ICONS
+    How to Recreate: SVG <path> elements with stroke and no fill. Use
+    stroke-dasharray and stroke-dashoffset for control. CSS borders for
+    simple shapes.
+    Animation Potential: Stroke-dashoffset "drawing" effect, marching ants
+    (animated dash), line weight morphing, sequential reveal.
+
+--------------------------------------------------------------------------------
+
+03. GLYPH / FILLED ICONS
+    How to Recreate: SVG with fill attribute, or CSS clip-path polygons
+    and shapes. Solid single-color silhouettes.
+    Animation Potential: Morphing between glyphs (with Flubber/GSAP),
+    pulse, bounce, squash-and-stretch, crossfade swaps.
+
+--------------------------------------------------------------------------------
+
+04. DUOTONE ICONS
+    How to Recreate: Two layered SVGs (background + foreground), or a
+    single SVG with two distinct fill values. Often uses a primary color
+    and a lighter/darker shade.
+    Animation Potential: Color cycling, layer offset motion, parallax
+    between the two tones, hover color swap.
+
+--------------------------------------------------------------------------------
+
+05. GRADIENT ICONS
+    How to Recreate: SVG <linearGradient> or <radialGradient> applied to
+    fills. Or CSS background-clip: text with a gradient background for
+    text-based icons.
+    Animation Potential: Animated gradient stops via CSS @keyframes or JS,
+    rotating gradient angle, gradient sweep across the icon.
+
+--------------------------------------------------------------------------------
+
+06. ISOMETRIC ICONS
+    How to Recreate: SVG using 2:1 isometric projection math (30-degree
+    angles). Or CSS transforms: rotateX(60deg) rotateZ(45deg) applied to
+    flat shapes stacked in 3D space.
+    Animation Potential: Rotation on the isometric axis, extrusion,
+    floating bob, animated shadow shifts, explode/assemble parts,
+    hover lift with parallax shadow.
+
+--------------------------------------------------------------------------------
+
+07. ANIMATED (MOTION) ICONS
+    How to Recreate: CSS @keyframes, Web Animations API, GSAP, or anime.js.
+    Any static icon becomes animated with these tools.
+    Animation Potential: Unlimited. This is the native home of web
+    animation. Loops, transitions, micro-interactions, state changes,
+    physics-based motion, choreographed sequences.
+
+--------------------------------------------------------------------------------
+
+08. MORPHING ICONS
+    How to Recreate: SVG path morphing via JS libraries: Flubber, GSAP
+    MorphSVG plugin, anime.js, or Kute.js. Requires paths with the same
+    number of anchor points for smooth interpolation.
+    Animation Potential: Hamburger menu to X, play to pause, plus to
+    minus, arrow to checkmark, any shape-to-shape transformation.
+
+--------------------------------------------------------------------------------
+
+09. GLASSMORPHISM ICONS
+    How to Recreate: CSS backdrop-filter: blur(), semi-transparent fill
+    (rgba), subtle white border (1px solid rgba(255,255,255,0.3)), and
+    soft shadows. Requires a colorful background behind the icon.
+    Animation Potential: Blur intensity shifts, parallax over background,
+    hover glow, frosted reveal, opacity transitions.
+
+--------------------------------------------------------------------------------
+
+10. NEUMORPHISM (SOFT UI) ICONS
+    How to Recreate: CSS box-shadow with dual shadows: one light
+    (top-left), one dark (bottom-right). Icon and background must be the
+    same color. Use inset shadows for pressed states.
+    Animation Potential: Press/release states (inset vs outset shadow
+    toggle), soft pulse, extruded-to-pressed morph, gentle float.
+
+--------------------------------------------------------------------------------
+
+11. BRUTALIST ICONS
+    How to Recreate: Raw CSS. Thick borders, clashing high-contrast
+    colors, system fonts (Courier, Arial), transform: rotate() for
+    intentional misalignment, no border-radius.
+    Animation Potential: Glitch effects, jitter, harsh snap transitions,
+    random rotation, color inversion flashes.
+
+--------------------------------------------------------------------------------
+
+12. ASCII / TEXT-BASED ICONS
+    How to Recreate: Plain HTML text inside <pre> or <code> tags, styled
+    with monospace fonts. Characters like [X], -->, :) form the icon.
+    Animation Potential: Typewriter effect, character scramble/decode,
+    cursor blink, character-by-character reveal, ASCII art morphing.
+
+--------------------------------------------------------------------------------
+
+13. EMOJI / EMOTICON ICONS
+    How to Recreate: Unicode characters rendered as text in HTML. Styled
+    with font-size, filter, and transform.
+    Animation Potential: Scale, rotate, bounce, CSS filter hue-rotate,
+    grayscale-to-color transitions, wobble, pop-in.
+
+--------------------------------------------------------------------------------
+
+14. BADGE / NOTIFICATION ICONS
+    How to Recreate: CSS absolute positioning of a small circle/dot over
+    a base icon. Counter numbers via HTML text content. z-index layering.
+    Animation Potential: Pop-in, shake, count-up via JS, pulse ring,
+    badge slide-in, attention bounce.
+
+--------------------------------------------------------------------------------
+
+15. FAVICON / APP ICON
+    How to Recreate: SVG or <canvas> drawn at small sizes (16x16 to
+    1024x1024). Rendered as a DOM element or in a simulated browser tab.
+    Animation Potential: Same as flat/line icons but constrained by size.
+    Frame-by-frame sprite animation, blink, rotate, color cycle.
+
+--------------------------------------------------------------------------------
+
+16. MONOGRAM / LETTERMARK ICONS
+    How to Recreate: CSS typography (font-family, font-weight, letter-
+    spacing) inside a shaped container (circle, square, hexagon). Or SVG
+    <text> element.
+    Animation Potential: Letter draw-on (SVG stroke), fade, rotate,
+    scale-in, letter-by-letter reveal, container morph.
+
+--------------------------------------------------------------------------------
+
+17. PICTOGRAM ICONS
+    How to Recreate: Simplified SVG paths with minimal detail. Universal
+    shapes recognized across cultures (restroom, exit, wheelchair).
+    Animation Potential: Same as line/flat icons. Draw-on, fade, slide,
+    sequential reveal in wayfinding sequences.
+
+--------------------------------------------------------------------------------
+
+18. LIQUID / BLOB ICONS
+    How to Recreate: SVG with animated "d" path values. Or CSS border-
+    radius morphing using percentage keyframes (e.g., 60% 40% 30% 70%
+    transitioning to 30% 60% 70% 40%). SVG gooey filter: feGaussianBlur
+    + feColorMatrix for merging blobs.
+    Animation Potential: Organic wobble, gooey merge/split, breathing,
+    liquid drip, morph between blob shapes.
+
+--------------------------------------------------------------------------------
+
+19. NEON / GLOW ICONS
+    How to Recreate: CSS text-shadow or filter: drop-shadow() with
+    multiple layered glows (3-4 layers with increasing blur) on a dark
+    background. Bright saturated colors.
+    Animation Potential: Flicker (irregular opacity keyframes), pulse,
+    draw-on with glow trail, color shift, buzz/vibrate.
+
+--------------------------------------------------------------------------------
+
+20. HOLOGRAPHIC / IRIDESCENT ICONS
+    How to Recreate: CSS conic-gradient or SVG gradient with animated
+    hue-rotate filter. Layered gradients with mix-blend-mode for
+    iridescent effect.
+    Animation Potential: Shifting rainbow sheen, rotation of gradient,
+    hue cycling, angle sweep, metallic shimmer.
+
+--------------------------------------------------------------------------------
+
+21. PAPERCUT / LAYERED ICONS
+    How to Recreate: Stacked SVG or DOM elements with hard box-shadow or
+    filter: drop-shadow() (no blur, or minimal blur). Each layer offset
+    slightly to simulate depth.
+    Animation Potential: Layer separation/explode, parallax on hover,
+    assembly/disassembly, sequential layer reveal.
+
+--------------------------------------------------------------------------------
+
+22. PIXEL (8-BIT) ICONS
+    How to Recreate: CSS box-shadow pixel art technique (each pixel is a
+    shadow offset). Or SVG <rect> grid. Or <canvas> with fillRect() for
+    each pixel.
+    Animation Potential: Frame-by-frame sprite animation, palette
+    cycling, pixel dissolve, scanline sweep, retro boot-up sequence.
+
+--------------------------------------------------------------------------------
+
+23. TECHNICAL / SCHEMATIC ICONS
+    How to Recreate: SVG paths with precise geometry. Monochrome strokes.
+    Use <line>, <circle>, <rect>, <polyline> for engineering symbols.
+    Animation Potential: Draw-on (stroke-dashoffset), measurement line
+    reveals, sequential circuit tracing, pulsing signal flow.
+
+--------------------------------------------------------------------------------
+
+24. BLUEPRINT ICONS
+    How to Recreate: SVG on a CSS grid background (repeating-linear-
+    gradient). Cyan strokes (#00FFFF) on dark blue (#001a33). Add
+    measurement marks with SVG <line> elements.
+    Animation Potential: Line draw, grid pulse, scan-line sweep,
+    measurement tick reveal, zoom-in detail.
+
+--------------------------------------------------------------------------------
+
+25. SOUND / AUDIO WAVEFORM ICONS
+    How to Recreate: SVG <rect> bars or <canvas> waveform driven by Web
+    Audio API (AnalyserNode) or randomized data via JS requestAnimation-
+    Frame loop.
+    Animation Potential: Real-time reactive bars, playback sync, idle
+    breathing animation, frequency spectrum, amplitude spikes.
+
+--------------------------------------------------------------------------------
+
+26. DOODLE / ZENTANGLE ICONS
+    How to Recreate: SVG paths with stroke-dasharray and stroke-linecap:
+    round to simulate hand-drawn wobble. Or use Rough.js library for
+    sketchy rendering. Multiple overlapping strokes for texture.
+    Animation Potential: Draw-on sketch effect, jitter, sketch-in (rough
+    to clean), pencil fill, cross-hatch reveal.
+
+--------------------------------------------------------------------------------
+
+27. STICKER ICONS
+    How to Recreate: SVG with thick white stroke (stroke-width: 4-8px)
+    and filter: drop-shadow(). Slight rotation via transform for a casual
+    placement feel.
+    Animation Potential: Peel effect (clip-path or mask), bounce, wiggle,
+    stick-on (scale + rotate), drop-in with squash.
+
+--------------------------------------------------------------------------------
+
+28. MATERIAL ICONS
+    How to Recreate: SVG + CSS transitions. Elevation via box-shadow
+    layers (Material elevation levels). Ripple effect via JS creating
+    expanding circle elements on click.
+    Animation Potential: Ripple on tap/click, elevation lift, morph
+    between states, color transition, icon swap with crossfade.
+
+--------------------------------------------------------------------------------
+
+29. KNITTED / TEXTILE ICONS
+    How to Recreate: SVG patterns with dashed strokes (stroke-dasharray
+    with round linecaps) to simulate stitches. CSS background-image with
+    repeating SVG pattern for texture. Warm color palette.
+    Animation Potential: Stitch-on reveal (sequential dashes), thread
+    pull, unravel, knit-in row by row, gentle sway.
+
+--------------------------------------------------------------------------------
+
+30. DATA / CHART ICONS
+    How to Recreate: Inline SVG with <rect> (bars), <path> (lines), or
+    <circle> (dots). Or <canvas> for more complex rendering. Data bound
+    via JS.
+    Animation Potential: Live data binding, bar growth from baseline,
+    sparkline draw-on, pie slice rotation, number count-up.
+
+--------------------------------------------------------------------------------
+
+31. QR / SCANNABLE ICONS
+    How to Recreate: JS libraries (qrcode.js, qrcode-generator) render to
+    <canvas> or SVG. Or manually draw a grid of <rect> elements.
+    Animation Potential: Module-by-module reveal (random or sequential),
+    scan-line overlay, fade-in grid, data stream effect, zoom-in focus.
+
+--------------------------------------------------------------------------------
+
+32. HERALDIC / EMBLEM ICONS
+    How to Recreate: Symmetrical SVG paths. Use <g> with transform:
+    scale(-1,1) for mirroring. Shields, banners, and crests built from
+    basic shapes. Detail-heavy but achievable.
+    Animation Potential: Shield assemble (parts fly in), banner unfurl
+    (clip-path or scaleX), glow, rotate, crest stamp-down.
+
+--------------------------------------------------------------------------------
+
+33. CULTURAL / RELIGIOUS ICONS
+    How to Recreate: SVG paths. Feasible if simplified. Requires cultural
+    sensitivity and accuracy. Examples: mandala (radial symmetry), yin-
+    yang (two interlocking shapes), om symbol (complex path).
+    Animation Potential: Respectful fade, mandala spin (rotate), radial
+    reveal, gentle pulse, color transition.
+
+--------------------------------------------------------------------------------
+
+34. CLAYMORPHISM ICONS (from 3D Render category)
+    How to Recreate: CSS border-radius (large values for puffy shapes),
+    layered box-shadow (soft outer + subtle inner), pastel gradients,
+    matte finish (no specular highlights). Squishy proportions.
+    Animation Potential: Squish (scaleX/scaleY opposition), bounce, press
+    (squash + shadow reduce), jelly wobble, friendly pop-in.
+
+================================================================================
+END OF FILE
+================================================================================

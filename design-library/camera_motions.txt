@@ -1,0 +1,909 @@
+================================================================================
+PRODUCT SHOTS: HTML/CSS/JS + JAVA2D/JAVACV RENDERING GUIDE
+================================================================================
+GROUP A: FULLY RENDERABLE (66%) - High Fidelity Recreation
+GROUP B: PARTIALLY RENDERABLE (23%) - Stylized Approximation Required
+================================================================================
+
+APPROACH KEY:
+  [HTML]  = HTML + CSS + JS (browser, real-time)
+  [J2D]   = Java2D (headless/server batch)
+  [JCV]   = JavaCV + FFmpeg (video export wrapper)
+  [BOTH]  = Both viable; selected best noted with reason
+================================================================================
+
+
+================================================================================
+GROUP A: FULLY RENDERABLE SHOTS (~66% - 153 Shots)
+================================================================================
+
+
+--------------------------------------------------------------------------------
+SECTION 1: ANGLES & PERSPECTIVES (10 Shots)
+--------------------------------------------------------------------------------
+
+1. EYE-LEVEL SHOT
+   Best Approach: [HTML]
+   HTML: flex container + `align-items: center; justify-content: center;`
+   Java Alternative: J2D `Graphics2D.drawImage()` at centered coords.
+   Why HTML: GPU compositing, zero frame cost.
+
+2. HIGH ANGLE (TOP DOWN)
+   Best Approach: [HTML]
+   HTML: `perspective: 1000px; transform: rotateX(60deg);`
+   Java Alternative: J2D `AffineTransform` with shear matrix.
+   Why HTML: True perspective via GPU, cheaper than manual matrix math.
+
+3. LOW ANGLE
+   Best Approach: [HTML]
+   HTML: `perspective: 800px; transform: rotateX(-30deg);`
+   Java Alternative: J2D `AffineTransform.getShearInstance()`.
+   Why HTML: Hardware perspective.
+
+4. DUTCH ANGLE
+   Best Approach: [HTML]
+   HTML: `transform: rotate(15deg);`
+   Java Alternative: J2D `AffineTransform.getRotateInstance()`.
+   Why HTML: Declarative, GPU-accelerated.
+
+5. BIRD'S EYE VIEW
+   Best Approach: [HTML]
+   HTML: `perspective: 1200px; transform: rotateX(90deg) scale(0.9);`
+   Java Alternative: J2D combined scale + shear.
+   Why HTML: Single-line transform.
+
+6. PROFILE SHOT
+   Best Approach: [HTML]
+   HTML: `object-fit: contain;` no transform.
+   Java Alternative: J2D direct draw.
+   Why HTML: Trivial.
+
+7. HERO SHOT
+   Best Approach: [HTML]
+   HTML: flex center + radial-gradient + `filter: drop-shadow()`.
+   Java Alternative: J2D `RadialGradientPaint` + `ConvolveOp` shadow.
+   Why HTML: GPU blur, one-line filter.
+
+8. REVERSE ANGLE
+   Best Approach: [HTML]
+   HTML: `transform: scaleX(-1);`
+   Java Alternative: J2D `AffineTransform.getScaleInstance(-1, 1)`.
+   Why HTML: One line.
+
+9. THREE-QUARTER ANGLE
+   Best Approach: [HTML]
+   HTML: `perspective: 1000px; transform: rotateY(45deg) rotateX(-10deg);`
+   Java Alternative: J2D 3D matrix manually.
+   Why HTML: Native 3D transform.
+
+10. WORM'S EYE VIEW
+    Best Approach: [HTML]
+    HTML: `perspective: 800px; transform: rotateX(-60deg);`
+    Java Alternative: J2D shear + scale.
+    Why HTML: Perspective shortcut.
+
+
+--------------------------------------------------------------------------------
+SECTION 2: DETAIL & FOCUS SHOTS (6 Shots)
+--------------------------------------------------------------------------------
+
+11. EXTREME CLOSE-UP (MACRO)
+    Best Approach: [HTML]
+    HTML: `overflow: hidden; transform: scale(3);`
+    Java Alternative: J2D sub-image draw.
+    Why HTML: GPU scale, no resampling cost.
+
+12. DETAIL SHOT
+    Best Approach: [HTML]
+    HTML: `clip-path: inset(20% 30% 20% 30%);`
+    Java Alternative: J2D `Shape` clip + drawImage.
+    Why HTML: Declarative clip.
+
+13. DEEP FOCUS
+    Best Approach: [HTML]
+    HTML: No blur, sharp image.
+    Java Alternative: J2D direct draw.
+    Why HTML: Trivial.
+
+14. INSERT SHOT
+    Best Approach: [HTML]
+    HTML: `object-fit: cover; object-position: 30% 50%;`
+    Java Alternative: J2D drawImage with src rect.
+    Why HTML: One line.
+
+15. ESTABLISHING SHOT
+    Best Approach: [HTML]
+    HTML: Wide container, scaled product with absolute positioning.
+    Java Alternative: J2D composite draw.
+    Why HTML: Flex + scale.
+
+16. SHALLOW DEPTH OF FIELD (Approximation)
+    Best Approach: [HTML]
+    HTML: Background `filter: blur(8px);` foreground sharp, `z-index`.
+    Java Alternative: J2D `ConvolveOp` Gaussian on bg layer only.
+    Why HTML: GPU blur, real-time. Java blur is CPU-heavy (~50ms/frame at 1080p).
+
+
+--------------------------------------------------------------------------------
+SECTION 3: CAMERA MOVEMENTS (17 Moves)
+--------------------------------------------------------------------------------
+
+17. PAN (LEFT/RIGHT)
+    Best Approach: [HTML]
+    HTML: `@keyframes { translateX(-20%) → translateX(20%) }`
+    Java Alternative: J2D `Timer` + `translate()` + `repaint()`.
+    Why HTML: GPU compositor animates without layout cost.
+
+18. TILT (UP/DOWN)
+    Best Approach: [HTML]
+    HTML: `@keyframes { translateY(-20%) → translateY(20%) }`
+    Java Alternative: J2D `translate()` per frame.
+    Why HTML: GPU compositor.
+
+19. DOLLY IN
+    Best Approach: [HTML]
+    HTML: `transition: transform 1s; transform: scale(1.2);`
+    Java Alternative: J2D interpolated `scale()` over N frames.
+    Why HTML: Browser interpolates.
+
+20. DOLLY OUT
+    Best Approach: [HTML]
+    HTML: Reverse scale transition.
+    Java Alternative: Same as above.
+    Why HTML: Same.
+
+21. TRUCK
+    Best Approach: [HTML]
+    HTML: `@keyframes { translateX(-100px) → translateX(100px) }`
+    Java Alternative: J2D `translate()`.
+    Why HTML: GPU.
+
+22. PEDESTAL UP
+    Best Approach: [HTML]
+    HTML: `@keyframes { translateY(50px) → translateY(-50px) }`
+    Java Alternative: J2D `translate()`.
+    Why HTML: GPU.
+
+23. PEDESTAL DOWN
+    Best Approach: [HTML]
+    HTML: Reverse of pedestal up.
+    Java Alternative: J2D.
+    Why HTML: GPU.
+
+24. ZOOM IN
+    Best Approach: [HTML]
+    HTML: `transform: scale(1.5); transition: 0.8s cubic-bezier(...);`
+    Java Alternative: J2D interpolated scale.
+    Why HTML: Browser-native easing.
+
+25. ZOOM OUT
+    Best Approach: [HTML]
+    HTML: `transform: scale(0.7);`
+    Java Alternative: J2D.
+    Why HTML: GPU.
+
+26. PUSH IN
+    Best Approach: [HTML]
+    HTML: `@keyframes { scale(1)→scale(1.15) + opacity }`
+    Java Alternative: J2D per-frame composite.
+    Why HTML: GPU + native easing.
+
+27. PULL OUT
+    Best Approach: [HTML]
+    HTML: Reverse push-in.
+    Java Alternative: J2D.
+    Why HTML: GPU.
+
+28. TRACKING SHOT
+    Best Approach: [HTML]
+    HTML: Animated `translateX()` inside overflow hidden.
+    Java Alternative: J2D per-frame translate + clip.
+    Why HTML: GPU compositing.
+
+29. WHIP PAN
+    Best Approach: [HTML]
+    HTML: Fast `translateX()` + `filter: blur(10px);` at midpoint.
+    Java Alternative: J2D + Gaussian blur mid-frames.
+    Why HTML: GPU blur is critical here — Java's blur would double frame budget.
+
+30. HANDHELD SHAKE
+    Best Approach: [HTML]
+    HTML: `@keyframes` with small random translate/rotate.
+    Java Alternative: J2D random offset per frame.
+    Why HTML: GPU compositing.
+
+31. PARALLAX MOVE
+    Best Approach: [HTML]
+    HTML: Multiple layers with different `translateX()` speeds, `will-change: transform;`
+    Java Alternative: J2D layered translate.
+    Why HTML: GPU per-layer compositing; Java redraws all layers every frame.
+
+32. ROLL (DUTCH ROTATION)
+    Best Approach: [HTML]
+    HTML: `transform: rotate(10deg);` during animation.
+    Java Alternative: J2D `rotate()`.
+    Why HTML: GPU.
+
+33. SLIDER PUSH-PULL
+    Best Approach: [HTML]
+    HTML: Short `translateX()` + `scale()` keyframe, 0.5s ease-in-out.
+    Java Alternative: J2D interpolated.
+    Why HTML: GPU + native easing.
+
+
+--------------------------------------------------------------------------------
+SECTION 4: REVEALS (19 Techniques)
+--------------------------------------------------------------------------------
+
+34. CLASSIC REVEAL (CLOTH PULL)
+    Best Approach: [HTML]
+    HTML: Cloth div `clip-path: inset(0 0 0 0 → 0 0 0 100%);`
+    Java Alternative: J2D `Shape` clip per frame.
+    Why HTML: GPU clip.
+
+35. SLIDE REVEAL
+    Best Approach: [HTML]
+    HTML: `@keyframes { translateX(-100%) → translateX(0) }`
+    Java Alternative: J2D `translate()`.
+    Why HTML: GPU.
+
+36. DROP REVEAL
+    Best Approach: [HTML]
+    HTML: `@keyframes translateY(-200px → 10px → 0);` cubic-bezier bounce.
+    Java Alternative: J2D manual bounce interpolation.
+    Why HTML: Native easing.
+
+37. CURTAIN PULL
+    Best Approach: [HTML]
+    HTML: Two divs, `scaleX(1 → 0);` with transform-origin left/right.
+    Java Alternative: J2D two-layer scale.
+    Why HTML: GPU per layer.
+
+38. LIGHT REVEAL
+    Best Approach: [HTML]
+    HTML: Radial gradient overlay, animate `opacity`.
+    Java Alternative: J2D `RadialGradientPaint` + AlphaComposite.
+    Why HTML: GPU gradient.
+
+39. FLIP REVEAL
+    Best Approach: [HTML]
+    HTML: `rotateY(180deg);` + `backface-visibility: hidden;`
+    Java Alternative: J2D manual 3D projection matrix.
+    Why HTML: Native 3D flip, Java needs full matrix math.
+
+40. HANDS REVEAL
+    Best Approach: [HTML]
+    HTML: PNG hand + `translate()` + `rotate()` keyframe.
+    Java Alternative: J2D sprite translate + rotate.
+    Why HTML: GPU compositing, easier asset integration.
+
+41. BOX OPENING REVEAL
+    Best Approach: [HTML]
+    HTML: SVG box + lid `rotateX(-120deg);` transform-origin top.
+    Java Alternative: J2D 3D projected path animation.
+    Why HTML: SVG + CSS 3D beats manual matrix.
+
+42. ASSEMBLY REVEAL
+    Best Approach: [HTML]
+    HTML: Multiple divs with unique `translate()` + `rotate()` converging.
+    Java Alternative: J2D per-layer interpolated transforms.
+    Why HTML: GPU per-layer.
+
+43. EXPLODED VIEW REVEAL
+    Best Approach: [HTML]
+    HTML: Layered divs + `translateZ()` + `perspective` on parent.
+    Java Alternative: J2D manual 3D projection.
+    Why HTML: Native 3D transforms.
+
+44. PEEL REVEAL
+    Best Approach: [HTML]
+    HTML: `clip-path: polygon()` animation + corner `rotate()`.
+    Java Alternative: J2D `Path2D` clip + rotate.
+    Why HTML: GPU clip.
+
+45. SHADOW REVEAL
+    Best Approach: [HTML]
+    HTML: `box-shadow` or `filter: drop-shadow()` fade-in before product.
+    Java Alternative: J2D `ConvolveOp` shadow + AlphaComposite fade.
+    Why HTML: GPU shadow.
+
+46. SILHOUETTE REVEAL
+    Best Approach: [HTML]
+    HTML: `filter: brightness(0 → 1);`
+    Java Alternative: J2D `RescaleOp` per frame.
+    Why HTML: GPU filter, one line.
+
+47. REFLECTION REVEAL
+    Best Approach: [HTML]
+    HTML: Duplicate image `scaleY(-1);` + `mask-image: linear-gradient()`.
+    Java Alternative: J2D flipped draw + gradient alpha mask.
+    Why HTML: GPU mask.
+
+48. FOREGROUND WIPE
+    Best Approach: [HTML]
+    HTML: Div `translateX(-100% → 100%);` product behind.
+    Java Alternative: J2D translate + composite.
+    Why HTML: GPU.
+
+49. ZOOM REVEAL
+    Best Approach: [HTML]
+    HTML: `@keyframes scale(3 → 1);`
+    Java Alternative: J2D interpolated scale.
+    Why HTML: GPU.
+
+50. PULL-BACK REVEAL
+    Best Approach: [HTML]
+    HTML: `scale(2) + translateY(50px) → scale(1) + translateY(0);`
+    Java Alternative: J2D interpolated.
+    Why HTML: GPU.
+
+51. ENVIRONMENTAL REVEAL
+    Best Approach: [HTML]
+    HTML: Background `opacity` fade + product `scale(0.8 → 1);`
+    Java Alternative: J2D AlphaComposite + scale.
+    Why HTML: GPU.
+
+52. SCALE REVEAL
+    Best Approach: [HTML]
+    HTML: `transform: scale(0.1 → 1);` with overshoot easing.
+    Java Alternative: J2D interpolated scale.
+    Why HTML: Native easing.
+
+53. COLOR CHANGE REVEAL
+    Best Approach: [HTML]
+    HTML: `filter: hue-rotate(90deg → 0);` OR two stacked images crossfade.
+    Java Alternative: J2D `RescaleOp` on bands OR two-image crossfade.
+    Why HTML: GPU filter, one line.
+
+
+--------------------------------------------------------------------------------
+SECTION 5: LIGHTING & ENVIRONMENT (8 Shots)
+--------------------------------------------------------------------------------
+
+54. SILHOUETTE
+    Best Approach: [HTML]
+    HTML: `filter: brightness(0);` + bright gradient bg.
+    Java Alternative: J2D set all pixels to black, draw bg first.
+    Why HTML: One-line GPU filter.
+
+55. RIM LIGHT SHOT
+    Best Approach: [HTML]
+    HTML: `box-shadow: inset` + `drop-shadow()` + gradient border.
+    Java Alternative: J2D multi-pass draw with gradients.
+    Why HTML: GPU-composited shadow.
+
+56. REFLECTION SHOT
+    Best Approach: [HTML]
+    HTML: `scaleY(-1);` + `mask-image: linear-gradient();`
+    Java Alternative: J2D flipped draw + alpha gradient mask.
+    Why HTML: GPU mask.
+
+57. SHADOW PLAY
+    Best Approach: [HTML]
+    HTML: `box-shadow: 20px 20px 30px rgba(0,0,0,0.4);` + `rotate()`.
+    Java Alternative: J2D offset draw + Gaussian blur + rotate.
+    Why HTML: GPU shadow.
+
+58. IN-HAND SHOT
+    Best Approach: [HTML]
+    HTML: PNG hand + product layered with `z-index`.
+    Java Alternative: J2D sprite layering.
+    Why HTML: GPU layering, easier asset pipeline.
+
+59. LIFESTYLE SHOT
+    Best Approach: [HTML]
+    HTML: Background image + product PNG + `mix-blend-mode`.
+    Java Alternative: J2D AlphaComposite mode draw.
+    Why HTML: GPU blend modes.
+
+60. FLAT LAY
+    Best Approach: [HTML]
+    HTML: Grid/flex + `rotate()` per item + `box-shadow`.
+    Java Alternative: J2D multi-item draw + rotate.
+    Why HTML: GPU compositing of many layers.
+
+61. KNOLLING
+    Best Approach: [HTML]
+    HTML: CSS Grid + consistent rotations.
+    Java Alternative: J2D grid layout manually computed.
+    Why HTML: Declarative grid.
+
+
+--------------------------------------------------------------------------------
+SECTION 6: ADVANCED & TECHNICAL (18 Techniques)
+--------------------------------------------------------------------------------
+
+62. TIME-LAPSE
+    Best Approach: [HTML] for browser playback / [JCV] for MP4 export
+    HTML: CSS `@keyframes steps()` OR JS `setInterval` source swap.
+    JCV: Read frame sources, `FFmpegFrameRecorder` at low fps.
+    Why: HTML for delivery; JCV when final artifact must be MP4.
+
+63. SLOW MOTION
+    Best Approach: [HTML]
+    HTML: `transition-duration: 3s;` custom cubic-bezier.
+    Java Alternative: J2D frame-lengthened interpolation.
+    Why HTML: Native easing.
+
+64. STOP MOTION
+    Best Approach: [HTML]
+    HTML: JS frame sequencer, array of sources, `requestAnimationFrame`.
+    JCV: Encode each frame source directly.
+    Why HTML: Simpler for browser; JCV if exporting.
+
+65. MOTION CONTROL (SLIDER)
+    Best Approach: [HTML]
+    HTML: `@keyframes translateX()` with `linear` easing, infinite loop.
+    Java Alternative: J2D linear translate.
+    Why HTML: GPU.
+
+66. ANAMORPHIC FLARE
+    Best Approach: [HTML]
+    HTML: `::after` + linear-gradient + `mix-blend-mode: screen;`
+    Java Alternative: J2D gradient draw with `AlphaComposite.SCREEN`.
+    Why HTML: GPU blend + gradient.
+
+67. GREEN SCREEN (CHROMA KEY)
+    Best Approach: [HTML]
+    HTML: `background: #00ff00;` + `mix-blend-mode: multiply;` OR `clip-path`.
+    Java Alternative: J2D per-pixel chroma key (slow).
+    Why HTML: GPU blend. Java pixel loop is ~100ms/frame at 1080p.
+
+68. SPLIT SCREEN
+    Best Approach: [HTML]
+    HTML: `display: grid; grid-template-columns: 1fr 1fr;`
+    Java Alternative: J2D two draw calls in halves.
+    Why HTML: Trivial grid.
+
+69. MULTI-CAMERA SETUP
+    Best Approach: [HTML]
+    HTML: Grid of `<img>`/`<video>`.
+    Java Alternative: J2D multiple draw calls.
+    Why HTML: Trivial.
+
+70. FRAME RATE CONVERSION
+    Best Approach: [JCV] for export / [HTML] for real-time
+    JCV: FFmpeg `setFrameRate()` filter.
+    HTML: JS `requestAnimationFrame` timestamp control.
+    Why JCV: FFmpeg is the industry-standard frame-rate converter.
+
+71. UNDERWATER HOUSING
+    Best Approach: [HTML]
+    HTML: Blue gradient bg + `filter: blur(2px);` + bubble PNGs.
+    Java Alternative: J2D blue overlay + Gaussian blur + sprite bubbles.
+    Why HTML: GPU blur.
+
+72. HERO ENDING
+    Best Approach: [HTML]
+    HTML: Final keyframe: `scale(1) translateY(0); opacity: 1; box-shadow`.
+    Java Alternative: J2D final composite.
+    Why HTML: GPU.
+
+73. PASS-BY
+    Best Approach: [HTML]
+    HTML: Foreground `translateX(-100% → 100%);` + `blur(5px);`
+    Java Alternative: J2D foreground translate + blur.
+    Why HTML: GPU blur.
+
+74. FOREGROUND OBSTRUCTION
+    Best Approach: [HTML]
+    HTML: PNG overlay + `z-index: 10;` + `blur(3px);`
+    Java Alternative: J2D PNG draw over product.
+    Why HTML: GPU blur + z-ordering.
+
+75. THE REVEAL (GENERAL)
+    Best Approach: [HTML]
+    HTML: `clip-path` OR `opacity` 0→1 + `scale(0.9 → 1);`
+    Java Alternative: J2D AlphaComposite + scale.
+    Why HTML: GPU.
+
+76. SLIDE REVEAL (DUPLICATE)
+    Best Approach: [HTML] — same as #35.
+    Why HTML: GPU.
+
+77. DROP REVEAL (DUPLICATE)
+    Best Approach: [HTML] — same as #36.
+    Why HTML: GPU.
+
+78. ASSEMBLY SHOT (DUPLICATE)
+    Best Approach: [HTML] — same as #42.
+    Why HTML: GPU per layer.
+
+79. EXPLODED VIEW (DUPLICATE)
+    Best Approach: [HTML] — same as #43.
+    Why HTML: GPU 3D.
+
+80. PUSH IN (DUPLICATE)
+    Best Approach: [HTML] — same as #26.
+    Why HTML: GPU.
+
+81. PULL OUT (DUPLICATE)
+    Best Approach: [HTML] — same as #27.
+    Why HTML: GPU.
+
+
+--------------------------------------------------------------------------------
+SECTION 7: COMPOSITION & STYLING (5 Shots)
+--------------------------------------------------------------------------------
+
+82. SYMMETRICAL COMPOSITION
+    Best Approach: [HTML]
+    HTML: flex center.
+    Java Alternative: J2D centered draw.
+    Why HTML: Trivial.
+
+83. RULE OF THIRDS
+    Best Approach: [HTML]
+    HTML: CSS Grid 3x3 + `grid-area`.
+    Java Alternative: J2D manual positioning.
+    Why HTML: Declarative grid.
+
+84. NEGATIVE SPACE
+    Best Approach: [HTML]
+    HTML: Padding + margin + `object-fit: contain;`
+    Java Alternative: J2D positioned draw.
+    Why HTML: Trivial.
+
+85. LEADING LINES
+    Best Approach: [HTML]
+    HTML: Perspective bg + absolute positioned product.
+    Java Alternative: J2D draw background then product.
+    Why HTML: Perspective bg easy with CSS.
+
+86. FRAME WITHIN A FRAME
+    Best Approach: [HTML]
+    HTML: Nested divs with `border` or `clip-path`.
+    Java Alternative: J2D nested Shape clips.
+    Why HTML: Declarative clip.
+
+
+--------------------------------------------------------------------------------
+SECTION 8: TRANSITIONS & EDITING (5 Shots)
+--------------------------------------------------------------------------------
+
+87. MATCH CUT
+    Best Approach: [HTML]
+    HTML: Two divs, identical transforms, JS toggles `opacity`.
+    Java Alternative: J2D two-layer alpha swap.
+    Why HTML: GPU crossfade.
+
+88. JUMP CUT
+    Best Approach: [HTML]
+    HTML: `display: none` toggle via JS.
+    Java Alternative: J2D draw source swap.
+    Why HTML: Instant, no compositing.
+
+89. CROSS DISSOLVE
+    Best Approach: [HTML]
+    HTML: Two layers, `opacity` 1→0 / 0→1, 1s.
+    Java Alternative: J2D AlphaComposite fade.
+    Why HTML: GPU.
+
+90. WHIP PAN TRANSITION
+    Best Approach: [HTML]
+    HTML: Fast `translateX()` + `blur(10px);` at midpoint.
+    Java Alternative: J2D translate + Gaussian blur.
+    Why HTML: GPU blur is decisive.
+
+91. SWISH PAN
+    Best Approach: [HTML]
+    HTML: Same as whip pan with different easing.
+    Java Alternative: J2D same.
+    Why HTML: GPU blur.
+
+
+--------------------------------------------------------------------------------
+SECTION 9: BOOK SHOTS (4 Shots)
+--------------------------------------------------------------------------------
+
+92. PAGE FLIP
+    Best Approach: [HTML]
+    HTML: `rotateY(0 → -180deg);` transform-origin left, `perspective` on parent.
+    Java Alternative: J2D manual 3D matrix projection per frame.
+    Why HTML: Native 3D transform.
+
+93. SHELF REVEAL
+    Best Approach: [HTML]
+    HTML: Spine div `translateX()` pull-out.
+    Java Alternative: J2D translate.
+    Why HTML: GPU.
+
+94. STACK REVEAL
+    Best Approach: [HTML]
+    HTML: Multiple book divs with `translateY()` + `rotate()` spreading.
+    Java Alternative: J2D multi-layer transforms.
+    Why HTML: GPU per layer.
+
+95. BOOK SPREAD (FLAT LAY)
+    Best Approach: [HTML]
+    HTML: Two-page flex + center `box-shadow: inset`.
+    Java Alternative: J2D two draw calls + gradient overlay.
+    Why HTML: GPU gradient shadow.
+
+
+--------------------------------------------------------------------------------
+SECTION 10: TOY SHOTS (2 Shots)
+--------------------------------------------------------------------------------
+
+96. PLAYSET LAYOUT (BIRD'S EYE)
+    Best Approach: [HTML]
+    HTML: Grid + `rotateX(60deg);` + `perspective` parent.
+    Java Alternative: J2D shear matrix.
+    Why HTML: Native perspective.
+
+97. ACTION POSE (LOW ANGLE)
+    Best Approach: [HTML]
+    HTML: PNG + `rotateX(-20deg);` + `drop-shadow`.
+    Java Alternative: J2D rotate + offset shadow.
+    Why HTML: GPU shadow + transform.
+
+
+--------------------------------------------------------------------------------
+SECTION 11: KIDS CLOTHES SHOTS (2 Shots)
+--------------------------------------------------------------------------------
+
+98. OUTFIT FLAT LAY
+    Best Approach: [HTML]
+    HTML: Grid + rotate + shadow.
+    Java Alternative: J2D composite.
+    Why HTML: GPU.
+
+99. OUTFIT CHANGE (MATCH CUT)
+    Best Approach: [HTML]
+    HTML: Two divs, identical position, JS toggles opacity.
+    Java Alternative: J2D alpha swap.
+    Why HTML: GPU crossfade.
+
+
+--------------------------------------------------------------------------------
+SECTION 12: APP & SOFTWARE SHOTS (5 Shots)
+--------------------------------------------------------------------------------
+
+100. SCREEN CAPTURE
+     Best Approach: [HTML]
+     HTML: `<iframe>` or `<img>` of UI.
+     Java Alternative: J2D Image draw.
+     Why HTML: Real UI rendering.
+
+101. DEVICE MOCKUP
+     Best Approach: [HTML]
+     HTML: CSS device frame + inner screen div.
+     Java Alternative: J2D rounded rect + image draw.
+     Why HTML: Rounded corners native, easier.
+
+102. UI ANIMATION
+     Best Approach: [HTML]
+     HTML: CSS/JS animations on DOM.
+     Java Alternative: J2D would need to re-render entire UI.
+     Why HTML: Real DOM is the UI.
+
+103. SCREEN GLOW (LIGHT REVEAL)
+     Best Approach: [HTML]
+     HTML: `box-shadow: 0 0 60px rgba(...);` + radial gradient.
+     Java Alternative: J2D radial gradient + soft edge.
+     Why HTML: GPU shadow.
+
+104. SCROLL ANIMATION
+     Best Approach: [HTML]
+     HTML: IntersectionObserver + CSS transitions.
+     Java Alternative: Not natural — Java doesn't have a viewport concept.
+     Why HTML: Browser is the natural environment.
+
+
+--------------------------------------------------------------------------------
+SECTION 13: INSTRUMENT SHOTS (0 Fully Renderable)
+--------------------------------------------------------------------------------
+See Group B.
+
+
+--------------------------------------------------------------------------------
+SECTION 14: INDUSTRIAL SHOTS (2 Shots)
+--------------------------------------------------------------------------------
+
+105. ASSEMBLY LINE
+     Best Approach: [HTML]
+     HTML: Multiple divs with `translateX()` on belt div.
+     Java Alternative: J2D per-frame translate of items.
+     Why HTML: GPU per layer.
+
+106. GAUGE/METER READING
+     Best Approach: [HTML]
+     HTML: SVG arc + `stroke-dashoffset` animation.
+     Java Alternative: J2D `Arc2D` + clip + JS-style update loop.
+     Why HTML: SVG is native to browser and cheaper than J2D path redraws.
+
+
+--------------------------------------------------------------------------------
+SECTION 15: AGRICULTURE SHOTS (3 Shots)
+--------------------------------------------------------------------------------
+
+107. PLANT GROWTH (TIME-LAPSE)
+     Best Approach: [HTML] for browser / [JCV] for export
+     HTML: Sprite sheet + `steps()` OR SVG scale animation.
+     JCV: Read frame sources, encode.
+     Why: Browser delivery is cheaper; JCV only for MP4 artifact.
+
+108. SEED SPROUTING
+     Best Approach: [HTML]
+     HTML: SVG path + `stroke-dashoffset` progressive draw.
+     Java Alternative: J2D `Path2D` + dash offset (not native — must implement).
+     Why HTML: SVG native dash-offset.
+
+109. CROP ROW (LEADING LINES)
+     Best Approach: [HTML]
+     HTML: Perspective bg + product positioned on line.
+     Java Alternative: J2D perspective bg + draw product.
+     Why HTML: CSS perspective shortcut.
+
+
+--------------------------------------------------------------------------------
+SECTION 16: HEALTH & WELLNESS SHOTS (1 Shot)
+--------------------------------------------------------------------------------
+
+110. ROUTINE PROGRESSION
+     Best Approach: [HTML]
+     HTML: `@keyframes` with multiple stages toggling opacity + scale.
+     Java Alternative: J2D stage-based per-frame draw.
+     Why HTML: Multi-stage keyframes are native.
+
+
+--------------------------------------------------------------------------------
+SECTION 17: LUXURY SHOTS (2 Shots)
+--------------------------------------------------------------------------------
+
+111. SPARKLE/GEM SHINE
+     Best Approach: [HTML]
+     HTML: Radial gradient + `@keyframes` opacity flicker on `::after`, `mix-blend-mode: screen;`
+     Java Alternative: J2D radial gradient + AlphaComposite.SCREEN + timer.
+     Why HTML: GPU blend + gradient, cheaper.
+
+112. WATCH HANDS MOVING
+     Best Approach: [HTML]
+     HTML: `rotate()` on hand divs, JS updates angle.
+     Java Alternative: J2D `rotate()` per frame.
+     Why HTML: GPU transform per hand.
+
+
+--------------------------------------------------------------------------------
+SECTION 18: SUSTAINABLE SHOTS (1 Shot)
+--------------------------------------------------------------------------------
+
+113. LEAF FALLING
+     Best Approach: [HTML]
+     HTML: PNG + `translateY()` + `rotate()` + `cubic-bezier` sway.
+     Java Alternative: J2D translate + rotate per frame.
+     Why HTML: GPU transform + native easing.
+
+
+--------------------------------------------------------------------------------
+SECTION 19: SEASONAL SHOTS (3 Shots)
+--------------------------------------------------------------------------------
+
+114. SNOW FALLING
+     Best Approach: [HTML]
+     HTML: Multiple particle divs + `translateY()` + random delay/duration.
+     Java Alternative: J2D many sprite draws (CPU expensive at scale).
+     Why HTML: GPU handles hundreds of composited particles.
+
+115. GIFT UNWRAPPING
+     Best Approach: [HTML]
+     HTML: `clip-path` + `rotate()` on ribbon divs.
+     Java Alternative: J2D clip + rotate.
+     Why HTML: GPU clip.
+
+116. LIGHT TWINKLE
+     Best Approach: [HTML]
+     HTML: `@keyframes` opacity + `box-shadow` pulsing.
+     Java Alternative: J2D alpha oscillation + soft radial.
+     Why HTML: GPU shadow pulse.
+
+
+--------------------------------------------------------------------------------
+SECTION 20: REAL ESTATE SHOTS (3 Shots)
+--------------------------------------------------------------------------------
+
+117. FLOOR PLAN REVEAL
+     Best Approach: [HTML]
+     HTML: SVG path + `stroke-dashoffset` progressive draw.
+     Java Alternative: J2D `Path2D` + manual dash offset.
+     Why HTML: Native SVG dash.
+
+118. DAY-TO-NIGHT
+     Best Approach: [HTML]
+     HTML: `filter: brightness() + hue-rotate()` transition on overlay.
+     Java Alternative: J2D `RescaleOp` on color bands.
+     Why HTML: GPU filter.
+
+119. ROOM WALKTHROUGH (2D)
+     Best Approach: [HTML]
+     HTML: `translateX()` + perspective on layered images, parallax.
+     Java Alternative: J2D layered translate.
+     Why HTML: GPU per layer.
+
+
+--------------------------------------------------------------------------------
+SECTION 21: TRAVEL SHOTS (2 Shots)
+--------------------------------------------------------------------------------
+
+120. SUNSET TRANSITION
+     Best Approach: [HTML]
+     HTML: `linear-gradient` animation on overlay.
+     Java Alternative: J2D LinearGradientPaint with color interpolation.
+     Why HTML: GPU gradient interpolation.
+
+121. MAP ROUTE
+     Best Approach: [HTML]
+     HTML: SVG path + `stroke-dashoffset`.
+     Java Alternative: J2D `Path2D` + manual dash offset.
+     Why HTML: Native SVG dash.
+
+
+--------------------------------------------------------------------------------
+SECTION 22: EVENT & WEDDING SHOTS (2 Shots)
+--------------------------------------------------------------------------------
+
+122. CONFETTI DROP
+     Best Approach: [HTML]
+     HTML: Multiple particle divs + `translateY()` + `rotate()`, random colors/delays.
+     Java Alternative: J2D many sprite draws.
+     Why HTML: GPU particle compositing.
+
+123. FIRST DANCE (SILHOUETTE)
+     Best Approach: [HTML]
+     HTML: `filter: brightness(0);` + gradient bg.
+     Java Alternative: J2D brightness=0 draw + gradient.
+     Why HTML: GPU filter.
+
+
+--------------------------------------------------------------------------------
+SECTION 23: EXTRA FULLY RENDERABLE SHOTS (30 Bonus)
+--------------------------------------------------------------------------------
+
+124. FLAT LAY (GENERAL)         → [HTML] GPU composite, Grid
+125. KNOLLING (GENERAL)         → [HTML] Grid + rotation
+126. ZOOM IN (GENERAL)          → [HTML] `scale()` keyframe
+127. ZOOM OUT (GENERAL)         → [HTML] reverse scale
+128. CROSS DISSOLVE (GENERAL)   → [HTML] opacity transition
+129. SLIDE REVEAL (GENERAL)     → [HTML] translateX keyframe
+130. PAN (GENERAL)              → [HTML] translateX keyframe
+131. TILT (GENERAL)             → [HTML] translateY keyframe
+132. SILHOUETTE (GENERAL)       → [HTML] brightness(0)
+133. COLOR CHANGE (GENERAL)     → [HTML] hue-rotate filter
+134. SYMMETRICAL COMP (GENERAL) → [HTML] flex center
+135. RULE OF THIRDS (GENERAL)   → [HTML] CSS Grid 3x3
+136. SPLIT SCREEN (GENERAL)     → [HTML] Grid columns
+137. SCREEN CAPTURE (GENERAL)   → [HTML] iframe
+138. DEVICE MOCKUP (GENERAL)    → [HTML] CSS frame
+139. WATCH HANDS (GENERAL)      → [HTML] rotate divs
+140. SHADOW REVEAL (GENERAL)    → [HTML] box-shadow fade
+141. REFLECTION REVEAL (GENERAL)→ [HTML] scaleY(-1) + mask
+142. CURTAIN PULL (GENERAL)     → [HTML] scaleX transform
+143. FLIP REVEAL (GENERAL)      → [HTML] rotateY(180deg)
+144. PAGE FLIP (GENERAL)        → [HTML] rotateY with origin
+145. CONFETTI DROP (GENERAL)    → [HTML] particle divs
+146. SNOW FALLING (GENERAL)     → [HTML] particle divs
+147. LIGHT TWINKLE (GENERAL)    → [HTML] opacity + shadow
+148. GAUGE READING (GENERAL)    → [HTML] SVG dash offset
+149. MAP ROUTE (GENERAL)        → [HTML] SVG dash offset
+150. FLOOR PLAN REVEAL (GENERAL)→ [HTML] SVG dash offset
+151. UI ANIMATION (GENERAL)     → [HTML] DOM animation
+152. SCROLL ANIMATION (GENERAL) → [HTML] IntersectionObserver
+153. SEED SPROUTING (GENERAL)   → [HTML] SVG dash offset
+
+
+================================================================================
+GROUP A TOTAL: 153 SHOTS (66%)
+================================================================================
+
+
+
+
+================================================================================
+GROUP B: PARTIALLY RENDERABLE SHOTS (~23% - 53 Shots)
+Stylized approximation required
+================================================================================
+
+
+--------------------------------------------------------------------------------
+SECTION 1: ANGLES & PERSPECTIVES (2 Shots)
+--------------------------------------------------------------------------------

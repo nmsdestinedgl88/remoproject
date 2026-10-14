@@ -1,0 +1,597 @@
+================================================================================
+GRAPHIC DESIGN STYLES — LLM / HTML / CSS / JS RECREATION GUIDE
+================================================================================
+Legend:
+  [FULL]     = Fully recreatable with HTML/CSS/JS alone (no external assets)
+  [PARTIAL]  = Recreatable in code IF image/SVG/font assets are provided
+  [ASSET]    = What external asset(s) are required for the PARTIAL styles
+================================================================================
+
+
+================================================================================
+SECTION 1 — FULLY RECREATABLE (HTML/CSS/JS ONLY)
+================================================================================
+
+1. Art Deco
+   - CSS geometric borders, gold gradients, repeating-linear-gradient
+   - Fonts: Poiret One / Limelight (Google Fonts)
+
+2. Bauhaus
+   - CSS Grid, primary colors, flat shapes, border-radius: 0
+
+3. Constructivism
+   - CSS clip-path diagonals, red/black palette, bold sans-serif
+
+4. De Stijl
+   - CSS Grid rectangles, primary colors + black lines
+
+5. Suprematism
+   - CSS transform: rotate(), flat color shapes, minimal palette
+
+6. Cyanotype
+   - CSS filter: sepia + hue-rotate(180deg) + contrast, SVG noise overlay
+
+7. Swiss Design
+   - CSS Grid, Helvetica/Inter, whitespace, asymmetric layout
+
+8. Mid-Century Modern
+   - CSS organic border-radius, warm palette, geometric SVG shapes
+
+9. Editorial
+   - CSS multi-column, grid-template-areas, serif + sans pairing
+
+10. 90s Editorial
+    - CSS + SVG feTurbulence noise, grunge palette, mixed type
+
+11. Halftone
+    - CSS radial-gradient dot pattern, background-size tiling
+
+12. Duotone
+    - CSS mix-blend-mode: multiply/screen, filter: grayscale + color overlay
+
+13. CMYK Dots
+    - CSS radial-gradients in cyan/magenta/yellow/black, rotation
+
+14. Blueprint Style
+    - CSS repeating-linear-gradient grid, white-on-blue, monospace font
+
+15. Paper Cutout
+    - CSS box-shadow + filter: drop-shadow, layered divs, subtle rotate
+
+16. Line Art
+    - SVG stroke paths, stroke-linecap: round, no fill
+
+17. Op Art
+    - CSS repeating gradients, transform: skew/rotate, animation
+
+18. Flat Pop Art
+    - CSS flat colors, SVG shapes, thick black outlines
+
+19. Architectural Duotone
+    - CSS filter + blend modes, high-contrast two-color overlay
+
+20. Visual Key
+    - CSS Grid, labeled boxes, thin borders, monospace
+
+21. Typographic Brutalism
+    - CSS raw type, system fonts, harsh contrast, no decoration
+
+22. Flat Design
+    - Native CSS, no shadows, flat colors
+
+23. Material Design
+    - CSS box-shadow layers, transitions, elevation
+
+24. Skeuomorphism
+    - CSS gradients, inset shadows, textures (linear/radial gradients)
+
+25. Neumorphism
+    - CSS dual box-shadow (inset + outset), soft background
+
+26. Glassmorphism
+    - backdrop-filter: blur(), rgba background, subtle border
+
+27. Cyberminimalism
+    - CSS + subtle neon text-shadow, dark background, minimal layout
+
+28. Vector Minimalism
+    - SVG shapes + CSS, limited palette
+
+29. Luxury Minimal
+    - CSS serif typography, whitespace, gold accents via gradient
+
+30. TechSpec
+    - CSS Grid, monospace font, SVG line diagrams, labels
+
+31. Frutiger Metro
+    - CSS flat colorful shapes, rounded rectangles, gradients
+
+32. Web 2.0 Gloss
+    - CSS linear-gradient gloss, border-radius, reflection pseudo-element
+
+33. GenX SoftClub
+    - CSS radial-gradient globe, soft blue gradients, corporate sans
+
+34. Surveillance
+    - CSS grid overlay, scanlines via repeating-linear-gradient, CCTV frame
+
+35. Anti-Design
+    - Deliberate CSS chaos, mismatched fonts, clashing colors
+
+36. Brutalism
+    - Raw CSS, default fonts, harsh borders, no polish
+
+37. Neubrutalism
+    - Thick black borders, hard box-shadow, bright flat colors
+
+38. Neo Brutalism
+    - Raw CSS layout, system fonts, anti-corporate look
+
+39. Neue Brutalism
+    - CSS Grid, bold type, black/white + one accent
+
+40. Minimalism
+    - Native CSS, whitespace, limited palette
+
+41. Maximalism
+    - Layered CSS, many elements, dense composition
+
+42. Camera Interface
+    - CSS Grid, viewfinder overlays, corner brackets, monospace
+
+43. Naive Design
+    - Intentionally rough CSS, misaligned elements, simple shapes
+
+44. Y2K
+    - CSS chrome gradients, bubbles (radial-gradient), star SVGs
+
+45. Old Web
+    - Pixel fonts (VT323), marquee-like CSS animation, table layouts
+
+46. Vectorheart
+    - SVG hearts/stars, CSS chrome gradient, playful layout
+
+47. Metalheart
+    - CSS metallic linear-gradient, SVG hearts, chrome effect
+
+48. Acid Graphics
+    - CSS neon colors, mix-blend-mode, distorted SVG shapes
+
+49. Acid
+    - Same as Acid Graphics
+
+50. Glitch
+    - CSS clip-path + animation, RGB text-shadow offset
+
+51. Glitch Art
+    - CSS + JS canvas for datamosh effect, channel shift
+
+52. Matrix Glitch
+    - JS canvas for falling code rain, green monospace
+
+53. CRT
+    - CSS scanlines, radial vignette, phosphor glow (text-shadow)
+
+54. ASCII Art
+    - <pre> tag + monospace, JS string generation
+
+55. Vaporwave
+    - CSS pastel gradients, glitch, Roman bust SVG, grid
+
+56. Synthwave
+    - CSS neon grid (perspective), sunset gradient, glow
+
+57. FutureFunk
+    - CSS gradients, funky palette, retro shapes
+
+58. Nightcore
+    - CSS animation, neon accents, fast transitions
+
+59. Cybersigilism
+    - SVG sigil paths, CSS glitch, dark palette
+
+60. Cybercore
+    - CSS neon, dark UI, grid overlays
+
+61. New Liquid
+    - CSS border-radius morphing animation, blob shapes
+
+62. Tape Ribbon
+    - CSS + SVG ribbon shapes, rotation, shadow
+
+63. Futuristic
+    - CSS neon, chrome gradients, HUD elements
+
+64. Retro Futurism
+    - CSS + SVG atomic shapes, warm gradients, retro fonts
+
+65. Cyberpunk
+    - CSS neon, glitch, dark UI, scanlines
+
+66. Solarpunk
+    - CSS green gradients, nature-tech SVG, warm light
+
+67. Cyberdelic
+    - CSS neon + psychedelic gradients, SVG fractals
+
+68. Liquid Chrome
+    - SVG feTurbulence + feDisplacementMap, CSS metallic gradient
+
+69. Metallic Typography
+    - background-clip: text + linear-gradient, text-shadow
+
+70. Isometric
+    - CSS transform: rotateX(60deg) rotateZ(45deg), SVG
+
+71. Heat Map
+    - CSS radial gradients + JS data mapping, color scale
+
+72. Kidcore
+    - CSS bright colors, emoji, playful rotation
+
+73. Naive
+    - CSS rough styling, simple shapes, childlike layout
+
+74. Handwritten
+    - Google Fonts (Caveat, Shadows Into Light) + CSS
+
+75. TypeDoodle
+    - CSS type + inline SVG doodles around text
+
+76. Font Mixing
+    - Pure CSS typography, contrasting font families
+
+77. Vector Art
+    - SVG paths + CSS fills
+
+78. Popping Colors
+    - Pure CSS saturated palette, high contrast
+
+79. Graphic Novel Panel
+    - CSS Grid panels, halftone background, bold borders
+
+80. Chalkboard Doodle
+    - CSS chalk texture (SVG noise), handwritten font, SVG doodles
+
+81. Minimal Line Art Motion
+    - SVG stroke-dasharray + CSS animation
+
+82. Sticker Style Bold Outline
+    - CSS thick white border + drop-shadow, SVG shape
+
+83. Pastel Dreamy
+    - CSS pastel gradients, soft blur, low contrast
+
+84. Scrapbook
+    - CSS layered layout, rotate, tape pseudo-elements, SVG
+
+85. Scandinavian Design
+    - CSS minimal, warm neutrals, simple SVG
+
+86. Japanese Minimalism
+    - CSS whitespace, zen layout, muted palette
+
+87. Japandi
+    - CSS fusion of Scandinavian + Japanese minimal
+
+88. Industrial Design
+    - CSS metal/concrete gradients, utilitarian grid
+
+89. Deconstructivism
+    - CSS transform, clip-path, fragmented layout
+
+90. Indie Groovy
+    - CSS warm retro palette, SVG squiggles, rounded type
+
+91. Retro
+    - CSS vintage palette, retro fonts, grain overlay
+
+92. Vintage 80s
+    - CSS neon, grid, bold type, chrome
+
+93. Memphis
+    - CSS geometric shapes, squiggles, bright 80s palette
+
+94. Psychedelic
+    - CSS gradients, SVG swirls, animation
+
+95. Neo Psychedelic
+    - CSS + SVG, digital psychedelia, neon
+
+96. Grunge
+    - SVG feTurbulence noise, CSS texture overlay, distressed type
+
+97. Emo/Goth
+    - CSS dark palette, ornate SVG, serif/blackletter fonts
+
+98. Gothic
+    - Same as Emo/Goth
+
+99. Dark Academia
+    - CSS muted earth tones, serif fonts, vintage layout
+
+100. Light Academia
+    - CSS cream/pastel, serif fonts, soft layout
+
+101. Liquid Design
+    - CSS border-radius morph animation, SVG blob
+
+102. Liquid Retro
+    - CSS + SVG liquid distortion, retro palette
+
+103. Aurora
+    - CSS animated gradients, blur, blend modes
+
+
+================================================================================
+SECTION 2 — PARTIALLY RECREATABLE (NEEDS IMAGE/SVG/FONT ASSETS)
+================================================================================
+Format:  Style — [ASSET NEEDED]
+================================================================================
+
+104. Art Nouveau
+     [ASSET] SVG floral/curved line illustrations, decorative border SVG
+
+105. Dadaism
+     [ASSET] Collage images (cutouts, vintage photos, newspaper)
+
+106. Victorian Style
+     [ASSET] Ornamental SVG borders, engraving illustrations, blackletter font
+
+107. Gothic Design
+     [ASSET] Blackletter font, SVG cathedral arches, ornament
+
+108. Baroque Style
+     [ASSET] Gold ornamental SVG, dramatic imagery, serif font
+
+109. Rococo Style
+     [ASSET] Pastel filigree SVG, floral ornament, script font
+
+110. Neoclassical
+     [ASSET] SVG columns, laurel wreaths, classical imagery
+
+111. Ancient Greeks
+     [ASSET] Meander pattern SVG, pottery imagery, classical sculpture
+
+112. Ukiyo-e
+     [ASSET] Woodblock print illustrations, flat color art
+
+113. Rubber Hose
+     [ASSET] SVG cartoon character, bendy limb animation
+
+114. Golden Age Airline
+     [ASSET] Vintage airline poster illustration, retro typography
+
+115. Showa Retro
+     [ASSET] Japanese Showa-era imagery, retro product art
+
+116. Adventure Pulp
+     [ASSET] Pulp magazine cover art, distressed texture
+
+117. Risograph
+     [ASSET] Grain texture (or SVG turbulence), spot-color artwork
+
+118. Classic Comic
+     [ASSET] Comic panel art, halftone dots, bold ink lines
+
+119. Poster Collage
+     [ASSET] Cutout images, vintage photos, mixed media
+
+120. Botanical Design
+     [ASSET] SVG plant/floral illustrations, scientific detail
+
+121. Pop Art
+     [ASSET] Comic/pop imagery, halftone photo, bold color overlay
+
+122. Firecracker Label
+     [ASSET] Vintage Chinese label art, ornate border
+
+123. Technical X-Ray
+     [ASSET] Technical line drawings, X-ray-style imagery
+
+124. Frutiger Aero
+     [ASSET] Glossy nature/tech imagery, bubbles, sky photos
+
+125. AQB
+     [ASSET] Depends on definition — likely custom imagery
+
+126. FIFA
+     [ASSET] Sports logos, player images, broadcast UI elements
+
+127. Pixel Art
+     [ASSET] Pixel sprite images (PNG, image-rendering: pixelated)
+
+128. 8-Bit
+     [ASSET] Pixel fonts + pixel sprite assets
+
+129. PC-98
+     [ASSET] Retro anime illustrations, dithered art
+
+130. City Pop
+     [ASSET] 80s Japanese illustration, pastel sunset art
+
+131. Heisei Retro
+     [ASSET] Heisei-era imagery, anime art, tech photos
+
+132. Animecore
+     [ASSET] Anime screenshots/illustrations
+
+133. Anime Matrix
+     [ASSET] Anime art + matrix overlay assets
+
+134. Dorfic
+     [ASSET] Dreamy pastel illustrations
+
+135. 2000s Preppy
+     [ASSET] Fashion/lifestyle photos, 2000s graphics
+
+136. Pacific Punk Wave
+     [ASSET] Surf/punk illustrations, wave art
+
+137. Minecraft
+     [ASSET] Block textures (or WebGL for full 3D scene)
+
+138. Sandbox Game
+     [ASSET] Game UI assets, world imagery
+
+139. Steampunk
+     [ASSET] Gear SVG, brass textures, Victorian machinery art
+
+140. Dieselpunk
+     [ASSET] Gritty industrial imagery, vintage machinery
+
+141. Biopunk
+     [ASSET] Organic/fleshy textures, bio-tech illustrations
+
+142. Afrofuturism
+     [ASSET] Cultural imagery, African patterns, futuristic art
+
+143. Neo 3D
+     [ASSET] 3D rendered assets (or WebGL/Three.js)
+
+144. 3D Inflated
+     [ASSET] 3D rendered puffy objects (or WebGL)
+
+145. Clay Style
+     [ASSET] 3D clay-rendered assets (or WebGL)
+
+146. Low Poly
+     [ASSET] SVG polygon art (or WebGL for scenes)
+
+147. Low Poly 3D
+     [ASSET] 3D low-poly models (or WebGL)
+
+148. Vox
+     [ASSET] Voxel models (or WebGL)
+
+149. Voxel Relief
+     [ASSET] Voxel depth-map assets
+
+150. Papercraft
+     [ASSET] Paper texture images, folded paper SVG
+
+151. Origami Paper Fold
+     [ASSET] Origami fold SVG or images
+
+152. Toy Brick Stop-Motion
+     [ASSET] Brick asset images, stop-motion frames
+
+153. Electron Scan
+     [ASSET] Microscopic/electron imagery
+
+154. Microbiology
+     [ASSET] Cell/organism SVG or microscope images
+
+155. Sinotype
+     [ASSET] Depends on definition — likely custom type assets
+
+156. Pixel Salt
+     [ASSET] Pixel grain texture, noise assets
+
+157. Western Cartoon
+     [ASSET] Character SVG/illustration, bold outlines
+
+158. Kawaii
+     [ASSET] Cute character SVG, pastel assets
+
+159. Superflat
+     [ASSET] Flat otaku-style illustrations
+
+160. Hand-Drawn Doodles
+     [ASSET] SVG doodle paths
+
+161. Doodle Bombing
+     [ASSET] Many SVG doodles (JS for density)
+
+162. Collage
+     [ASSET] Cutout images, mixed media
+
+163. Surreal Design
+     [ASSET] Surreal imagery, dreamlike photos/art
+
+164. New Surrealism
+     [ASSET] Modern surreal digital art assets
+
+165. Romanticy
+     [ASSET] Ethereal/romantic illustrations
+
+166. Watercolor
+     [ASSET] Watercolor texture images, or SVG turbulence + blend
+
+167. Ink Wash / Sumi-e
+     [ASSET] Brush stroke SVG, ink texture
+
+168. Noir B&W Sketch
+     [ASSET] Sketch/line illustration assets
+
+169. Felt/Fabric Puppet
+     [ASSET] Felt texture images, puppet character art
+
+170. Whimsical Storybook
+     [ASSET] Storybook-style illustrations
+
+171. Satirical Cutout Cartoon
+     [ASSET] Cutout cartoon character assets
+
+172. Mixed Media Collage
+     [ASSET] Mixed media textures + cutouts
+
+173. Neon Pop Illustration
+     [ASSET] Pop illustration + neon overlay
+
+174. Vintage Travel Poster
+     [ASSET] Vintage travel illustrations
+
+175. Crayon/Kids Drawing
+     [ASSET] Crayon texture SVG or images
+
+176. Wood Carving/Whittled
+     [ASSET] Wood texture images, carved figure art
+
+177. Punk Collage
+     [ASSET] Punk imagery, torn paper textures
+
+178. Slavic Folk
+     [ASSET] Slavic folk pattern SVG, embroidery art
+
+179. Asian Sheep
+     [ASSET] Custom cultural/character assets
+
+180. Tooled Leather
+     [ASSET] Leather texture images, tooled pattern SVG
+
+181. Bohemian
+     [ASSET] Organic pattern SVG, earthy textures
+
+182. Cottagecore
+     [ASSET] Floral SVG, vintage nature imagery
+
+183. Graffiti
+     [ASSET] Spray paint SVG, tag art, brick texture
+
+184. Grind Fiction
+     [ASSET] Gritty dystopian imagery, pulp textures
+
+
+================================================================================
+SECTION 3 — NOT RECREATABLE VIA CODE ALONE
+================================================================================
+
+185. Realistic Cinematic
+     [REQUIRES] Photography or photorealistic 3D rendering
+
+186. Sand Animation
+     [REQUIRES] Frame-by-frame video/animation assets
+
+
+================================================================================
+SUMMARY
+================================================================================
+FULL (pure code) ...................... 103 styles
+PARTIAL (needs image/SVG/font) ........ 81 styles
+NOT RECREATABLE ....................... 2 styles
+TOTAL ................................. 186 styles
+
+For PARTIAL styles, the required asset is listed after [ASSET].
+For FULL styles, no external assets are needed — pure HTML/CSS/JS works.
+================================================================================

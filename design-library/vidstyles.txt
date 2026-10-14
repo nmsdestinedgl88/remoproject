@@ -1,0 +1,167 @@
+================================================================================
+VIDEO STYLE SCREENING FOR LLM-CODABLE HTML/CSS/JS
+================================================================================
+Question: Which video styles can be coded by an LLM in HTML/CSS/JS — either
+fully or partially — where images are provided externally?
+
+VERDICT KEY
+-----------
+[FULL]     LLM can code the entire thing (shapes, SVG, CSS filters, canvas,
+           typography, animation). Only static images supplied as inputs.
+[PARTIAL]  LLM handles layout, motion, compositing, grading; the visual "look"
+           depends on supplied raster art / textures / frames.
+[ASSET]    Style identity is photographic/rendered craft; only sequencing is
+           codeable.
+
+================================================================================
+FULL LIST — CONSOLIDATED SCREENING
+================================================================================
+
+#   STYLE                          VERDICT    NOTES
+--- ------------------------------ ---------- --------------------------------
+ 1  Cinematic                      [FULL]     Letterbox + color grade + Ken Burns
+ 2  Commercial                     [FULL]     Layout + easing + logo sting
+ 3  Kinetic typography             [FULL]     Pure text + timing + transforms
+ 4  Documentary                    [PARTIAL]  Needs archive images/footage
+ 5  Explainer                      [FULL]     Needs only simple SVG icons
+ 6  Minimalist                     [FULL]     Pure CSS/SVG, whitespace
+ 7  Collage                        [PARTIAL]  Needs cutout images
+ 8  Handdrawn                      [PARTIAL]  Filters approximate; frames ideal
+ 9  Motion graphics                [FULL]     Full SVG/canvas animation
+10  Papercraft stop motion         [PARTIAL]  Needs photographed frames
+11  Layered diorama                [PARTIAL]  Parallax codeable; layer PNGs needed
+12  Claymation                     [PARTIAL]  Stop-motion timing codeable; frames needed
+13  3D pixel                       [PARTIAL]  Three.js voxels possible; assets heavy
+14  Ghibli                         [PARTIAL]  Painted backgrounds needed
+15  90s retro anime cel shading    [PARTIAL]  Scanlines/grain codeable; cel art needed
+16  Watercolor                     [PARTIAL]  Bleed filters approx.; textures ideal
+17  Ink wash / sumi-e              [PARTIAL]  Stroke anim codeable; brush textures needed
+18  Graphic novel panel            [FULL]     Grid + bubbles + halftone CSS
+19  Noir B&W sketch                [PARTIAL]  Grayscale/contrast codeable; sketch art needed
+20  Chalkboard doodle              [PARTIAL]  Chalk font + rough SVG; texture helps
+21  Felt/fabric puppet             [PARTIAL]  Jitter motion codeable; puppet photos needed
+22  Toy brick stop-motion          [PARTIAL]  Sequencing codeable; frame photos needed
+23  Origami paper fold             [FULL]     CSS 3D fold transforms — great fit
+24  Low poly 3D                    [PARTIAL]  Three.js possible; models/textures help
+25  Whimsical storybook            [PARTIAL]  Page-turn + parallax; illustrations needed
+26  Realistic cinematic            [PARTIAL]  Grade + camera moves; footage needed
+27  Satirical cutout cartoon       [PARTIAL]  Animation codeable; cutout PNGs needed
+28  Minimal line art motion        [FULL]     SVG stroke-dasharray animation
+29  Mixed media collage style      [PARTIAL]  Compositing codeable; assets needed
+30  Neon pop illustration          [FULL]     Glow via box-shadow, saturate filter
+31  Vintage travel poster          [FULL]     Flat SVG shapes + type + grain
+32  Crayon / kids drawing          [PARTIAL]  feTurbulence approximates; drawings ideal
+33  Sticker style bold outline     [FULL]     SVG outline + drop-shadow
+34  Sand animation                 [PARTIAL]  Backlight glow/particles; frames ideal
+35  Wood carving / whittled        [PARTIAL]  Carved-reveal masks; wood photos needed
+36  Pastel dreamy                  [FULL]     Soft blur, pastel gradients, bloom
+37  Dark Deco                      [FULL]     Art-Deco SVG frames, gold gradients
+38  Cell Shaded Noir               [PARTIAL]  Posterize + B&W codeable; base art needed
+39  Rubber Hose                    [PARTIAL]  Bendy limb SVG; character art needed
+40  Flat Retro Mid-Century         [FULL]     Geometric SVG, limited palette
+41  Thick Line Graphic             [FULL]     SVG heavy stroke-width
+42  Vinyl Toy Pop                  [PARTIAL]  Glossy CSS possible; toy renders ideal
+43  Ligne Claire (Lineage Claire)  [PARTIAL]  Uniform outline SVG; character art needed
+44  Cyberpunk Cell Anime           [PARTIAL]  Neon+glitch+scanlines; anime art needed
+45  Chunky Sports Anime            [PARTIAL]  Speed lines/impact frames; art needed
+46  Yukio Woodblock                [PARTIAL]  Flat layers + grain; woodblock art needed
+47  Paper Cutout Collage           [PARTIAL]  Same as collage
+48  Stop Motion Clay               [PARTIAL]  Timing codeable; clay frames needed
+49  Puppet Stop Motion             [PARTIAL]  Timing codeable; puppet frames needed
+50  Low Poly PS1                   [PARTIAL]  Vertex jitter + affine warp; models needed
+51  PS2 Game Cinematic             [PARTIAL]  Dither+scanlines+fog; art/frames needed
+52  Vaporwave Crown                [FULL]     Gradients, chrome text, grid perspective
+53  Y2K Glossy 3D                  [FULL]     Gradients, radial highlights, shadows
+54  Claymorphism                   [FULL]     border-radius + soft layered shadows
+55  Grease Pencil Sketch           [PARTIAL]  feTurbulence + displacement on SVG
+56  Pen sketch                     [PARTIAL]  Rough SVG filters or animated strokes
+
+================================================================================
+TALLY
+================================================================================
+[FULL]     ~19 styles
+[PARTIAL]  ~37 styles
+[ASSET]     0 hard rejects
+
+Nothing on the list is fully un-codeable — roughly two-thirds need supplied
+raster assets to look authentic.
+
+================================================================================
+DETAILED BREAKDOWN — TOP 9 STYLES (from follow-up request)
+================================================================================
+
+1. CINEMATIC  —  [FULL] (with supplied stills)
+   - Letterbox bars (aspect-ratio + black bands)
+   - Anamorphic feel: contrast/saturate filters + subtle chromatic aberration
+   - Ken Burns pans/zooms via transform + @keyframes
+   - Color grading via filter: sepia() hue-rotate() contrast()
+   - Vignette via radial-gradient overlay
+   - Shallow depth-of-field via backdrop-filter: blur()
+
+2. COMMERCIAL  —  [FULL]
+   - Product card layouts (CSS Grid)
+   - Snappy transitions (cubic-bezier easing)
+   - Text pop-ins, price tags, CTA buttons
+   - Logo stings via SVG stroke-dasharray animation
+   - Bright saturated palette — pure CSS
+
+3. KINETIC TYPOGRAPHY  —  [FULL] (perfect LLM target)
+   - 100% text + timing + transforms
+   - @keyframes for scale, rotate, skew, clip-path reveals
+   - Variable font weight animation (font-variation-settings)
+   - Masked text reveals via clip-path or background-clip: text
+   - Split-text animation via JS
+   - No images required
+
+4. DOCUMENTARY  —  [PARTIAL]
+   - Codeable: Ken Burns, lower-thirds, chapter cards, interview framing,
+     grain overlay (feTurbulence), desaturated grade
+   - Needed: actual photographs/footage
+
+5. EXPLAINER  —  [FULL] (with icon set)
+   - Scene sequencing, step reveals, callout lines
+   - SVG icon animation (drawing, morphing)
+   - Number counters, progress bars, arrow/path animations
+   - Needs only simple icons — easily supplied or drawn in SVG
+
+6. MINIMALIST  —  [FULL]
+   - Whitespace, simple geometry, restrained motion
+   - Thin type, limited palette, slow eases
+   - Pure CSS/SVG
+
+7. COLLAGE  —  [PARTIAL]
+   - Codeable: layered transforms, rotation, blend modes
+     (mix-blend-mode: multiply/screen), torn-paper masks via clip-path,
+     drop shadows, staggered timing
+   - Needed: the cutout images themselves
+
+8. HANDDRAWN  —  [PARTIAL] (borderline FULL)
+   - Codeable: "boil" wiggle via feTurbulence + feDisplacementMap animated,
+     rough SVG strokes, frame jitter on loop
+   - Needed: ideally a set of hand-drawn frames — but a single SVG traced
+     image can be made to feel hand-drawn with filters
+
+9. MOTION GRAPHICS  —  [FULL]
+   - Shapes, masks, transitions, morphs
+   - SVG path animation, clip-path wipes
+   - Particle canvas, easing, timing
+   - Entirely codeable
+
+================================================================================
+RULE OF THUMB
+================================================================================
+- The more a style is defined by geometry, typography, timing, color, or CSS
+  filters                                      ->  [FULL]
+- The more it depends on hand-drawn frames, painted textures, or photographic
+  craft                                        ->  [PARTIAL]
+- Nothing on the list is fully un-codeable — but roughly two-thirds need
+  supplied raster assets to look authentic.
+
+PIPELINE GUIDANCE
+-----------------
+- Treat [FULL] styles as "generate from scratch."
+- Treat [PARTIAL] styles as "generate the animator, ingest your frames."
+
+================================================================================
+END OF FILE
+================================================================================
