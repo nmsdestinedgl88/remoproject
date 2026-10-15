@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Ava: Ask how big the cut will be</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Inter Tight"; font-weight: 800; src: url("assets/fonts/InterTight-800-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Inter Tight"; font-weight: 900; src: url("assets/fonts/InterTight-900-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Caveat"; font-weight: 600; src: url("assets/fonts/Caveat-600-normal.woff2") format("woff2"); }
+      @font-face { font-family: "JetBrains Mono"; font-weight: 500; src: url("assets/fonts/JetBrainsMono-500-normal.woff2") format("woff2"); }
+
+      :root {
+        --navy: #14213d;
+        --yellow: #ffc93c;
+        --coral: #ff6b57;
+        --teal: #006680;
+        --paper: #f4efe3;
+        --white: #fbfaf6;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "Inter Tight", sans-serif; color: var(--navy); }
+
+      /* ---------- scenes ---------- */
+      .scene { position: absolute; inset: 0; overflow: hidden; z-index: 2; }
+      .bg-paper { background: var(--paper); }
+      .bg-yellow { background: var(--yellow); }
+      .bg-coral { background: var(--coral); }
+      .bg-teal { background: var(--teal); }
+      .halftone::before {
+        content: ""; position: absolute; inset: 0;
+        background: radial-gradient(circle, rgba(20, 33, 61, 0.17) 2.6px, transparent 3.2px) 0 0 / 28px 28px;
+        -webkit-mask-image: linear-gradient(200deg, #000 0%, transparent 62%);
+        mask-image: linear-gradient(200deg, #000 0%, transparent 62%);
+      }
+      .bg-teal.halftone::before { background-image: radial-gradient(circle, rgba(251, 250, 246, 0.14) 2.6px, transparent 3.2px); }
+
+      .vw { position: absolute; inset: 0; z-index: 1; transform-origin: 50% 40%; }
+      .vw video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+      /* ---------- type ---------- */
+      .big { font-family: "Inter Tight", sans-serif; font-weight: 900; text-transform: uppercase; line-height: 0.93; letter-spacing: -0.025em; }
+      .ln { display: block; white-space: nowrap; }
+      .w { display: inline-block; margin-right: 0.2em; }
+      .w:last-child { margin-right: 0; }
+      .hand { font-family: "Caveat", cursive; font-weight: 600; line-height: 1; white-space: nowrap; }
+      .abs { position: absolute; }
+      .hl { background: linear-gradient(var(--yellow), var(--yellow)) no-repeat left center / 0% 88%; padding: 0 0.07em; margin: 0 0.13em 0 -0.07em; }
+      .hl-coral { background: linear-gradient(var(--coral), var(--coral)) no-repeat left center / 0% 88%; padding: 0 0.07em; margin: 0 0.05em 0 -0.07em; }
+
+      /* ---------- paper pieces ---------- */
+      .shadow { position: absolute; filter: drop-shadow(10px 14px 0 rgba(20, 33, 61, 0.22)); }
+      .torn { position: relative; }
+      .strip { background: var(--white); padding: 34px 44px 38px; }
+      .strip.yellow { background: var(--yellow); }
+      .strip.navy { background: var(--navy); color: var(--white); }
+      .strip.coral { background: var(--coral); }
+      .cut { background: var(--white); padding: 18px; }
+      .cut img { display: block; width: 100%; height: auto; }
+      .tape { position: absolute; width: 190px; height: 64px; background: rgba(255, 244, 200, 0.74); box-shadow: 0 2px 0 rgba(20, 33, 61, 0.12); z-index: 5; }
+
+      svg.ink { position: absolute; inset: 0; width: 1080px; height: 1920px; overflow: visible; pointer-events: none; z-index: 4; }
+      svg.ink path, svg.ink line, svg.ink polyline { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .dot { position: absolute; border-radius: 50%; background: var(--yellow); border: 8px solid var(--navy); }
+
+      /* ---------- transitions ---------- */
+      .wipe { position: absolute; top: -60px; left: 0; width: 1400px; height: 2040px; z-index: 50; }
+      #iris { position: absolute; z-index: 40; width: 240px; height: 240px; border-radius: 50%; background: var(--yellow); left: 420px; top: 1180px; }
+
+      /* ---------- captions ---------- */
+      .cap { position: absolute; left: 60px; width: 960px; top: 1660px; z-index: 60; display: none; justify-content: center; }
+      .cap .box { display: inline-block; background: var(--navy); color: var(--white); padding: 12px 26px 16px; border-radius: 8px; font-weight: 800; font-size: 50px; line-height: 1.22; text-align: center; letter-spacing: -0.005em; box-shadow: 6px 8px 0 rgba(20, 33, 61, 0.25); }
+      .cap .cw { display: inline-block; padding: 0 8px; margin: 0 -2px; border-radius: 4px; }
+
+      #grain {
+        position: absolute; inset: 0; z-index: 70; pointer-events: none; mix-blend-mode: multiply; opacity: 0.16;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='360'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.2 -0.18'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+        background-size: 360px 360px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="60" data-width="1080" data-height="1920">
+
+      <!-- ===================== AUDIO ===================== -->
+      <audio id="vo" src="assets/voiceover.wav" data-start="0" data-duration="55.37" data-track-index="1" data-volume="1"></audio>
+      <audio id="sx-w1" src="assets/sfx/whoosh.wav" data-start="9.14" data-duration="1" data-track-index="2" data-volume="0.28"></audio>
+      <audio id="sx-w2" src="assets/sfx/whoosh.wav" data-start="26.74" data-duration="1" data-track-index="2" data-volume="0.28"></audio>
+      <audio id="sx-w3" src="assets/sfx/whoosh.wav" data-start="46.14" data-duration="1" data-track-index="2" data-volume="0.28"></audio>
+      <audio id="sx-pop" src="assets/sfx/pop.wav" data-start="17.2" data-duration="0.6" data-track-index="5" data-volume="0.3"></audio>
+      <audio id="sx-thump" src="assets/sfx/thump.wav" data-start="31.45" data-duration="1" data-track-index="5" data-volume="0.32"></audio>
+      <audio id="sx-t1" src="assets/sfx/tick.wav" data-start="46.72" data-duration="0.5" data-track-index="4" data-volume="0.3"></audio>
+      <audio id="sx-t2" src="assets/sfx/tick.wav" data-start="48.16" data-duration="0.5" data-track-index="4" data-volume="0.3"></audio>
+      <audio id="sx-t3" src="assets/sfx/tick.wav" data-start="49.09" data-duration="0.5" data-track-index="4" data-volume="0.3"></audio>
+
+      <!-- ===================== VIDEO LAYERS ===================== -->
+      <div class="vw" id="vwA"><video id="vidA" class="clip" src="assets/video_a.mp4" muted playsinline data-start="0" data-duration="9.5" data-track-index="0"></video></div>
+      <div class="vw" id="vwB"><video id="vidB" class="clip" src="assets/video_b.mp4" muted playsinline data-start="27.1" data-duration="11.3" data-playback-rate="0.885" data-track-index="0"></video></div>
+
+      <!-- ===================== S1 hook (0 - 9.5) ===================== -->
+      <section id="s1" class="scene clip" data-start="0" data-duration="9.5" data-track-index="3">
+        <div class="shadow" id="s1a" style="left: 36px; top: 1150px; width: 980px;">
+          <div class="torn strip yellow big" data-seed="3" style="font-size: 122px;">
+            <span class="ln"><span class="w">Diabetes</span><span class="w">can</span></span>
+            <span class="ln"><span class="w">slow</span><span class="w">healing.</span></span>
+          </div>
+        </div>
+        <div class="shadow" id="s1b" style="left: 36px; top: 1150px; width: 980px;">
+          <div class="torn strip big" data-seed="9" style="font-size: 112px;">
+            <span class="ln"><span class="w">Ask</span><span class="w hl" id="hl1a">how</span><span class="w hl" id="hl1b">big</span></span>
+            <span class="ln"><span class="w hl" id="hl1c">the</span><span class="w hl" id="hl1d">cut</span><span class="w">will</span><span class="w">be.</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S2 the cut (9.5 - 17.5) ===================== -->
+      <section id="s2" class="scene clip bg-paper halftone" data-start="9.5" data-duration="8" data-track-index="3">
+        <div class="big abs" id="s2h1" style="left: 64px; top: 200px; font-size: 144px; color: var(--navy);">
+          <span class="ln">One <span class="hl-coral" id="hl2a">long</span></span>
+          <span class="ln">incision.</span>
+        </div>
+        <div class="big abs" id="s2h2" style="left: 64px; top: 200px; font-size: 144px; color: var(--navy);">
+          <span class="ln">A few</span>
+          <span class="ln"><span class="hl" id="hl2b">small</span> ones.</span>
+        </div>
+        <svg class="ink" id="s2ink" viewBox="0 0 1080 1920"></svg>
+        <div class="hand abs" id="s2l1" style="left: 70px; top: 640px; font-size: 76px; color: var(--coral);">open surgery</div>
+        <div class="hand abs" id="s2l2" style="left: 520px; top: 835px; font-size: 62px; color: var(--navy);">one long incision</div>
+        <div class="dot" id="s2lead" style="width: 70px; height: 70px; left: 0; top: 0;"></div>
+        <div class="dot s2p" style="width: 64px; height: 64px; left: 108px; top: 1160px;"></div>
+        <div class="dot s2p" style="width: 64px; height: 64px; left: 308px; top: 1160px;"></div>
+        <div class="dot s2p" style="width: 64px; height: 64px; left: 508px; top: 1160px;"></div>
+        <div class="dot s2p" style="width: 64px; height: 64px; left: 708px; top: 1160px;"></div>
+        <div class="hand abs" id="s2l3" style="left: 70px; top: 1010px; font-size: 76px; color: var(--teal);">minimal access surgery</div>
+        <div class="hand abs" id="s2l4" style="left: 70px; top: 1290px; font-size: 58px; color: var(--navy);">a few small incisions (count illustrative)</div>
+      </section>
+
+      <!-- ===================== S3 mechanism (17.5 - 22) ===================== -->
+      <section id="s3" class="scene clip bg-yellow halftone" data-start="17.5" data-duration="4.5" data-track-index="3">
+        <svg class="ink" id="s3ink" viewBox="0 0 1080 1920"></svg>
+        <div class="hand abs" id="s3screen" style="left: 458px; top: 318px; font-size: 76px; color: var(--navy);">screen</div>
+        <div class="hand abs" id="s3cam" style="left: 650px; top: 478px; font-size: 62px; color: var(--navy);">camera</div>
+        <div class="hand abs" id="s3in1" style="left: 296px; top: 1040px; font-size: 56px; color: var(--navy);">instrument</div>
+        <div class="hand abs" id="s3in2" style="left: 836px; top: 1040px; font-size: 56px; color: var(--navy);">instrument</div>
+        <div class="hand abs" id="s3out" style="left: 52px; top: 830px; font-size: 52px; color: var(--navy); opacity: 0.8;">outside</div>
+        <div class="hand abs" id="s3ins" style="left: 52px; top: 930px; font-size: 52px; color: var(--navy); opacity: 0.8;">inside</div>
+        <div class="hand abs" id="s3tz" style="left: 400px; top: 1196px; font-size: 56px; color: var(--navy);">target area</div>
+        <div class="shadow" id="s3h" style="left: 40px; top: 1330px; width: 1000px;">
+          <div class="torn strip big" data-seed="14" style="font-size: 80px;">
+            <span class="ln"><span class="w">The</span><span class="w">surgeon</span><span class="w">works</span></span>
+            <span class="ln"><span class="w">from</span><span class="w">a</span><span class="w">screen.</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S4 for diabetics (22 - 27.1) ===================== -->
+      <section id="s4" class="scene clip bg-coral halftone" data-start="22" data-duration="5.1" data-track-index="3">
+        <div class="shadow" id="s4p" style="left: 60px; top: 140px; width: 960px;">
+          <div class="torn cut" data-seed="21"><img src="assets/i1.jpg" /></div>
+        </div>
+        <div class="tape" id="s4t1" style="left: 40px; top: 120px;"></div>
+        <div class="tape" id="s4t2" style="left: 850px; top: 150px;"></div>
+        <svg class="ink" id="s4ink" viewBox="0 0 1080 1920"></svg>
+        <div class="hand abs" id="s4note" style="left: 520px; top: 985px; font-size: 70px; color: var(--navy);">diabetic patient</div>
+        <div class="big abs" id="s4h" style="left: 64px; top: 1070px; font-size: 156px; color: var(--white); text-shadow: 7px 8px 0 var(--navy);">
+          <span class="ln"><span class="w">Less</span><span class="w">wound</span></span>
+          <span class="ln"><span class="w">to</span><span class="w">heal.</span></span>
+        </div>
+        <div class="shadow" id="s4c1" style="left: 64px; top: 1440px;"><div class="torn strip yellow big" data-seed="5" style="font-size: 42px; padding: 18px 30px 20px; letter-spacing: 0;">For diabetic patients</div></div>
+        <div class="shadow" id="s4c2" style="left: 400px; top: 1545px;"><div class="torn strip big" data-seed="8" style="font-size: 42px; padding: 18px 30px 20px; letter-spacing: 0;">Recovery can be quicker.</div></div>
+      </section>
+
+      <!-- ===================== S5 proof (27.1 - 38.4) ===================== -->
+      <section id="s5" class="scene clip" data-start="27.1" data-duration="11.3" data-track-index="3">
+        <div class="shadow" id="s5b" style="left: -30px; top: 1010px; width: 1140px;">
+          <div class="torn strip navy" data-seed="30" style="height: 620px; padding: 0;"></div>
+        </div>
+        <div class="big abs" id="s5name" style="left: 64px; top: 1058px; font-size: 62px; color: var(--yellow); letter-spacing: 0.02em;">Dr. Oto Peters</div>
+        <div class="big abs" id="s5num" style="left: 56px; top: 1100px; font-size: 350px; color: var(--white); line-height: 1; letter-spacing: -0.04em;"><span id="s5n">0</span><span id="s5plus" style="color: var(--yellow);">+</span></div>
+        <svg class="ink" id="s5ink" viewBox="0 0 1080 1920"></svg>
+        <div class="big abs" id="s5cap" style="left: 64px; top: 1450px; font-size: 46px; color: var(--white); letter-spacing: 0;">consecutive successful operations</div>
+        <div class="hand abs" id="s5note" style="left: 300px; top: 1525px; font-size: 58px; color: var(--yellow);">with this procedure and equipment</div>
+      </section>
+
+      <!-- ===================== S6 only one in Uyo (38.4 - 42.35) ===================== -->
+      <section id="s6" class="scene clip bg-teal halftone" data-start="38.4" data-duration="3.95" data-track-index="3">
+        <div class="big abs" id="s6h" style="left: 64px; top: 130px; font-size: 154px; color: var(--white);">
+          <span class="ln"><span class="w">The</span><span class="w">only</span></span>
+          <span class="ln"><span class="w">one</span><span class="w">of</span><span class="w">its</span></span>
+          <span class="ln"><span class="w">kind</span><span class="w">in</span><span class="w hl" id="hl6" style="color: var(--navy);">Uyo.</span></span>
+        </div>
+        <div class="shadow" id="s6p" style="left: 110px; top: 780px; width: 860px;">
+          <div class="torn cut" data-seed="40"><img src="assets/i2.jpg" /></div>
+        </div>
+        <div class="tape" id="s6t" style="left: 460px; top: 758px;"></div>
+        <svg class="ink" id="s6ink" viewBox="0 0 1080 1920"></svg>
+        <div class="hand abs" id="s6note" style="left: 560px; top: 1440px; font-size: 68px; color: var(--yellow);">the surgeon's screen</div>
+        <div class="shadow" id="s6c" style="left: 64px; top: 1540px;"><div class="torn strip yellow big" data-seed="12" style="font-size: 40px; padding: 16px 28px 18px; letter-spacing: 0;">Laparoscopic prostate surgery</div></div>
+      </section>
+
+      <!-- ===================== S7 offer (42.35 - 46.5) ===================== -->
+      <section id="s7" class="scene clip bg-yellow halftone" data-start="42.35" data-duration="4.15" data-track-index="3">
+        <div class="shadow" id="s7p" style="left: 50px; top: 130px; width: 980px;">
+          <div class="torn cut" data-seed="51"><img src="assets/i3.jpg" /></div>
+        </div>
+        <div class="tape" id="s7t1" style="left: 780px; top: 108px;"></div>
+        <div class="shadow" id="s7r1" style="left: 40px; top: 900px; width: 1000px;">
+          <div class="torn strip big" data-seed="17" style="font-size: 124px;">
+            <span class="ln">Free</span>
+            <span class="ln">consultation</span>
+          </div>
+        </div>
+        <svg class="ink" id="s7ink" viewBox="0 0 1080 1920"></svg>
+        <div class="shadow" id="s7r2" style="left: 40px; top: 1330px; width: 1000px;">
+          <div class="torn strip navy big" data-seed="23" style="font-size: 58px; letter-spacing: 0; line-height: 1;">
+            <span class="ln">Ask about diabetic</span>
+            <span class="ln">pre-surgical screening</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S8 call to action (46.5 - 60) ===================== -->
+      <section id="s8" class="scene clip bg-paper halftone" data-start="46.5" data-duration="13.5" data-track-index="3">
+        <img id="s8logo" class="abs" src="assets/logo.png" style="left: 60px; top: 70px; height: 150px; width: auto;" />
+        <div class="shadow" id="s8p" style="left: 60px; top: 270px; width: 960px;">
+          <div class="torn cut" data-seed="61"><img src="assets/i4.jpg" /></div>
+        </div>
+        <div class="tape" id="s8t" style="left: 40px; top: 250px;"></div>
+        <svg class="ink" id="s8ink" viewBox="0 0 1080 1920"></svg>
+        <div class="big abs" id="s8phone" style="left: 60px; top: 990px; font-size: 128px; color: var(--navy); white-space: nowrap; letter-spacing: -0.03em;">
+          <span class="w" id="ph1">0808</span><span class="w" id="ph2">888</span><span class="w" id="ph3">2788</span>
+        </div>
+        <div class="big abs" id="s8web" style="left: 60px; top: 1190px; font-size: 80px; text-transform: none; color: var(--teal); white-space: nowrap; letter-spacing: -0.015em; display: flex; align-items: center;">avacentre<span class="dot" style="position: relative; width: 28px; height: 28px; border-width: 5px; margin: 14px 10px 0;"></span>com<span class="dot" style="position: relative; width: 28px; height: 28px; border-width: 5px; margin: 14px 10px 0;"></span>ng</div>
+        <div class="hand abs" id="s8addr" style="left: 60px; top: 1330px; font-size: 96px; color: var(--navy);">off 4-Lane, Uyo</div>
+        <div class="abs" id="s8note" style="left: 60px; top: 1500px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 26px; letter-spacing: 0.06em; color: var(--navy); opacity: 0.7;">SCENES ARE ILLUSTRATIVE.</div>
+      </section>
+
+      <!-- ===================== TRANSITIONS ===================== -->
+      <div id="wipe1" class="wipe" style="background: var(--coral);"></div>
+      <div id="wipe2" class="wipe" style="background: var(--navy);"></div>
+      <div id="wipe3" class="wipe" style="background: var(--coral);"></div>
+      <div id="iris"></div>
+
+      <div id="capHost"></div>
+      <div id="grain"></div>
+    </div>
+
+    <script>
+      /* ============ helpers (all deterministic) ============ */
+      const NAVY = "#14213d", YEL = "#ffc93c", CORAL = "#ff6b57", TEAL = "#006680", WHITE = "#fbfaf6";
+      function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => Array.from(document.querySelectorAll(s));
+      const NS = "http://www.w3.org/2000/svg";
+
+      /* rough torn-paper outline, expressed in % so it needs no measuring */
+      function tornPoly(seed, amp = 2.2, n = 22) {
+        const r = rng(seed), pts = [];
+        for (let i = 0; i <= n; i++) pts.push([(i / n) * 100, r() * amp]);
+        for (let i = 1; i < 8; i++) pts.push([100 - r() * 1.2, (i / 8) * 100]);
+        for (let i = n; i >= 0; i--) pts.push([(i / n) * 100, 100 - r() * amp]);
+        for (let i = 7; i > 0; i--) pts.push([r() * 1.2, (i / 8) * 100]);
+        return "polygon(" + pts.map((p) => p[0].toFixed(2) + "% " + p[1].toFixed(2) + "%").join(",") + ")";
+      }
+      $$(".torn").forEach((el) => { el.style.clipPath = tornPoly(+el.dataset.seed || 1); });
+      $$(".wipe").forEach((el, i) => {
+        const r = rng(80 + i), pts = [[0, 0], [100, 0]];
+        for (let k = 0; k <= 26; k++) pts.push([100 - 1.6 - r() * 2.4, (k / 26) * 100]);
+        pts.push([0, 100]);
+        el.style.clipPath = "polygon(" + pts.map((p) => p[0].toFixed(2) + "% " + p[1].toFixed(2) + "%").join(",") + ")";
+      });
+
+      /* hand-drawn marker line as an svg path with pathLength=1 */
+      function mk(svg, d, color, width, cls) {
+        const p = document.createElementNS(NS, "path");
+        p.setAttribute("d", d); p.setAttribute("pathLength", "1");
+        p.setAttribute("stroke", color); p.setAttribute("stroke-width", width);
+        p.setAttribute("stroke-dasharray", "1 2"); p.setAttribute("stroke-dashoffset", "1");
+        if (cls) p.setAttribute("class", cls);
+        svg.appendChild(p); return p;
+      }
+      function handLine(x0, y0, x1, y1, seed, amp = 5, n = 30) {
+        const r = rng(seed), dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L;
+        let d = "M" + x0 + " " + y0;
+        for (let i = 1; i <= n; i++) {
+          const t = i / n, o = Math.sin(t * 9 + seed) * amp + (r() - 0.5) * amp * 0.9;
+          d += " L" + (x0 + dx * t + nx * o).toFixed(1) + " " + (y0 + dy * t + ny * o).toFixed(1);
+        }
+        return d;
+      }
+      function handLoop(cx, cy, rx, ry, seed, turns = 1.35) {
+        const r = rng(seed); let d = "";
+        const N = 60;
+        for (let i = 0; i <= N; i++) {
+          const t = i / N, a = -1.9 + t * turns * Math.PI * 2, k = 1 + 0.07 * t + (r() - 0.5) * 0.04;
+          const x = cx + Math.cos(a) * rx * k, y = cy + Math.sin(a) * ry * k;
+          d += (i ? " L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
+        }
+        return d;
+      }
+      function arrow(x0, y0, x1, y1, seed) {
+        const a = Math.atan2(y1 - y0, x1 - x0), h = 38;
+        return handLine(x0, y0, x1, y1, seed, 4, 18) +
+          " M" + (x1 - Math.cos(a - 0.5) * h).toFixed(1) + " " + (y1 - Math.sin(a - 0.5) * h).toFixed(1) + " L" + x1 + " " + y1 +
+          " L" + (x1 - Math.cos(a + 0.5) * h).toFixed(1) + " " + (y1 - Math.sin(a + 0.5) * h).toFixed(1);
+      }
+      const draw = (tl, p, t, dur = 0.5, ease = "power2.out") => tl.to(p, { strokeDashoffset: 0, duration: dur, ease }, t);
+      const slam = (tl, els, t, o = {}) => tl.fromTo(els,
+        { opacity: 0, y: o.y ?? -80, rotation: o.rot ?? -5, scale: o.scale ?? 1.12 },
+        { opacity: 1, y: 0, rotation: 0, scale: 1, duration: o.dur ?? 0.45, ease: o.ease ?? "back.out(1.5)", stagger: o.stagger ?? 0.08 }, t);
+      const pop = (tl, el, t, dur = 0.3) => tl.fromTo(el, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: dur, ease: "back.out(2.2)" }, t);
+      const exit = (tl, el, t, dur = 0.22) => tl.to(el, { opacity: 0, y: -30, duration: dur, ease: "power2.in" }, t);
+      const swipe = (tl, el, t, dur = 0.5) => tl.to(el, { backgroundSize: "100% 88%", duration: dur, ease: "power2.inOut" }, t);
+
+      const tl = gsap.timeline({ paused: true });
+
+      /* ============ S1  0 - 9.5 : full-bleed clip + torn paper headline ============ */
+      tl.fromTo("#vwA", { scale: 1 }, { scale: 1.08, duration: 9.5, ease: "none" }, 0);
+      gsap.set("#s1a", { rotation: -1.6, transformOrigin: "0% 50%" });
+      gsap.set("#s1b", { rotation: 1.4, transformOrigin: "0% 50%" });
+      tl.fromTo("#s1a", { x: -1200 }, { x: 0, duration: 0.55, ease: "power4.out" }, 0.22);
+      slam(tl, "#s1a .w", 0.34, { stagger: 0.09, y: -50, rot: -4 });
+      exit(tl, "#s1a", 6.7, 0.25);
+      tl.fromTo("#s1b", { x: 1200, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power4.out" }, 6.95);
+      slam(tl, "#s1b .w", 7.0, { stagger: 0.07, y: -50, rot: 4 });
+      ["#hl1a", "#hl1b", "#hl1c", "#hl1d"].forEach((s, i) => swipe(tl, s, 7.35 + i * 0.18, 0.4));
+
+      /* ============ S2  9.5 - 17.5 : long marker line becomes a few dots ============ */
+      const s2 = $("#s2ink");
+      const longD = handLine(60, 760, 1020, 760, 4, 9, 40);
+      const longP = mk(s2, longD, CORAL, 18);
+      const lead = $("#s2lead");
+      const O = { p: 0, q: 0 };
+      /* sample the hand-drawn path once, at build time, so callbacks never measure the DOM */
+      const LEN = longP.getTotalLength(), SAMP = [];
+      for (let i = 0; i <= 240; i++) { const q = longP.getPointAtLength((i / 240) * LEN); SAMP.push([q.x, q.y]); }
+      const ptAt = (u) => SAMP[Math.round(Math.max(0, Math.min(1, u)) * 240)];
+      gsap.set(lead, { opacity: 0, xPercent: -50, yPercent: -50, x: SAMP[0][0], y: SAMP[0][1] });
+      const paintLong = () => {
+        longP.setAttribute("stroke-dasharray", (O.p - O.q) + " 3");
+        longP.setAttribute("stroke-dashoffset", String(-O.q));
+        const pt = ptAt(O.p); gsap.set(lead, { x: pt[0], y: pt[1] });
+      };
+      gsap.set(longP, { attr: { "stroke-dasharray": "0 3", "stroke-dashoffset": 0 } });
+      slam(tl, "#s2h1 .ln", 9.83, { y: -70, rot: -3, stagger: 0.12 });
+      swipe(tl, "#hl2a", 11.0, 0.5);
+      tl.fromTo("#s2l1", { opacity: 0, rotation: -6 }, { opacity: 1, rotation: -3, duration: 0.4, ease: "back.out(1.7)" }, 10.0);
+      tl.set(lead, { opacity: 1 }, 9.9);
+      tl.to(O, { p: 1, duration: 2.7, ease: "power2.inOut", onUpdate: paintLong }, 9.9);
+      tl.fromTo("#s2l2", { opacity: 0, rotation: 4 }, { opacity: 1, rotation: 2, duration: 0.4, ease: "back.out(1.7)" }, 11.6);
+      exit(tl, "#s2h1", 13.35); exit(tl, "#s2l1", 13.4); exit(tl, "#s2l2", 13.4);
+      slam(tl, "#s2h2 .ln", 13.62, { y: -70, rot: 3, stagger: 0.12 });
+      swipe(tl, "#hl2b", 16.55, 0.5);
+      tl.to(O, { q: 1, duration: 0.5, ease: "power2.inOut", onUpdate: paintLong }, 13.62);
+      /* the lead dot falls to the last port; the other four pop in around it */
+      tl.fromTo(lead, { x: SAMP[240][0], y: SAMP[240][1] }, { x: 972, y: 1192, duration: 0.55, ease: "power3.inOut" }, 14.15);
+      $$(".s2p").forEach((d, i) => { gsap.set(d, { opacity: 0, scale: 0 }); pop(tl, d, 14.5 + i * 0.08); });
+      tl.fromTo("#s2l3", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 14.6);
+      tl.fromTo("#s2l4", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 15.4);
+      /* iris out from the last dot into S3's yellow field */
+      gsap.set("#iris", { xPercent: -50, yPercent: -50, scale: 0, left: 972, top: 1192 });
+      tl.to("#iris", { scale: 14, duration: 0.55, ease: "power3.in" }, 17.0);
+      tl.set("#iris", { opacity: 0 }, 17.62);
+
+      /* ============ S3  17.5 - 22 : marker diagram ============ */
+      const s3 = $("#s3ink");
+      const skin = mk(s3, handLine(40, 900, 1040, 900, 7, 4, 40), NAVY, 12);
+      const instL = mk(s3, handLine(270, 640, 270, 1180, 8, 3, 30), TEAL, 14);
+      const instR = mk(s3, handLine(810, 640, 810, 1180, 9, 3, 30), TEAL, 14);
+      const camS = mk(s3, handLine(540, 600, 540, 1120, 10, 3, 30), TEAL, 14);
+      const jawL = mk(s3, "M240 1210 L270 1176 L300 1210", TEAL, 14);
+      const jawR = mk(s3, "M780 1210 L810 1176 L840 1210", TEAL, 14);
+      const lens = mk(s3, handLoop(540, 1132, 16, 16, 11, 1.1), TEAL, 12);
+      const hL = mk(s3, "M232 590 L308 590 L308 690 L232 690 Z", NAVY, 10);
+      const hR = mk(s3, "M772 590 L848 590 L848 690 L772 690 Z", NAVY, 10);
+      const cH = mk(s3, "M486 520 L594 520 L594 612 L486 612 Z", NAVY, 10);
+      const scr = mk(s3, "M370 250 L710 250 L710 450 L370 450 Z", NAVY, 14);
+      const arr = mk(s3, arrow(540, 510, 540, 466, 12), NAVY, 12);
+      const tz = mk(s3, "M150 1000 L930 1000 L930 1262 L150 1262 Z", NAVY, 7);
+      tz.setAttribute("stroke-dasharray", "0.012 0.012");
+      const portsS3 = [270, 540, 810].map((x) => { const d = document.createElement("div"); d.className = "dot"; d.style.cssText = "position:absolute;width:52px;height:52px;left:" + (x - 26) + "px;top:874px;background:" + CORAL + ";z-index:5"; $("#s3").appendChild(d); return d; });
+      draw(tl, skin, 17.85, 0.5, "power2.inOut");
+      portsS3.forEach((d, i) => { gsap.set(d, { opacity: 0, scale: 0 }); pop(tl, d, 18.4 + i * 0.09); });
+      [hL, hR, cH].forEach((p, i) => draw(tl, p, 18.7 + i * 0.06, 0.35));
+      draw(tl, camS, 18.8, 0.9, "power2.inOut"); draw(tl, instL, 18.95, 0.9, "power2.inOut"); draw(tl, instR, 19.1, 0.9, "power2.inOut");
+      [jawL, jawR, lens].forEach((p, i) => draw(tl, p, 19.85 + i * 0.05, 0.3));
+      tl.fromTo(tz, { opacity: 0 }, { opacity: 1, duration: 0.4 }, 20.0);
+      tl.set(tz, { attr: { "stroke-dashoffset": 0 } }, 0);
+      draw(tl, scr, 20.4, 0.45, "power2.inOut"); draw(tl, arr, 20.85, 0.4);
+      [["#s3out", 18.5], ["#s3ins", 18.55], ["#s3cam", 19.4], ["#s3in1", 19.7], ["#s3in2", 19.8], ["#s3tz", 20.1], ["#s3screen", 20.7]].forEach(([s, t]) =>
+        tl.fromTo(s, { opacity: 0, y: 14 }, { opacity: s.includes("out") || s.includes("ins") ? 0.8 : 1, y: 0, duration: 0.35, ease: "power3.out" }, t));
+      gsap.set("#s3h", { rotation: -1.2, transformOrigin: "0% 50%" });
+      tl.fromTo("#s3h", { x: 1200 }, { x: 0, duration: 0.5, ease: "power4.out" }, 18.2);
+      slam(tl, "#s3h .w", 18.3, { stagger: 0.08, y: -40, rot: 3 });
+
+      /* ============ S4  22 - 27.1 : consultation photo slams in ============ */
+      gsap.set("#s4p", { rotation: -2.2 });
+      tl.fromTo("#s4p", { y: 140, scale: 1.18, rotation: -7, opacity: 0 }, { y: 0, scale: 1, rotation: -2.2, opacity: 1, duration: 0.6, ease: "power4.out" }, 22.0);
+      tl.fromTo(["#s4t1", "#s4t2"], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)", stagger: 0.1 }, 22.5);
+      gsap.set("#s4t1", { rotation: -28 }); gsap.set("#s4t2", { rotation: 24 });
+      tl.fromTo("#s4p img", { scale: 1 }, { scale: 1.05, duration: 5.1, ease: "none" }, 22);
+      const s4 = $("#s4ink");
+      const gl = mk(s4, handLoop(521, 600, 96, 62, 15), NAVY, 10);
+      const ar4 = mk(s4, arrow(700, 975, 745, 700, 16), NAVY, 9);
+      draw(tl, gl, 23.2, 0.55, "power2.inOut"); draw(tl, ar4, 23.7, 0.45);
+      tl.fromTo("#s4note", { opacity: 0, rotation: -5 }, { opacity: 1, rotation: -2, duration: 0.4, ease: "back.out(1.7)" }, 23.7);
+      slam(tl, "#s4h .w", 22.55, { stagger: 0.1, y: -90, rot: -4 });
+      gsap.set("#s4c1", { rotation: 2, transformOrigin: "0% 50%" }); gsap.set("#s4c2", { rotation: -1.8, transformOrigin: "0% 50%" });
+      tl.fromTo("#s4c1", { x: -700, opacity: 1 }, { x: 0, duration: 0.45, ease: "power4.out" }, 22.95);
+      tl.fromTo("#s4c2", { x: 900, opacity: 1 }, { x: 0, duration: 0.45, ease: "power4.out" }, 25.1);
+
+      /* ============ S5  27.1 - 38.4 : count-up proof over the corridor clip ============ */
+      tl.fromTo("#vwB", { scale: 1.12 }, { scale: 1, duration: 11.3, ease: "none" }, 27.1);
+      tl.fromTo("#s5b", { y: 700 }, { y: 0, duration: 0.6, ease: "power4.out" }, 27.7);
+      tl.fromTo("#s5name", { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 28.1);
+      const C = { v: 0 };
+      tl.fromTo("#s5num", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 30.2);
+      tl.to(C, { v: 50, duration: 1.2, ease: "power2.out", onUpdate() { $("#s5n").textContent = Math.round(C.v); } }, 30.3);
+      tl.fromTo("#s5plus", { opacity: 0, scale: 0.4, transformOrigin: "50% 60%" }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.4)" }, 31.5);
+      const s5 = $("#s5ink");
+      const ul5 = mk(s5, handLine(70, 1440, 760, 1440, 18, 4, 30), YEL, 12);
+      draw(tl, ul5, 31.7, 0.5, "power2.inOut");
+      tl.fromTo("#s5cap", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 31.9);
+      tl.fromTo("#s5note", { opacity: 0, rotation: -4 }, { opacity: 1, rotation: -2, duration: 0.45, ease: "back.out(1.7)" }, 35.71);
+
+      /* ============ S6  38.4 - 42.35 : only one in Uyo ============ */
+      slam(tl, "#s6h .w", 38.74, { stagger: 0.14, y: -110, rot: -5, scale: 1.2 });
+      swipe(tl, "#hl6", 40.55, 0.45);
+      gsap.set("#s6p", { rotation: 3 });
+      tl.fromTo("#s6p", { y: 300, rotation: 9, opacity: 0 }, { y: 0, rotation: 3, opacity: 1, duration: 0.6, ease: "power4.out" }, 39.2);
+      tl.fromTo("#s6t", { opacity: 0, scale: 0.6, rotation: -8 }, { opacity: 1, scale: 1, rotation: -6, duration: 0.3, ease: "back.out(2)" }, 39.7);
+      tl.fromTo("#s6p img", { scale: 1 }, { scale: 1.04, duration: 3.2, ease: "none" }, 39.2);
+      const s6 = $("#s6ink");
+      const ar6 = mk(s6, arrow(700, 1420, 700, 1070, 19), YEL, 10);
+      draw(tl, ar6, 40.0, 0.5);
+      tl.fromTo("#s6note", { opacity: 0, rotation: -5 }, { opacity: 1, rotation: -2, duration: 0.4, ease: "back.out(1.7)" }, 40.1);
+      gsap.set("#s6c", { rotation: -1.6, transformOrigin: "0% 50%" });
+      tl.fromTo("#s6c", { x: -800 }, { x: 0, duration: 0.45, ease: "power4.out" }, 40.9);
+
+      /* ============ S7  42.35 - 46.5 : free consultation ============ */
+      gsap.set("#s7p", { rotation: 1.8 });
+      tl.fromTo("#s7p", { y: -260, rotation: -6, opacity: 0 }, { y: 0, rotation: 1.8, opacity: 1, duration: 0.55, ease: "power4.out" }, 42.35);
+      tl.fromTo("#s7t1", { opacity: 0, scale: 0.6, rotation: 40 }, { opacity: 1, scale: 1, rotation: 22, duration: 0.3, ease: "back.out(2)" }, 42.8);
+      tl.fromTo("#s7p img", { scale: 1 }, { scale: 1.04, duration: 4.15, ease: "none" }, 42.35);
+      gsap.set("#s7r1", { rotation: -1.8, transformOrigin: "0% 50%" });
+      tl.fromTo("#s7r1", { x: 1300 }, { x: 0, duration: 0.5, ease: "power4.out" }, 42.42);
+      slam(tl, "#s7r1 .ln", 42.55, { stagger: 0.1, y: -40, rot: 2 });
+      gsap.set("#s7r2", { rotation: 1.2, transformOrigin: "0% 50%" });
+      tl.fromTo("#s7r2", { x: -1300 }, { x: 0, duration: 0.5, ease: "power4.out" }, 44.42);
+      const s7 = $("#s7ink");
+      const ar7 = mk(s7, handLoop(618, 575, 66, 46, 20), CORAL, 11);
+      draw(tl, ar7, 44.6, 0.55, "power2.inOut");
+
+      /* ============ S8  46.5 - 60 : the call ============ */
+      tl.fromTo("#s8logo", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 46.8);
+      gsap.set("#s8p", { rotation: -2 });
+      tl.fromTo("#s8p", { y: 200, rotation: -7, opacity: 0 }, { y: 0, rotation: -2, opacity: 1, duration: 0.6, ease: "power4.out" }, 46.75);
+      tl.fromTo("#s8t", { opacity: 0, scale: 0.6, rotation: -50 }, { opacity: 1, scale: 1, rotation: -26, duration: 0.3, ease: "back.out(2)" }, 47.3);
+      tl.fromTo("#s8p img", { scale: 1 }, { scale: 1.05, duration: 9, ease: "none" }, 46.75);
+      [["#ph1", 46.72], ["#ph2", 48.16], ["#ph3", 49.09]].forEach(([s, t]) => tl.fromTo(s, { opacity: 0, y: -90, rotation: -6, scale: 1.15 }, { opacity: 1, y: 0, rotation: 0, scale: 1, duration: 0.4, ease: "back.out(1.6)" }, t));
+      const s8 = $("#s8ink");
+      const ul8 = mk(s8, handLine(60, 1170, 990, 1170, 21, 6, 40), CORAL, 16);
+      draw(tl, ul8, 49.7, 0.6, "power2.inOut");
+      tl.fromTo("#s8web", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 50.8);
+      tl.fromTo("#s8addr", { opacity: 0, rotation: -6, scale: 0.8 }, { opacity: 1, rotation: -3, scale: 1, duration: 0.5, ease: "back.out(1.7)" }, 53.35);
+      tl.fromTo("#s8note", { opacity: 0 }, { opacity: 0.7, duration: 0.6 }, 53.9);
+
+      /* ============ wipes ============ */
+      [["#wipe1", 9.5], ["#wipe2", 27.1], ["#wipe3", 46.5]].forEach(([w, c]) =>
+        tl.fromTo(w, { x: -1500 }, { x: 1100, duration: 0.72, ease: "power2.inOut" }, c - 0.36));
+
+      /* ============ captions, highlight style, timed to the real take ============ */
+      const PHR = [
+        ["Diabetes can slow healing.", 0.22, 2.41],
+        ["If you have diabetes and need prostate surgery,", 3.17, 6.48],
+        ["ask how big the cut will be.", 6.97, 8.8],
+        ["Open surgery needs one long incision.", 9.83, 12.78],
+        ["Minimal access surgery needs a few small ones.", 13.6, 17.24],
+        ["A camera and fine instruments pass through those openings.", 17.82, 21.62],
+        ["For diabetics, smaller incisions mean less wound to heal.", 22.35, 26.6],
+        ["Dr. Oto Peters has completed over fifty consecutive successful operations", 27.58, 34.99],
+        ["with this procedure and equipment.", 35.71, 38.04],
+        ["It is the only one of its kind in Uyo.", 38.74, 42.28],
+        ["Book a free consultation,", 42.42, 43.69],
+        ["and ask about diabetic pre-surgical screening.", 44.42, 46.24],
+        ["Call 0808 888 2788.", 46.72, 49.67],
+        ["Ava Consultants and Urology Centre, off 4-Lane, Uyo.", 50.67, 55.37],
+      ];
+      const syl = (w) => { const s = w.toLowerCase().replace(/[^a-z0-9]/g, ""); const m = s.match(/[aeiouy]+/g); return Math.max(1, (m ? m.length : 1) - (/[^aeiou]e$/.test(s) ? 1 : 0)); };
+      const host = $("#capHost");
+      const FLAT = [];
+      PHR.forEach(([text, s, e]) => {
+        const toks = text.split(" "), total = toks.reduce((n, w) => n + syl(w), 0);
+        let cur = s;
+        const words = toks.map((w) => { const d = ((e - s) * syl(w)) / total; const o = { w, a: cur, b: cur + d }; cur += d; return o; });
+        const chunks = []; let line = [], chars = 0;
+        words.forEach((wd) => { if (chars + wd.w.length > 30 && line.length) { chunks.push(line); line = []; chars = 0; } line.push(wd); chars += wd.w.length + 1; });
+        if (line.length) chunks.push(line);
+        chunks.forEach((ws) => FLAT.push(ws));
+      });
+      FLAT.forEach((ws, k) => {
+        const cap = document.createElement("div"); cap.className = "cap";
+        const box = document.createElement("div"); box.className = "box";
+        const spans = ws.map((wd) => { const sp = document.createElement("span"); sp.className = "cw"; sp.textContent = wd.w; box.appendChild(sp); box.appendChild(document.createTextNode(" ")); return sp; });
+        cap.appendChild(box); host.appendChild(cap);
+        const a = ws[0].a - 0.04;
+        let b = ws[ws.length - 1].b + 0.2;
+        if (FLAT[k + 1]) b = Math.min(b, FLAT[k + 1][0].a - 0.04);   /* never two caption boxes at once */
+        tl.set(cap, { display: "flex" }, a);
+        tl.set(cap, { display: "none" }, b);
+        ws.forEach((wd, i) => {
+          tl.set(spans[i], { backgroundColor: YEL, color: NAVY }, wd.a);
+          tl.set(spans[i], { backgroundColor: "rgba(0,0,0,0)", color: WHITE }, wd.b);
+        });
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
