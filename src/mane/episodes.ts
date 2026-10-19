@@ -100,6 +100,41 @@ export const WED: EpisodeData = {
   ],
 };
 
+export const THU: EpisodeData = {
+  id: 'Thu-ColdTrucks',
+  vo: 'thu.wav',
+  dur: 71.0, // voiceover ends at 68.3; the DM US card holds 2.7s after it (the closing line was not recorded)
+  object: 'thermo',
+  objSize: 420,
+  tint: {color: '#E2DCE8', op: 0.75},
+  firstLevel: 0.9,
+  scenes: [
+    {t: 0, layout: 'hook', kicker: 'NIGERIA · COLD CHAIN', num: {pre: '<', to: 1000, comma: true, at: 0.05}, headSize: 220, label: 'cold trucks on the road', sub: 'It needs about 25,000', subAt: 4.8, obj: {x: 540, y: 1330, s: 1.0, level: 0.15, la: 0.6, ld: 3}, sfx: [[0, 'whoosh'], [1.0, 'stamp'], [4.8, 'pop']]},
+    {t: 7.4, layout: 'name', head: 'BIMBO', tag: 'FICTIONAL FOUNDER · COLD HAUL', icons: [{k: 'truck', x: 740, y: 300, s: 240, at: 3.6}], obj: {x: 300, y: 1300, s: 0.95, level: 0.3}, sfx: [[0, 'whoosh'], [3.6, 'pop']]},
+    {t: 13.3, layout: 'chips', head: 'STARTS WITH\n*3* COLD TRUCKS', headSize: 112, chips: [{text: 'Tomatoes', at: 4.6}, {text: 'Fish', at: 5.6}, {text: 'Dairy', icon: 'cold', at: 6.4, hot: true}], icons: [{k: 'truck', x: 720, y: 640, s: 230, at: 0.8}], obj: {x: 800, y: 1330, s: 0.9, level: 0.3}, sfx: [[0, 'whoosh'], [0.8, 'pop'], [6.4, 'pop']]},
+    {t: 21.9, layout: 'headline', head: 'WHAT COULD\n*60 TRUCKS*\nEARN?', headSize: 124, avatar: {pose: 'think_up', side: 'left'}, obj: {x: 790, y: 1300, s: 1.0, level: 0.5, la: 0.3, ld: 1.4}, sfx: [[0, 'whoosh'], [0.2, 'swap']]},
+    {
+      t: 24.5,
+      layout: 'equation',
+      kicker: 'FLEET MATH · A MONTH',
+      cells: [
+        {num: {to: 20, at: 1.9}, label: 'trips per truck'},
+        {num: {pre: '₦', to: 150000, comma: true, at: 3.6}, label: 'per trip'},
+        {num: {to: 60, at: 6.5}, label: 'trucks'},
+        {num: {pre: '₦', to: 180, suf: 'M', at: 8.6}, label: 'a month'},
+      ],
+      tag: 'FICTIONAL FIGURES FOR THE STORY',
+      obj: {x: 830, y: 1400, s: 0.75, level: 0.9, la: 8.6, ld: 1.2},
+      sfx: [[0, 'whoosh'], [1.9, 'tick'], [8.8, 'stamp']],
+    },
+    {t: 38.8, layout: 'block', kicker: 'WHY FARMERS PAY · INDUSTRY GROUPS', num: {pre: '₦', to: 3.5, dec: 1, tail: '–5TN', at: 7.2}, label: 'post-harvest losses in 2025', icons: [{k: 'plate', x: 90, y: 850, s: 230, at: 1.0}], obj: {x: 800, y: 1330, s: 0.9, level: 0.2, la: 7.2, ld: 1.2}, sfx: [[0, 'whoosh'], [1.0, 'pop'], [7.2, 'tick']]},
+    {t: 49.8, layout: 'headline', head: "BIMBO'S PROBLEM:\n*MONEY*", headSize: 124, sub: "Industry groups say banks often don't understand the cold chain", subAt: 2.7, icons: [{k: 'bank', x: 90, y: 960, s: 230, at: 2.9}], obj: {x: 790, y: 1330, s: 0.95, level: 0.2}, sfx: [[0, 'whoosh'], [2.9, 'pop']]},
+    {t: 57.1, layout: 'headline', head: 'TRUCKS NEED FUNDING.\nFUNDING NEEDS\n*PROOF*.', headSize: 104, icons: [{k: 'doc', x: 720, y: 900, s: 250, at: 2.2}], obj: {x: 300, y: 1310, s: 0.95, level: 0.6, la: 3.4, ld: 1}, sfx: [[0, 'whoosh'], [3.4, 'stamp']]},
+    brand(61.4, [{text: 'BUSINESS PLAN', icon: 'doc', at: 2.2}, {text: 'MARKET RESEARCH', icon: 'magnifier', at: 3.4}], {...BRAND_OBJ, level: 0.6}, 'SHOW A LENDER THE GAP'),
+    action(68.3, 'To start yours', {...BRAND_OBJ, level: 0.6}),
+  ],
+};
+
 export const FRI: EpisodeData = {
   id: 'Fri-OneBakery',
   vo: 'fri.wav',
@@ -182,4 +217,4 @@ export const SUN: EpisodeData = {
   ],
 };
 
-export const EPISODES = [MON, TUE, WED, FRI, SAT, SUN];
+export const EPISODES = [MON, TUE, WED, THU, FRI, SAT, SUN];

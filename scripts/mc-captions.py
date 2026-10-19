@@ -37,6 +37,16 @@ EP = {
         "Your documents decide how far the key turns.",
         "Manetrust Solutions writes proposals, pitch decks and company profiles for businesses applying to funds like these.",
         "DM us to get yours ready."]),
+    "Thu": (68.3, [0, 7.4, 13.3, 21.9, 24.5, 38.8, 49.8, 57.1, 61.4], [
+        "Nigeria has fewer than 1,000 cold trucks. It needs about 25,000.",
+        "Meet Bimbo, a fictional founder who sees that gap as a business.",
+        "Bimbo starts with three refrigerated trucks. Farmers pay her to move tomatoes, fish and dairy without spoilage.",
+        "So what could sixty trucks earn?",
+        "Say each truck makes 20 trips a month at 150,000 naira. Sixty trucks earn 180 million naira a month. These figures are made up for the story.",
+        "Her customers have a reason to pay. Industry groups put 2025 post-harvest losses at 3.5 to 5 trillion naira.",
+        "Bimbo's problem is money. Industry groups say banks often do not understand the cold chain.",
+        "Trucks need funding, and funding needs proof.",
+        "Manetrust Solutions writes the business plan and market research that show a lender the size of the gap."]),
     "Fri": (68.49, [0, 9.5, 15.4, 22.7, 31.1, 34.3, 46.9, 52.9, 57.1, 66.0], [
         "SMEDAN says loans priced at 9 to 9.5 percent exist for expansion, equipment and working capital.",
         "It also says many small businesses lack the structure to qualify.",
