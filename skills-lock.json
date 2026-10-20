@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "isometric-motion": {
+      "source": "dzhng/skills",
+      "sourceType": "github",
+      "skillPath": "skills/graphics/isometric-motion/SKILL.md",
+      "computedHash": "8593801d27da3c66c545bd27e91e233f55f8ae41965067c94c31707a07c65f22"
+    }
+  }
+}
