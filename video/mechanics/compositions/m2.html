@@ -1,0 +1,126 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; }
+    #m2-shake { position: absolute; inset: 0; }
+    #m2-ringcam { position: absolute; inset: 0; perspective: 1100px; perspective-origin: 50% 52%; }
+    #m2-ringpos { position: absolute; left: 360px; top: 720px; width: 0; height: 0; transform-style: preserve-3d; }
+    #m2-ring { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+    .m2-slot { position: absolute; left: -120px; top: -213px; width: 240px; height: 427px; }
+    .m2-slot img { position: absolute; inset: 0; width: 240px; height: 427px; object-fit: cover; border-radius: 24px;
+      filter: blur(2px) saturate(0.92); box-shadow: 0 20px 40px rgba(34, 22, 47, 0.25); }
+    #m2-cam { position: absolute; inset: 0; perspective: 1400px; }
+    #m2-card { position: absolute; left: 0; top: 0; width: 720px; height: 1280px; filter: drop-shadow(0 26px 40px rgba(34, 22, 47, 0.32)); }
+    #m2-frame { position: absolute; inset: 0; background: #15101b; }
+    #m2-video { position: absolute; left: 0; top: 0; width: 720px; height: 1280px; object-fit: cover; }
+    #m2-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 560px; opacity: 0;
+      background: linear-gradient(180deg, rgba(15, 10, 20, 0), rgba(15, 10, 20, 0.72)); }
+    .m2-txt { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; line-height: 1;
+      text-shadow: 0 0 24px rgba(247, 243, 238, 0.95), 0 0 8px rgba(247, 243, 238, 0.9); }
+    .m2-txt .w { display: inline-block; margin-right: 0.2em; opacity: 0; }
+    .m2-o { color: #FF6600; }
+    .m2-dark { color: #fff; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.45); }
+    #m2-t1 { top: 100px; font-size: 46px; font-weight: 600; }
+    #m2-t2 { top: 158px; font-size: 92px; font-weight: 800; letter-spacing: -0.035em; }
+    #m2-t3 { top: 100px; font-size: 46px; font-weight: 600; }
+    #m2-t4 { top: 158px; font-size: 74px; font-weight: 800; letter-spacing: -0.03em; }
+    #m2-t5 { top: 890px; font-size: 54px; font-weight: 600; }
+    #m2-t6 { top: 960px; font-size: 104px; font-weight: 800; letter-spacing: -0.035em; }
+    #m2-tag { position: absolute; left: 60px; top: 1000px; display: flex; align-items: center; gap: 18px; padding: 18px 30px 18px 18px;
+      border-radius: 26px; background: #fff; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28); opacity: 0; }
+    #m2-tag .bar { width: 10px; height: 74px; border-radius: 5px; background: #FF6600; }
+    #m2-tag .n { font-size: 44px; font-weight: 800; line-height: 1; }
+    #m2-tag .r { font-size: 28px; font-weight: 600; color: #7851A9; margin-top: 6px; letter-spacing: 0.02em; }
+  </style>
+  <div id="root" data-composition-id="m2" data-width="720" data-height="1280">
+    <div id="m2-shake">
+      <div id="m2-ringcam" data-layout-ignore>
+        <div id="m2-ringpos">
+          <div id="m2-ring">
+            <div class="m2-slot" style="transform: rotateY(0deg) translateZ(560px)"><img src="assets/img/card0.jpg" /></div>
+            <div class="m2-slot" style="transform: rotateY(45deg) translateZ(560px)"><img src="assets/img/card3.jpg" /></div>
+            <div class="m2-slot" style="transform: rotateY(90deg) translateZ(560px)"><img src="assets/img/card1.jpg" /></div>
+            <div class="m2-slot" style="transform: rotateY(135deg) translateZ(560px)"><img src="assets/img/card6.jpg" /></div>
+            <div class="m2-slot" style="transform: rotateY(180deg) translateZ(560px)"><img src="assets/img/card4.jpg" /></div>
+            <div class="m2-slot" style="transform: rotateY(225deg) translateZ(560px)"><img src="assets/img/card2.jpg" /></div>
+            <div class="m2-slot" style="transform: rotateY(270deg) translateZ(560px)"><img src="assets/img/card7.jpg" /></div>
+            <div class="m2-slot" style="transform: rotateY(315deg) translateZ(560px)"><img src="assets/img/card5.jpg" /></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="m2-cam">
+        <div id="m2-card">
+          <div id="m2-frame">
+            <video id="m2-video" class="clip" data-start="0" data-duration="9.6" data-media-start="0" data-track-index="0" src="assets/footage/m2.mp4" data-has-audio="true" playsinline></video>
+            <div id="m2-scrim"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="m2-tag"><div class="bar"></div><div><div class="n">Charles</div><div class="r">Sevun Marketing</div></div></div>
+      <div id="m2-t1" class="m2-txt"><span class="w">I</span><span class="w">make</span></div>
+      <div id="m2-t2" class="m2-txt"><span class="w m2-o">short</span><span class="w">videos.</span></div>
+      <div id="m2-t3" class="m2-txt"><span class="w">A</span><span class="w">mechanic</span><span class="w">explains</span></div>
+      <div id="m2-t4" class="m2-txt"><span class="w">the</span><span class="w">common</span><span class="w">sounds.</span></div>
+      <div id="m2-t5" class="m2-txt m2-dark"><span class="w">Customers</span><span class="w">learn…</span></div>
+      <div id="m2-t6" class="m2-txt m2-dark"><span class="w">trust</span><span class="w">you</span><span class="w m2-o">first.</span></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const $ = (s) => document.querySelectorAll(s);
+      const FULL = { x: 0, y: 0, scale: 1, rotationY: 0 };
+      const CARD_L = { x: 0, y: 150, scale: 0.66, rotationY: 16 };
+      const CENTER = { x: 0, y: 110, scale: 0.6, rotationY: 0 };
+      const R0 = "inset(0px 0px 0px 0px round 0px)";
+      const R = "inset(0px 0px 0px 0px round 48px)";
+      const wordIn = (el, at) =>
+        tl.fromTo(el, { opacity: 0, y: 18, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }, at);
+      const words = (sel, times) => { const w = $(sel + " .w"); times.forEach((t, i) => wordIn(w[i], t)); };
+      const out = (sel, at) => {
+        tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in", stagger: 0.02 }, at);
+        tl.set(sel, { visibility: "hidden" }, at + 0.3);
+      };
+      const pose = (p, clip, at, d, ease) => {
+        tl.to("#m2-card", { ...p, duration: d, ease }, at);
+        tl.to("#m2-frame", { clipPath: clip, duration: d, ease }, at);
+      };
+
+      tl.fromTo("#m2-card", { ...CARD_L, transformOrigin: "50% 50%" }, { ...FULL, duration: 0.5, ease: "power3.inOut" }, 0.0);
+      tl.fromTo("#m2-frame", { clipPath: R }, { clipPath: R0, duration: 0.5, ease: "power3.inOut" }, 0.0);
+
+      // "I'm Charles from Sevun Marketing"
+      tl.to("#m2-scrim", { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.4);
+      tl.fromTo("#m2-tag", { opacity: 0, x: -40, scale: 0.9 }, { opacity: 1, x: 0, scale: 1, duration: 0.45, ease: "back.out(1.8)" }, 0.6);
+      tl.to("#m2-tag", { opacity: 0, x: -30, duration: 0.2, ease: "power3.in" }, 2.3);
+      tl.to("#m2-scrim", { opacity: 0, duration: 0.3, ease: "power2.in" }, 2.3);
+
+      // "I make short videos" — the shot becomes one card in an orbit of them
+      pose(CENTER, R, 2.38, 0.6, "power3.inOut");
+      tl.fromTo("#m2-ringpos", { z: -2600, rotationX: -8, opacity: 0 }, { z: -760, rotationX: -8, opacity: 0.7, duration: 1.2, ease: "expo.out" }, 2.5);
+      tl.fromTo("#m2-ring", { rotationY: 70 }, { rotationY: 0, duration: 1.3, ease: "expo.out" }, 2.5);
+      tl.to("#m2-ring", { rotationY: -16, duration: 2.6, ease: "none" }, 3.8);
+      words("#m2-t1", [2.52, 2.61]);
+      words("#m2-t2", [2.81, 3.12]);
+      out("#m2-t1 .w, #m2-t2 .w", 3.82);
+
+      // "where a mechanic explains the common sounds" (the phone shot plays inside the card)
+      words("#m2-t3", [4.15, 4.18, 4.73]);
+      words("#m2-t4", [5.37, 5.55, 5.75]);
+      out("#m2-t3 .w, #m2-t4 .w", 6.4);
+      tl.to("#m2-ringpos", { z: -3200, opacity: 0, duration: 0.55, ease: "power3.in" }, 6.42);
+
+      // "so your customers learn… and trust you first."
+      pose(FULL, R0, 6.48, 0.55, "power3.inOut");
+      tl.to("#m2-scrim", { opacity: 1, duration: 0.4, ease: "power2.out" }, 6.9);
+      words("#m2-t5", [7.16, 7.88]);
+      words("#m2-t6", [8.44, 8.95, 9.07]);
+      tl.to("#m2-shake", { keyframes: [{ x: -8, y: 4 }, { x: 6, y: -3 }, { x: -3, y: 1 }, { x: 0, y: 0 }], duration: 0.28, ease: "none" }, 9.07);
+      out("#m2-t5 .w, #m2-t6 .w", 9.38);
+      tl.to("#m2-scrim", { opacity: 0, duration: 0.2, ease: "power2.in" }, 9.38);
+
+      window.__timelines["m2"] = tl;
+    })();
+  </script>
+</template>

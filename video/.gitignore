@@ -4,3 +4,5 @@ outro/out/*
 sevun/renders/*
 !sevun/renders/sevun_promo_50s.mp4
 *.log
+mechanics/renders/*
+!mechanics/renders/sevun_mechanics_9x16.mp4

@@ -47,9 +47,12 @@ const T = {
   cta: 6.3,
 };
 
-// Lockup placement: A = centred hero, B = left of the offer.
-const A = { cx: 960, cy: 540, s: 0.37 };
-const B = { cx: 500, cy: 540, s: 0.3 };
+// Lockup placement: A = centred hero, B = beside (landscape) or above (portrait) the offer.
+type Layout = { vertical: boolean; A: { cx: number; cy: number; s: number }; B: { cx: number; cy: number; s: number } };
+const LANDSCAPE: Layout = { vertical: false, A: { cx: 960, cy: 540, s: 0.37 }, B: { cx: 500, cy: 540, s: 0.3 } };
+// Portrait is designed on a 1080 × 1920 canvas and rendered at --scale for 720 × 1280.
+const PORTRAIT: Layout = { vertical: true, A: { cx: 540, cy: 860, s: 0.5 }, B: { cx: 540, cy: 560, s: 0.34 } };
+const LayoutCtx = React.createContext<Layout>(LANDSCAPE);
 
 const font = `@font-face{font-family:Outfit;font-weight:500;src:url(${staticFile("fonts/outfit-latin-500-normal.woff2")}) format("woff2")}
 @font-face{font-family:Outfit;font-weight:700;src:url(${staticFile("fonts/outfit-latin-700-normal.woff2")}) format("woff2")}
@@ -125,7 +128,8 @@ const Lockup: React.FC = () => {
   // Sheen across the face while the camera swings.
   const sheen = interpolate(f, [sec(0.9), sec(1.9)], [-0.6, 1.4], { ...clamp, easing: theme.ease.inOut });
 
-  // Camera: centred hero → left of the offer.
+  // Camera: centred hero → its place beside the offer.
+  const { A, B } = React.useContext(LayoutCtx);
   const mv = interpolate(f, [sec(T.move[0]), sec(T.move[1])], [0, 1], { ...clamp, easing: theme.ease.move });
   const cx = A.cx + (B.cx - A.cx) * mv;
   const cy = A.cy + (B.cy - A.cy) * mv;
@@ -199,9 +203,11 @@ const Lockup: React.FC = () => {
 // ── The carry in: the burst's full-frame orange collapses into the stem ──
 const Collapse: React.FC = () => {
   const f = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+  const { A } = React.useContext(LayoutCtx);
   if (f >= sec(T.collapse[1])) return null;
   const p = interpolate(f, [sec(T.collapse[0]), sec(T.collapse[1])], [0, 1], { ...clamp, easing: theme.ease.inOut });
-  const corners: [number, number][] = [[-260, -260], [2180, -260], [2180, 1340], [-260, 1340]];
+  const corners: [number, number][] = [[-260, -260], [width + 260, -260], [width + 260, height + 260], [-260, height + 260]];
   const target = STEM.map(([x, y]) => [A.cx + (x - LOGO_W / 2) * A.s, A.cy + (y - LOGO_H / 2) * A.s]);
   const poly = corners.map(([x, y], i) => `${x + (target[i][0] - x) * p}px ${y + (target[i][1] - y) * p}px`).join(",");
   return <AbsoluteFill style={{ background: C.orange, clipPath: `polygon(${poly})` }} />;
@@ -226,7 +232,9 @@ const Word: React.FC<{ at: number; children: React.ReactNode; color?: string }> 
 const Offer: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const left = 820;
+  const { vertical } = React.useContext(LayoutCtx);
+  const left = vertical ? 0 : 820;
+  const row: React.CSSProperties = vertical ? { right: 0, textAlign: "center", justifyContent: "center" } : {};
   const divider = interpolate(f, [sec(T.move[0]) + 6, sec(T.move[1])], [0, 1], { ...clamp, easing: theme.ease.out });
   const kick = interpolate(f, [sec(T.kicker), sec(T.kicker) + 14], [0, 1], { ...clamp, easing: theme.ease.out });
   const ul = interpolate(f, [sec(T.underline), sec(T.underline) + 12], [0, 1], { ...clamp, easing: theme.ease.out });
@@ -237,20 +245,24 @@ const Offer: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ fontFamily: theme.fonts.display, color: C.ink }}>
-      <div style={{ position: "absolute", left: 730, top: 300, width: 2, height: 480, background: C.purple, opacity: 0.28, transformOrigin: "top", transform: `scaleY(${divider})` }} />
+      {vertical ? (
+        <div style={{ position: "absolute", left: 280, top: 1000, width: 520, height: 2, background: C.purple, opacity: 0.28, transform: `scaleX(${divider})` }} />
+      ) : (
+        <div style={{ position: "absolute", left: 730, top: 300, width: 2, height: 480, background: C.purple, opacity: 0.28, transformOrigin: "top", transform: `scaleY(${divider})` }} />
+      )}
 
-      <div style={{ position: "absolute", left, top: 292, display: "flex", alignItems: "center", gap: 18, opacity: kick, transform: `translateX(${(1 - kick) * -24}px)` }}>
+      <div style={{ position: "absolute", left, top: vertical ? 1040 : 292, ...row, display: "flex", alignItems: "center", gap: 18, opacity: kick, transform: `translateX(${(1 - kick) * -24}px)` }}>
         <div style={{ width: 14, height: 34, background: C.orange, transform: "skewX(-28deg)" }} />
         <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: `${0.32 + (1 - kick) * 0.3}em`, color: C.purple }}>THE SEVUN OFFER</div>
       </div>
 
-      <div style={{ position: "absolute", left, top: 346, fontSize: 150, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", whiteSpace: "nowrap" }}>
+      <div style={{ position: "absolute", left, top: vertical ? 1110 : 346, ...row, fontSize: vertical ? 140 : 150, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", whiteSpace: "nowrap" }}>
         <Word at={t0}>Try</Word>
         <Word at={t0 + 3} color={C.purple}>1</Word>
         <Word at={t0 + 6}>video.</Word>
       </div>
 
-      <div style={{ position: "absolute", left, top: 528, fontSize: 74, fontWeight: 700, lineHeight: 1.1, letterSpacing: "-0.015em", whiteSpace: "nowrap" }}>
+      <div style={{ position: "absolute", left, top: vertical ? 1290 : 528, ...row, fontSize: vertical ? 68 : 74, fontWeight: 700, lineHeight: 1.1, letterSpacing: "-0.015em", whiteSpace: "nowrap" }}>
         <Word at={t1}>Pay</Word>
         <Word at={t1 + 3}>only</Word>
         <span style={{ position: "relative", display: "inline-block" }}>
@@ -264,10 +276,11 @@ const Offer: React.FC = () => {
 
       <div
         style={{
-          position: "absolute", left, top: 690, display: "flex", alignItems: "center", gap: 20,
+          position: "absolute", left: vertical ? 540 : left, top: vertical ? 1450 : 690, display: "flex", alignItems: "center", gap: 20,
           padding: "26px 46px", borderRadius: 999, background: C.purple, color: "#fff",
           fontSize: 44, fontWeight: 700, letterSpacing: "-0.005em", opacity: ctaO,
-          transform: `translateY(${(1 - cta) * 30}px) scale(${0.86 + 0.14 * cta})`, transformOrigin: "left center",
+          transform: `${vertical ? "translateX(-50%) " : ""}translateY(${(1 - cta) * 30}px) scale(${0.86 + 0.14 * cta})`,
+          transformOrigin: vertical ? "center" : "left center", whiteSpace: "nowrap",
           boxShadow: "0 18px 40px rgba(78,49,117,0.28)",
         }}
       >
@@ -297,7 +310,8 @@ const Vignette: React.FC = () => (
   <AbsoluteFill style={{ background: "radial-gradient(ellipse at center, transparent 58%, rgba(34,22,47,0.14) 100%)" }} />
 );
 
-export const Outro: React.FC = () => (
+export const Outro: React.FC<{ vertical?: boolean }> = ({ vertical = false }) => (
+  <LayoutCtx.Provider value={vertical ? PORTRAIT : LANDSCAPE}>
   <AbsoluteFill>
     <style>{font}</style>
     <Ground />
@@ -307,4 +321,5 @@ export const Outro: React.FC = () => (
     <Grain />
     <Vignette />
   </AbsoluteFill>
+  </LayoutCtx.Provider>
 );
