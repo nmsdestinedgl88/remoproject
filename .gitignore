@@ -1,2 +1,6 @@
 node_modules
 out
+scout-tennessee/out/
+scout-tennessee/__pycache__/
+scout-tennessee/book/pages/*.png
+scout-tennessee/book/pages/*.pdf
