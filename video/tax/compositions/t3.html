@@ -1,0 +1,175 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; }
+    #t3-cam { position: absolute; inset: 0; perspective: 1400px; }
+    #t3-card { position: absolute; left: 0; top: 0; width: 720px; height: 1280px; filter: drop-shadow(0 24px 36px rgba(34, 22, 47, 0.3)); }
+    #t3-plane { position: absolute; left: 0; top: 0; width: 2276px; height: 1280px; clip-path: inset(0px round 84px); background: #15101b; }
+    #t3-video { position: absolute; left: 0; top: 0; width: 2276px; height: 1280px; object-fit: cover; }
+    #t3-kick { position: absolute; left: 0; right: 0; top: 52px; text-align: center; font-size: 34px; font-weight: 800; letter-spacing: 0.22em; color: #7851A9; opacity: 0; }
+    .t3-tag { position: absolute; top: 432px; padding: 10px 20px; border-radius: 999px; background: #fff; font-size: 26px; font-weight: 700;
+      box-shadow: 0 10px 24px rgba(34, 22, 47, 0.22); white-space: nowrap; opacity: 0; }
+    .t3-tag b { color: #FF6600; }
+    #t3-tag1 { left: 46px; }
+    #t3-tag2 { left: 330px; }
+
+    #t3-calcwrap { position: absolute; left: 0; top: 0; width: 720px; height: 1280px; perspective: 1200px; }
+    #t3-calc { position: absolute; left: 32px; top: 548px; width: 306px; height: 590px; border-radius: 36px; padding: 22px;
+      background: linear-gradient(160deg, #3A2A4E, #22162F 60%); box-shadow: 0 30px 60px rgba(34, 22, 47, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.12); opacity: 0; }
+    #t3-lcd { position: relative; height: 150px; border-radius: 20px; background: linear-gradient(180deg, #0F0A14, #1B1325);
+      box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.6); overflow: hidden; }
+    #t3-lcd .lab { position: absolute; left: 18px; top: 14px; font-size: 20px; font-weight: 700; letter-spacing: 0.16em; color: #B9A3D9; opacity: 0; }
+    #t3-lcd .val { position: absolute; right: 18px; bottom: 14px; font-size: 64px; font-weight: 700; color: #fff; letter-spacing: -0.02em; opacity: 0; white-space: nowrap; }
+    #t3-lcd .val.o { color: #FF7A1F; }
+    #t3-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+    .t3-k { height: 62px; border-radius: 16px; background: #4A3A5E; color: #fff; font-size: 30px; font-weight: 700; display: flex;
+      align-items: center; justify-content: center; box-shadow: 0 4px 0 #1A1024; }
+    .t3-k.op { background: #7851A9; }
+    .t3-k.eq { background: #FF6600; }
+    .t3-k.fn { background: #6B5C7E; }
+    .t3-k.zero { grid-column: span 2; }
+
+    #t3-stmt { position: absolute; left: 352px; top: 548px; width: 336px; height: 590px; border-radius: 30px; background: #fff; padding: 26px 24px;
+      box-shadow: 0 30px 60px rgba(34, 22, 47, 0.2); opacity: 0; }
+    #t3-stmt .h1 { font-size: 22px; font-weight: 800; letter-spacing: 0.14em; color: #7851A9; }
+    #t3-stmt .h2 { font-size: 22px; font-weight: 600; color: rgba(34, 22, 47, 0.6); margin-top: 6px; }
+    .t3-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 18px; opacity: 0; }
+    .t3-row span { font-size: 25px; font-weight: 600; color: rgba(34, 22, 47, 0.75); }
+    .t3-row b { font-size: 30px; font-weight: 800; }
+    .t3-row b small { font-size: 20px; font-weight: 600; color: rgba(34, 22, 47, 0.55); margin-left: 6px; }
+    .t3-rule { height: 3px; border-radius: 2px; background: #22162F; margin-top: 16px; transform-origin: 0 50%; transform: scaleX(0); }
+    .t3-rule.dbl { height: 7px; background: transparent; border-top: 3px solid #22162F; border-bottom: 3px solid #22162F; border-radius: 0; }
+    #t3-net span { color: #22162F; font-weight: 800; font-size: 28px; }
+    #t3-net b { font-size: 46px; color: #FF6600; }
+    #t3-roi { position: absolute; right: 22px; bottom: 22px; padding: 10px 20px; border-radius: 999px; background: #7851A9; color: #fff;
+      font-size: 26px; font-weight: 800; letter-spacing: 0.04em; opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="t3" data-width="720" data-height="1280">
+    <div id="t3-cam">
+      <div id="t3-card">
+        <div id="t3-plane">
+          <video id="t3-video" class="clip" data-start="0" data-duration="7.9" data-media-start="0" data-track-index="0" src="assets/footage/t3.mp4" data-has-audio="true" playsinline></video>
+        </div>
+      </div>
+    </div>
+    <div id="t3-kick">THE COST: $7 / DAY</div>
+    <div id="t3-tag1" class="t3-tag"><b>&lt;</b> a Big Mac</div>
+    <div id="t3-tag2" class="t3-tag"><b>&lt;</b> your morning coffee</div>
+
+    <div id="t3-calcwrap">
+      <div id="t3-calc">
+        <div id="t3-lcd">
+          <div class="lab" id="t3-l0">VIDEO / DAY</div>
+          <div class="lab" id="t3-l1">VIEWS</div>
+          <div class="lab" id="t3-l2">CONVERSION</div>
+          <div class="lab" id="t3-l3">TICKET PRICE</div>
+          <div class="lab" id="t3-l4">REVENUE</div>
+          <div class="lab" id="t3-l5">VIDEO COST</div>
+          <div class="lab" id="t3-l6">NET PROFIT</div>
+          <div class="val" id="t3-d0">$7.00</div>
+          <div class="val" id="t3-d1">2</div>
+          <div class="val" id="t3-d2">20</div>
+          <div class="val" id="t3-d3">200</div>
+          <div class="val" id="t3-d4">2,000</div>
+          <div class="val" id="t3-d5">1 ÷ 2,000</div>
+          <div class="val" id="t3-d6">0.05%</div>
+          <div class="val" id="t3-d7">× 400</div>
+          <div class="val" id="t3-d8">$400</div>
+          <div class="val" id="t3-d9">− 7</div>
+          <div class="val o" id="t3-d10">$393</div>
+        </div>
+        <div id="t3-keys">
+          <div class="t3-k fn">C</div><div class="t3-k fn">±</div><div class="t3-k fn">%</div><div class="t3-k op" id="t3-kdiv">÷</div>
+          <div class="t3-k" id="t3-k7">7</div><div class="t3-k">8</div><div class="t3-k">9</div><div class="t3-k op" id="t3-kmul">×</div>
+          <div class="t3-k" id="t3-k4">4</div><div class="t3-k">5</div><div class="t3-k">6</div><div class="t3-k op" id="t3-kmin">−</div>
+          <div class="t3-k" id="t3-k1">1</div><div class="t3-k" id="t3-k2">2</div><div class="t3-k">3</div><div class="t3-k op">+</div>
+          <div class="t3-k zero" id="t3-k0">0</div><div class="t3-k">.</div><div class="t3-k eq" id="t3-keq">=</div>
+        </div>
+      </div>
+
+      <div id="t3-stmt">
+        <div class="h1">INCOME STATEMENT</div>
+        <div class="h2">1 video · 1 buyer</div>
+        <div class="t3-row" id="t3-r1"><span>Views</span><b>2,000</b></div>
+        <div class="t3-row" id="t3-r2"><span>Buyers</span><b>1<small>0.05%</small></b></div>
+        <div class="t3-row" id="t3-r3"><span>Ticket price</span><b>$400</b></div>
+        <div class="t3-rule" id="t3-u1"></div>
+        <div class="t3-row" id="t3-r4"><span>Revenue</span><b>$400</b></div>
+        <div class="t3-row" id="t3-r5"><span>Video cost</span><b>−$7</b></div>
+        <div class="t3-rule dbl" id="t3-u2"></div>
+        <div class="t3-row" id="t3-net"><span>Net profit</span><b id="t3-netv">$393</b></div>
+        <div id="t3-roi">56× return</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const K = 1280 / 720;
+      const FRAME = (xs, s = 1) => ({ x: 360 - K * xs, y: 0, scale: s });
+      const CARDP = (cy, s = 0.29) => ({ x: -778, y: cy - 640, scale: s });
+
+      tl.set("#t3-card", { x: 0, y: 0, rotationY: 0, scale: 1, transformOrigin: "50% 50%" }, 0);
+      // From the close-up band to the whole frame up top: the Big Mac comes into view
+      tl.fromTo("#t3-plane", { ...CARDP(790, 0.66), transformOrigin: "50% 50%" }, { ...CARDP(300, 0.29), duration: 0.6, ease: "power3.inOut" }, 0);
+      tl.fromTo("#t3-kick", { opacity: 0, y: -16, scale: 1.08 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" }, 2.0);
+
+      // The calculator and the statement fly up from depth
+      tl.fromTo("#t3-calc", { opacity: 0, z: -900, rotationX: 40, y: 200 }, { opacity: 1, z: 0, rotationX: 0, y: 0, duration: 0.8, ease: "expo.out" }, 0.75);
+      tl.fromTo("#t3-stmt", { opacity: 0, z: -900, rotationX: 40, y: 200 }, { opacity: 1, z: 0, rotationX: 0, y: 0, duration: 0.8, ease: "expo.out" }, 0.9);
+
+      // Display: one value at a time
+      const show = (val, lab, at) => {
+        tl.set("#t3-lcd .val", { opacity: 0 }, at);
+        tl.fromTo(val, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.12, ease: "power3.out" }, at);
+        if (lab) { tl.set("#t3-lcd .lab", { opacity: 0 }, at); tl.set(lab, { opacity: 1 }, at); }
+      };
+      const press = (key, at) => {
+        tl.to(key, { scale: 0.88, y: 3, boxShadow: "0 1px 0 #1A1024", filter: "brightness(1.35)", duration: 0.05, ease: "power2.out" }, at);
+        tl.to(key, { scale: 1, y: 0, boxShadow: "0 4px 0 #1A1024", filter: "brightness(1)", duration: 0.05, ease: "power2.out" }, at + 0.055);
+      };
+      const row = (el, at) => tl.fromTo(el, { opacity: 0, x: -24, filter: "blur(6px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, at);
+
+      // "seven dollars a day"
+      press("#t3-k7", 1.9); show("#t3-d0", "#t3-l0", 1.92);
+      // Views: 2,000
+      press("#t3-k2", 2.95); show("#t3-d1", "#t3-l1", 2.97);
+      press("#t3-k0", 3.08); show("#t3-d2", null, 3.1);
+      press("#t3-k0", 3.2); show("#t3-d3", null, 3.22);
+      press("#t3-k0", 3.32); show("#t3-d4", null, 3.34);
+      row("#t3-r1", 3.36);
+      // Conversion: 1 buyer in 2,000
+      press("#t3-k1", 3.62); press("#t3-kdiv", 3.74); show("#t3-d5", "#t3-l2", 3.76);
+      press("#t3-keq", 4.0); show("#t3-d6", null, 4.02);
+      row("#t3-r2", 4.04);
+      // Ticket price: × 400
+      press("#t3-kmul", 4.3); press("#t3-k4", 4.42); press("#t3-k0", 4.52); press("#t3-k0", 4.62); show("#t3-d7", "#t3-l3", 4.44);
+      row("#t3-r3", 4.66);
+      // Revenue (as he says "Big Mac")
+      press("#t3-keq", 4.98); show("#t3-d8", "#t3-l4", 5.0);
+      tl.to("#t3-u1", { scaleX: 1, duration: 0.3, ease: "power3.out" }, 5.0);
+      row("#t3-r4", 5.08);
+      tl.fromTo("#t3-tag1", { opacity: 0, y: 16, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.36, ease: "back.out(2)" }, 4.98);
+      // Video cost: − 7
+      press("#t3-kmin", 5.6); press("#t3-k7", 5.72); show("#t3-d9", "#t3-l5", 5.74);
+      row("#t3-r5", 5.8);
+      // Net profit
+      press("#t3-keq", 6.3); show("#t3-d10", "#t3-l6", 6.32);
+      tl.to("#t3-u2", { scaleX: 1, duration: 0.3, ease: "power3.out" }, 6.3);
+      row("#t3-net", 6.36);
+      const net = { v: 0 };
+      const netEl = document.getElementById("t3-netv");
+      tl.fromTo(net, { v: 0 }, { v: 393, duration: 0.6, ease: "power2.out", onUpdate: () => { netEl.textContent = "$" + Math.round(net.v); } }, 6.36);
+      tl.fromTo("#t3-lcd", { boxShadow: "inset 0 3px 10px rgba(0,0,0,0.6), 0 0 0 0 rgba(255,102,0,0)" },
+        { boxShadow: "inset 0 3px 10px rgba(0,0,0,0.6), 0 0 0 6px rgba(255,102,0,0.9)", duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out" }, 6.32);
+      tl.fromTo("#t3-roi", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.42, ease: "back.out(2.6)" }, 6.95);
+      tl.fromTo("#t3-tag2", { opacity: 0, y: 16, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.36, ease: "back.out(2)" }, 7.21);
+
+      // Clear: the maths drops away, the film returns to full frame for the offer
+      tl.to("#t3-calc, #t3-stmt", { opacity: 0, y: 160, z: -300, duration: 0.3, ease: "power3.in", stagger: 0.04 }, 7.55);
+      tl.to("#t3-kick, .t3-tag", { opacity: 0, duration: 0.16, ease: "power2.in" }, 7.55);
+      tl.to("#t3-plane", { ...FRAME(400), duration: 0.32, ease: "power3.in" }, 7.58);
+
+      window.__timelines["t3"] = tl;
+    })();
+  </script>
+</template>

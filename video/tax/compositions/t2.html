@@ -1,0 +1,148 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; }
+    #t2-shake { position: absolute; inset: 0; }
+    #t2-ringcam { position: absolute; inset: 0; perspective: 1100px; perspective-origin: 50% 54%; }
+    #t2-ringpos { position: absolute; left: 360px; top: 700px; width: 0; height: 0; transform-style: preserve-3d; }
+    #t2-ring { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+    .t2-slot { position: absolute; left: -150px; top: -267px; width: 300px; height: 534px; }
+    .t2-slot img { position: absolute; inset: 0; width: 300px; height: 534px; object-fit: cover; border-radius: 22px;
+      filter: blur(2px) saturate(0.92); box-shadow: 0 18px 36px rgba(34, 22, 47, 0.25); }
+    .t2-chip { position: absolute; left: 18px; top: 14px; padding: 8px 16px; border-radius: 999px; background: #FF6600; color: #fff;
+      font-size: 34px; font-weight: 800; letter-spacing: 0.08em; opacity: 0; }
+    #t2-cam { position: absolute; inset: 0; perspective: 1400px; }
+    #t2-card { position: absolute; left: 0; top: 0; width: 720px; height: 1280px; filter: drop-shadow(0 24px 36px rgba(34, 22, 47, 0.3)); }
+    #t2-plane { position: absolute; left: 0; top: 0; width: 2276px; height: 1280px; clip-path: inset(0px round 84px); background: #15101b; }
+    #t2-video { position: absolute; left: 0; top: 0; width: 2276px; height: 1280px; object-fit: cover; }
+    #t2-scrimtop { position: absolute; left: 0; right: 0; top: 0; height: 560px; opacity: 0; background: linear-gradient(0deg, rgba(15, 10, 20, 0), rgba(15, 10, 20, 0.66)); }
+    .t2-txt { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; line-height: 1; }
+    .t2-txt .w { display: inline-block; margin-right: 0.2em; opacity: 0; }
+    .t2-o { color: #FF6600; }
+    .t2-white { color: #fff; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
+    .t2-halo { text-shadow: 0 0 24px rgba(247, 243, 238, 0.95), 0 0 8px rgba(247, 243, 238, 0.9); }
+    #t2-a1 { top: 96px; font-size: 54px; font-weight: 600; }
+    #t2-a2 { top: 160px; font-size: 64px; font-weight: 700; }
+    #t2-a3 { top: 232px; font-size: 150px; font-weight: 800; letter-spacing: -0.04em; }
+    #t2-b1 { top: 150px; font-size: 64px; font-weight: 600; }
+    #t2-b2 { top: 224px; font-size: 124px; font-weight: 800; letter-spacing: -0.04em; }
+    #t2-c1 .w { display: block; margin-right: 0; }
+    #t2-c1 { top: 96px; font-size: 118px; font-weight: 800; letter-spacing: -0.04em; }
+    #t2-c2 { top: 346px; font-size: 44px; font-weight: 600; color: rgba(34, 22, 47, 0.75); }
+    #t2-daily { position: absolute; left: 0; right: 0; top: 960px; text-align: center; }
+    #t2-daily span { display: inline-block; padding: 14px 36px; border-radius: 999px; background: #7851A9; color: #fff; font-size: 48px;
+      font-weight: 800; letter-spacing: 0.14em; opacity: 0; }
+    #t2-d1 { top: 120px; font-size: 60px; font-weight: 600; }
+    #t2-d2 { top: 190px; font-size: 120px; font-weight: 800; letter-spacing: -0.04em; }
+    #t2-e1 { top: 96px; font-size: 130px; font-weight: 800; letter-spacing: -0.04em; }
+    #t2-e2 { top: 236px; font-size: 52px; font-weight: 600; }
+    #t2-phone { position: absolute; left: 570px; top: 100px; width: 96px; height: 96px; border-radius: 50%; background: #7851A9;
+      display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 26px rgba(78, 49, 117, 0.35); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="t2" data-width="720" data-height="1280">
+    <div id="t2-shake">
+      <div id="t2-ringcam" data-layout-ignore>
+        <div id="t2-ringpos">
+          <div id="t2-ring">
+            <div class="t2-slot" style="transform: rotateY(0deg) translateZ(380px)"><img src="assets/img/card0.jpg" /><div class="t2-chip">MON</div></div>
+            <div class="t2-slot" style="transform: rotateY(45deg) translateZ(380px)"><img src="assets/img/card3.jpg" /><div class="t2-chip">TUE</div></div>
+            <div class="t2-slot" style="transform: rotateY(90deg) translateZ(380px)"><img src="assets/img/card6.jpg" /><div class="t2-chip">WED</div></div>
+            <div class="t2-slot" style="transform: rotateY(135deg) translateZ(380px)"><img src="assets/img/card1.jpg" /><div class="t2-chip">THU</div></div>
+            <div class="t2-slot" style="transform: rotateY(180deg) translateZ(380px)"><img src="assets/img/card4.jpg" /><div class="t2-chip">FRI</div></div>
+            <div class="t2-slot" style="transform: rotateY(225deg) translateZ(380px)"><img src="assets/img/card7.jpg" /><div class="t2-chip">SAT</div></div>
+            <div class="t2-slot" style="transform: rotateY(270deg) translateZ(380px)"><img src="assets/img/card2.jpg" /><div class="t2-chip">SUN</div></div>
+            <div class="t2-slot" style="transform: rotateY(315deg) translateZ(380px)"><img src="assets/img/card5.jpg" /><div class="t2-chip">MON</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="t2-cam">
+        <div id="t2-card">
+          <div id="t2-plane">
+            <video id="t2-video" class="clip" data-start="0" data-duration="9.6" data-media-start="0" data-track-index="0" src="assets/footage/t2.mp4" data-has-audio="true" playsinline></video>
+          </div>
+        </div>
+      </div>
+      <div id="t2-scrimtop"></div>
+
+      <div id="t2-a1" class="t2-txt t2-white"><span class="w">Be</span><span class="w">the</span><span class="w">one</span></div>
+      <div id="t2-a2" class="t2-txt t2-white"><span class="w">who</span><span class="w">tells</span><span class="w">them</span></div>
+      <div id="t2-a3" class="t2-txt t2-white"><span class="w t2-o">first.</span></div>
+      <div id="t2-b1" class="t2-txt t2-halo"><span class="w">Every</span><span class="w">single</span></div>
+      <div id="t2-b2" class="t2-txt t2-halo"><span class="w t2-o">day.</span></div>
+      <div id="t2-c1" class="t2-txt t2-halo"><span class="w">Scroll-</span><span class="w t2-o">stopping</span></div>
+      <div id="t2-c2" class="t2-txt t2-halo"><span class="w">videos</span><span class="w">for</span><span class="w">your</span><span class="w">practice.</span></div>
+      <div id="t2-daily"><span>DAILY</span></div>
+      <div id="t2-d1" class="t2-txt"><span class="w">You</span><span class="w">do</span><span class="w">the</span></div>
+      <div id="t2-d2" class="t2-txt"><span class="w t2-o">numbers.</span></div>
+      <div id="t2-e1" class="t2-txt"><span class="w">Trust,</span></div>
+      <div id="t2-e2" class="t2-txt"><span class="w">before</span><span class="w">they</span><span class="w">even</span><span class="w">call.</span></div>
+      <div id="t2-phone">
+        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z" />
+        </svg>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const $ = (s) => document.querySelectorAll(s);
+      const K = 1280 / 720;
+      const FRAME = (xs, s = 1) => ({ x: 360 - K * xs, y: 0, scale: s });
+      const CARDP = (cy, s = 0.29) => ({ x: -778, y: cy - 640, scale: s });
+      const wordIn = (el, at) =>
+        tl.fromTo(el, { opacity: 0, y: 18, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }, at);
+      const words = (sel, times) => { const w = $(sel + " .w"); times.forEach((t, i) => wordIn(w[i], t)); };
+      const out = (sel, at) => {
+        tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in", stagger: 0.02 }, at);
+        tl.set(sel, { visibility: "hidden" }, at + 0.3);
+      };
+
+      tl.set("#t2-card", { x: 0, y: 0, rotationY: 0, scale: 1, transformOrigin: "50% 50%" }, 0);
+      tl.fromTo("#t2-plane", { ...FRAME(616, 1.08), transformOrigin: "50% 50%" }, { ...FRAME(616, 1.0), duration: 1.6, ease: "power2.out" }, 0);
+
+      // "You need to be the one who tells them first"
+      tl.to("#t2-scrimtop", { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.1);
+      words("#t2-a1", [0.47, 0.58, 0.66]);
+      words("#t2-a2", [0.83, 0.9, 1.18]);
+      tl.fromTo("#t2-a3 .w", { opacity: 0, scale: 1.3, filter: "blur(12px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 1.32);
+      out("#t2-a1 .w, #t2-a2 .w, #t2-a3 .w", 1.66);
+      tl.to("#t2-scrimtop", { opacity: 0, duration: 0.3, ease: "power2.in" }, 1.66);
+
+      // "every single day" — pull back into a card, an orbit of daily videos behind it
+      tl.to("#t2-plane", { ...CARDP(700, 0.24), duration: 0.6, ease: "power3.inOut" }, 1.7);
+      tl.fromTo("#t2-ringpos", { z: -2600, rotationX: -8, opacity: 0 }, { z: -420, rotationX: -6, opacity: 0.85, duration: 1.2, ease: "expo.out" }, 1.75);
+      tl.fromTo("#t2-ring", { rotationY: 70 }, { rotationY: 0, duration: 1.3, ease: "expo.out" }, 1.75);
+      tl.to("#t2-ring", { rotationY: -10, duration: 0.74, ease: "none" }, 3.05);
+      words("#t2-b1", [1.92, 2.23]);
+      tl.fromTo("#t2-b2 .w", { opacity: 0, scale: 1.3, filter: "blur(12px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 2.54);
+      tl.fromTo(".t2-chip", { opacity: 0, scale: 0.5, y: 12 }, { opacity: 1, scale: 1, y: 0, duration: 0.34, ease: "back.out(2.2)", stagger: 0.07 }, 2.0);
+      out("#t2-b1 .w, #t2-b2 .w", 3.5);
+      tl.to(".t2-chip", { opacity: 0, duration: 0.2, ease: "power2.in" }, 3.5);
+
+      // "scroll-stopping videos": the feed spins up… and stops dead
+      tl.to("#t2-ring", { rotationY: -300, duration: 0.85, ease: "power2.in" }, 3.8);
+      tl.to("#t2-ring", { rotationY: -315, duration: 0.7, ease: "elastic.out(1, 0.45)" }, 4.65);
+      tl.to("#t2-shake", { keyframes: [{ x: -12, y: 6 }, { x: 9, y: -5 }, { x: -5, y: 2 }, { x: 0, y: 0 }], duration: 0.34, ease: "none" }, 4.66);
+      wordIn($("#t2-c1 .w")[0], 4.36);
+      tl.fromTo($("#t2-c1 .w")[1], { opacity: 0, scale: 1.3, filter: "blur(12px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 4.65);
+      words("#t2-c2", [5.02, 5.35, 5.44, 5.53]);
+      tl.fromTo("#t2-daily span", { opacity: 0, scale: 0.6, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(2.4)" }, 6.09);
+      out("#t2-c1 .w, #t2-c2 .w, #t2-daily span", 6.38);
+
+      // Close-up (source cut 6.46): a wide band of his face, the line above it
+      tl.to("#t2-ringpos", { z: -3200, opacity: 0, duration: 0.5, ease: "power3.in" }, 6.3);
+      tl.to("#t2-plane", { ...CARDP(790, 0.62), duration: 0.5, ease: "power3.inOut" }, 6.3);
+      words("#t2-d1", [6.56, 6.68, 6.82]);
+      tl.fromTo("#t2-d2 .w", { opacity: 0, scale: 1.25, filter: "blur(12px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 6.89);
+      out("#t2-d1 .w, #t2-d2 .w", 7.9);
+      tl.to("#t2-plane", { scale: 0.66, duration: 2.2, ease: "sine.inOut" }, 7.0);
+      tl.fromTo("#t2-e1 .w", { opacity: 0, scale: 1.25, filter: "blur(12px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 8.39);
+      words("#t2-e2", [8.73, 8.96, 9.06, 9.26]);
+      tl.fromTo("#t2-phone", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2.4)" }, 8.5);
+      tl.to("#t2-phone", { keyframes: [{ rotation: -14 }, { rotation: 12 }, { rotation: -10 }, { rotation: 8 }, { rotation: 0 }], duration: 0.4, ease: "none" }, 9.1);
+
+      window.__timelines["t2"] = tl;
+    })();
+  </script>
+</template>

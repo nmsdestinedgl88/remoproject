@@ -1,0 +1,36 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; background: #F7F3EE; }
+    .tb-hit { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-weight: 800; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; opacity: 0; }
+    #tb-1 { font-size: 112px; }
+    #tb-2 { font-size: 120px; color: #7851A9; }
+    #tb-3 { font-size: 150px; }
+    .tb-o { color: #FF6600; }
+    #tb-wipe { position: absolute; inset: 0; background: #FF6600; }
+  </style>
+  <div id="root" data-composition-id="tburst" data-width="720" data-height="1280">
+    <div id="tb-1" class="tb-hit"><span>Tell them</span><span>first.</span></div>
+    <div id="tb-2" class="tb-hit"><span>Every</span><span>day.</span></div>
+    <div id="tb-3" class="tb-hit"><span><span class="tb-o">$7</span></span><span>a day.</span></div>
+    <div id="tb-wipe" data-layout-ignore></div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const hit = (sel, at, end) => {
+        tl.fromTo(sel, { opacity: 0, scale: 1.14, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.16, ease: "expo.out" }, at);
+        tl.set(sel, { opacity: 0 }, end);
+      };
+      hit("#tb-1", 0.0, 0.55);
+      hit("#tb-2", 0.55, 1.05);
+      hit("#tb-3", 1.05, 2.5);
+
+      // The orange stroke sweeps the frame full: the logo is built from it next
+      tl.fromTo("#tb-wipe", { clipPath: "polygon(-800px 0px, -790px 0px, -51px 1280px, -800px 1280px)" },
+        { clipPath: "polygon(-800px 0px, 760px 0px, 1499px 1280px, -800px 1280px)", duration: 0.68, ease: "power3.in" }, 1.8);
+
+      window.__timelines["tburst"] = tl;
+    })();
+  </script>
+</template>

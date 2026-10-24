@@ -1,0 +1,118 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; }
+    #t4-cam { position: absolute; inset: 0; perspective: 1400px; }
+    #t4-card { position: absolute; left: 0; top: 0; width: 720px; height: 1280px; filter: drop-shadow(0 24px 36px rgba(34, 22, 47, 0.3)); }
+    #t4-plane { position: absolute; left: 0; top: 0; width: 2276px; height: 1280px; clip-path: inset(0px round 84px); background: #15101b; }
+    #t4-video { position: absolute; left: 0; top: 0; width: 2276px; height: 1280px; object-fit: cover; }
+    #t4-scrimtop { position: absolute; left: 0; right: 0; top: 0; height: 600px; opacity: 0; background: linear-gradient(0deg, rgba(15, 10, 20, 0), rgba(15, 10, 20, 0.68)); }
+    #t4-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 520px; opacity: 0; background: linear-gradient(180deg, rgba(15, 10, 20, 0), rgba(15, 10, 20, 0.6)); }
+    .t4-txt { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; line-height: 1; }
+    .t4-txt .w { display: inline-block; margin-right: 0.2em; opacity: 0; }
+    .t4-o { color: #FF6600; }
+    .t4-white { color: #fff; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
+    .t4-ext { color: #FF6600; font-weight: 800; letter-spacing: -0.04em;
+      text-shadow: 1px 1px 0 #E85D00, 2px 2px 0 #E25A00, 3px 3px 0 #DB5600, 4px 4px 0 #D45300, 5px 5px 0 #CD5000,
+        6px 6px 0 #C64C00, 7px 7px 0 #BF4900, 8px 8px 0 #B84600, 10px 18px 30px rgba(0, 0, 0, 0.3); }
+    #t4-a1 { top: 96px; font-size: 58px; font-weight: 600; }
+    #t4-a2 { position: absolute; left: 0; right: 0; top: 172px; display: flex; justify-content: center; }
+    #t4-badge { width: 170px; height: 170px; border-radius: 50%; background: #FF6600; color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 130px; font-weight: 800; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35), inset 0 -8px 0 rgba(0, 0, 0, 0.15); opacity: 0; }
+    #t4-b1 { top: 96px; font-size: 58px; font-weight: 600; }
+    #t4-b2 { position: absolute; left: 0; right: 0; top: 160px; display: flex; justify-content: center; align-items: baseline; gap: 22px; white-space: nowrap; }
+    #t4-b2 .num { font-size: 170px; line-height: 1; display: inline-block; opacity: 0; }
+    #t4-b2 .w { display: inline-block; font-size: 76px; font-weight: 800; letter-spacing: -0.03em; color: #fff; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); opacity: 0; }
+    #t4-c1 { top: 150px; font-size: 60px; font-weight: 600; }
+    #t4-c2 { top: 222px; font-size: 96px; font-weight: 800; letter-spacing: -0.035em; }
+    #t4-d1 { top: 130px; font-size: 100px; font-weight: 800; letter-spacing: -0.04em; }
+    #t4-d2 { top: 262px; font-size: 52px; font-weight: 600; }
+    #t4-dm { position: absolute; left: 60px; top: 1000px; display: flex; align-items: center; gap: 18px; padding: 24px 36px 24px 28px;
+      border-radius: 40px 40px 40px 10px; background: #7851A9; color: #fff; font-size: 44px; font-weight: 700; white-space: nowrap;
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.35); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="t4" data-width="720" data-height="1280">
+    <div id="t4-cam">
+      <div id="t4-card">
+        <div id="t4-plane">
+          <video id="t4-video" class="clip" data-start="0" data-duration="9" data-media-start="0" data-track-index="0" src="assets/footage/t4.mp4" data-has-audio="true" playsinline></video>
+        </div>
+      </div>
+    </div>
+    <div id="t4-scrimtop"></div>
+    <div id="t4-scrim"></div>
+
+    <div id="t4-a1" class="t4-txt t4-white"><span class="w">Try</span><span class="w">us</span><span class="w">with</span></div>
+    <div id="t4-a2"><div id="t4-badge">1</div></div>
+    <div id="t4-b1" class="t4-txt t4-white"><span class="w">Don't</span><span class="w">like</span><span class="w">it?</span></div>
+    <div id="t4-b2"><span class="num t4-ext">$0</span><span class="w">Don't</span><span class="w">pay.</span></div>
+    <div id="t4-c1" class="t4-txt"><span class="w">Your</span><span class="w">clients</span></div>
+    <div id="t4-c2" class="t4-txt"><span class="w">are</span><span class="w">losing</span><span class="w t4-o">money.</span></div>
+    <div id="t4-d1" class="t4-txt"><span class="w">Remind</span><span class="w">them</span></div>
+    <div id="t4-d2" class="t4-txt"><span class="w">before</span><span class="w">someone</span><span class="w t4-o">else</span><span class="w">does.</span></div>
+    <div id="t4-dm">
+      <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4z" fill="rgba(255,255,255,0.18)" />
+      </svg>
+      DM us to get started
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const $ = (s) => document.querySelectorAll(s);
+      const K = 1280 / 720;
+      const FRAME = (xs, s = 1) => ({ x: 360 - K * xs, y: 0, scale: s });
+      const CARDP = (cy, s = 0.29) => ({ x: -778, y: cy - 640, scale: s });
+      const wordIn = (el, at) =>
+        tl.fromTo(el, { opacity: 0, y: 18, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }, at);
+      const words = (sel, times) => { const w = $(sel + " .w"); times.forEach((t, i) => wordIn(w[i], t)); };
+      const out = (sel, at) => {
+        tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in", stagger: 0.02 }, at);
+        tl.set(sel, { visibility: "hidden" }, at + 0.3);
+      };
+
+      tl.set("#t4-card", { x: 0, y: 0, rotationY: 0, scale: 1, transformOrigin: "50% 50%" }, 0);
+      tl.fromTo("#t4-plane", { ...FRAME(640, 1.08), transformOrigin: "50% 50%" }, { ...FRAME(640, 1.0), duration: 1.4, ease: "power2.out" }, 0);
+      tl.to("#t4-scrimtop", { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.0);
+
+      // "Try us with one."
+      words("#t4-a1", [0.12, 0.37, 0.52]);
+      tl.fromTo("#t4-badge", { opacity: 0, rotationY: -180, scale: 0.6, transformPerspective: 800 }, { opacity: 1, rotationY: 0, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 0.6);
+      out("#t4-a1 .w, #t4-badge", 1.08);
+
+      // "If you don't like it, you don't pay."
+      words("#t4-b1", [1.27, 1.34, 1.51]);
+      tl.fromTo("#t4-b2 .num", { opacity: 0, scale: 2.2, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, 2.08);
+      const bw = $("#t4-b2 .w"); wordIn(bw[0], 2.16); wordIn(bw[1], 2.31);
+      out("#t4-b1 .w, #t4-b2 .num, #t4-b2 .w", 3.0);
+      tl.to("#t4-scrimtop", { opacity: 0, duration: 0.3, ease: "power2.in" }, 3.0);
+
+      // Pull back into a card: "Your clients are losing money."
+      tl.to("#t4-plane", { ...CARDP(760, 0.3), duration: 0.6, ease: "power3.inOut" }, 3.0);
+      tl.to("#t4-card", { rotationY: -12, duration: 0.6, ease: "power3.inOut" }, 3.0);
+      words("#t4-c1", [3.23, 3.33]);
+      words("#t4-c2", [4.15, 4.29, 4.6]);
+      out("#t4-c1 .w, #t4-c2 .w", 5.1);
+
+      // The card swings: "Remind them before someone else does."
+      tl.to("#t4-card", { rotationY: 12, duration: 0.6, ease: "power3.inOut" }, 5.1);
+      tl.to("#t4-plane", { ...CARDP(720, 0.31), duration: 0.6, ease: "power3.inOut" }, 5.1);
+      words("#t4-d1", [5.48, 5.77]);
+      words("#t4-d2", [6.2, 6.46, 6.73, 6.94]);
+      out("#t4-d1 .w, #t4-d2 .w", 7.25);
+
+      // Full frame for the ask: "DM us to get started."
+      tl.to("#t4-card", { rotationY: 0, duration: 0.5, ease: "power3.inOut" }, 7.2);
+      tl.to("#t4-plane", { ...FRAME(632), duration: 0.5, ease: "power3.inOut" }, 7.2);
+      tl.to("#t4-scrim", { opacity: 1, duration: 0.3, ease: "power2.out" }, 7.45);
+      tl.fromTo("#t4-dm", { opacity: 0, scale: 0.6, y: 40, transformOrigin: "0% 100%" }, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.8)" }, 7.55);
+
+      // Fly the film back into depth for the closing burst
+      tl.to("#t4-dm", { opacity: 0, x: -50, duration: 0.18, ease: "power3.in" }, 8.72);
+      tl.to("#t4-plane", { ...CARDP(640, 0.12), duration: 0.28, ease: "power3.in" }, 8.7);
+      tl.to("#t4-scrim", { opacity: 0, duration: 0.2, ease: "power2.in" }, 8.7);
+
+      window.__timelines["t4"] = tl;
+    })();
+  </script>
+</template>

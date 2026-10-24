@@ -1,0 +1,134 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; }
+    #t1-reveal { position: absolute; inset: 0; }
+    #t1-cam { position: absolute; inset: 0; perspective: 1400px; }
+    #t1-card { position: absolute; left: 0; top: 0; width: 720px; height: 1280px; filter: drop-shadow(0 24px 36px rgba(34, 22, 47, 0.3)); }
+    #t1-plane { position: absolute; left: 0; top: 0; width: 2276px; height: 1280px; clip-path: inset(0px round 84px); background: #15101b; }
+    #t1-video { position: absolute; left: 0; top: 0; width: 2276px; height: 1280px; object-fit: cover; }
+    #t1-band { position: absolute; left: 0; top: 0; width: 420px; height: 1280px; background: #FF6600; transform-origin: 0 0; }
+    #t1-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 520px; opacity: 0; background: linear-gradient(180deg, rgba(15, 10, 20, 0), rgba(15, 10, 20, 0.7)); }
+    #t1-scrimtop { position: absolute; left: 0; right: 0; top: 0; height: 520px; opacity: 0; background: linear-gradient(0deg, rgba(15, 10, 20, 0), rgba(15, 10, 20, 0.66)); }
+    .t1-txt { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; line-height: 1; }
+    .t1-txt .w { display: inline-block; margin-right: 0.2em; opacity: 0; }
+    .t1-o { color: #FF6600; }
+    .t1-white { color: #fff; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
+    #t1-a1 { top: 110px; font-size: 56px; font-weight: 600; }
+    #t1-a2 { top: 176px; font-size: 118px; font-weight: 800; letter-spacing: -0.035em; }
+    #t1-chart { position: absolute; left: 260px; top: 300px; width: 200px; height: 80px; opacity: 0; }
+    #t1-b1 { top: 96px; font-size: 44px; font-weight: 600; }
+    #t1-b2 { top: 152px; font-size: 58px; font-weight: 700; letter-spacing: -0.02em; }
+    #t1-b3 { top: 222px; font-size: 128px; font-weight: 800; letter-spacing: -0.04em; }
+    #t1-form { position: absolute; left: 110px; top: 930px; width: 500px; height: 230px; border-radius: 22px; background: #fff;
+      box-shadow: 0 20px 44px rgba(34, 22, 47, 0.18); padding: 26px 30px; opacity: 0; }
+    #t1-form .h { display: flex; justify-content: space-between; font-size: 26px; font-weight: 700; color: #7851A9; letter-spacing: 0.06em; }
+    #t1-form .l { height: 12px; border-radius: 6px; background: #ECE6F2; margin-top: 18px; }
+    #t1-form .row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; font-size: 30px; font-weight: 600; }
+    #t1-form .row b { font-size: 40px; font-weight: 800; color: #22162F; }
+    #t1-stamp { position: absolute; right: 22px; top: 70px; padding: 8px 20px; border: 5px solid #FF6600; border-radius: 12px; color: #FF6600;
+      font-size: 40px; font-weight: 800; letter-spacing: 0.08em; opacity: 0; }
+    #t1-c1 { top: 96px; font-size: 54px; font-weight: 600; }
+    #t1-c2 { top: 160px; font-size: 108px; font-weight: 800; letter-spacing: -0.035em; }
+    #t1-rec { display: inline-block; width: 30px; height: 30px; border-radius: 50%; background: #FF6600; margin-right: 18px; vertical-align: 14px; }
+    #t1-d { top: 930px; font-size: 140px; font-weight: 800; letter-spacing: -0.04em; }
+  </style>
+  <div id="root" data-composition-id="t1" data-width="720" data-height="1280">
+    <div id="t1-reveal">
+      <div id="t1-cam">
+        <div id="t1-card">
+          <div id="t1-plane">
+            <video id="t1-video" class="clip" data-start="0" data-duration="10" data-media-start="0" data-track-index="0" src="assets/footage/t1.mp4" data-has-audio="true" playsinline></video>
+          </div>
+        </div>
+      </div>
+      <div id="t1-scrim"></div>
+      <div id="t1-scrimtop"></div>
+    </div>
+    <div id="t1-band"></div>
+
+    <div id="t1-a1" class="t1-txt"><span class="w">They're</span><span class="w">losing</span></div>
+    <div id="t1-a2" class="t1-txt"><span class="w t1-o">money.</span></div>
+    <svg id="t1-chart" viewBox="0 0 320 150" fill="none">
+      <polyline id="t1-line" points="10,30 70,46 120,40 175,78 225,70 300,128" stroke="#FF6600" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+      <path id="t1-arrow" d="M276 104 L304 132 L268 134" stroke="#FF6600" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+
+    <div id="t1-b1" class="t1-txt"><span class="w">Right</span><span class="w">now,</span></div>
+    <div id="t1-b2" class="t1-txt"><span class="w">someone</span><span class="w">is</span><span class="w">overpaying</span></div>
+    <div id="t1-b3" class="t1-txt"><span class="w">the</span><span class="w t1-o">IRS.</span></div>
+    <div id="t1-form">
+      <div class="h"><span>FORM 1040</span><span>2026</span></div>
+      <div class="l" style="width: 82%"></div>
+      <div class="l" style="width: 60%"></div>
+      <div class="row"><span>Refund they're owed</span><b>??</b></div>
+      <div id="t1-stamp">OVERPAID</div>
+    </div>
+
+    <div id="t1-c1" class="t1-txt"><span class="w">Your</span><span class="w">competition</span></div>
+    <div id="t1-c2" class="t1-txt"><span class="w">is</span><span class="w">on</span><span class="w"><span id="t1-rec"></span>video.</span></div>
+    <div id="t1-d" class="t1-txt t1-white"><span class="w">You're</span><span class="w t1-o">not.</span></div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const $ = (s) => document.querySelectorAll(s);
+      const K = 1280 / 720;
+      const FRAME = (xs, s = 1) => ({ x: 360 - K * xs, y: 0, scale: s });
+      const CARDP = (cy, s = 0.29) => ({ x: -778, y: cy - 640, scale: s });
+      const wordIn = (el, at) =>
+        tl.fromTo(el, { opacity: 0, y: 18, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }, at);
+      const words = (sel, times) => { const w = $(sel + " .w"); times.forEach((t, i) => wordIn(w[i], t)); };
+      const out = (sel, at) => {
+        tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in", stagger: 0.02 }, at);
+        tl.set(sel, { visibility: "hidden" }, at + 0.3);
+      };
+
+      tl.set("#t1-plane", { ...CARDP(790, 0.62), transformOrigin: "50% 50%" }, 0);
+      tl.set("#t1-card", { x: 0, y: 0, rotationY: 0, scale: 1, transformOrigin: "50% 50%" }, 0);
+
+      // 0.0 – 0.62  the orange stroke from the logo wipes the film open
+      tl.fromTo("#t1-band", { x: -1200, skewX: 30 }, { x: 800, skewX: 30, duration: 0.62, ease: "power3.inOut" }, 0);
+      tl.fromTo("#t1-reveal", { clipPath: "polygon(-800px 0px, -790px 0px, -51px 1280px, -800px 1280px)" },
+        { clipPath: "polygon(-800px 0px, 800px 0px, 1539px 1280px, -800px 1280px)", duration: 0.62, ease: "power3.inOut" }, 0.02);
+      tl.set("#t1-reveal", { clipPath: "none" }, 0.7);
+
+      // "…they're losing money." — slow push on the close-up, a falling line draws
+      tl.to("#t1-plane", { scale: 0.66, duration: 2.2, ease: "sine.inOut" }, 0.6);
+      words("#t1-a1", [1.07, 1.21]);
+      wordIn($("#t1-a2 .w")[0], 1.53);
+      tl.set("#t1-chart", { opacity: 1 }, 1.6);
+      tl.fromTo("#t1-line", { strokeDasharray: 400, strokeDashoffset: 400 }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, 1.6);
+      tl.fromTo("#t1-arrow", { opacity: 0, scale: 0.4, transformOrigin: "100% 100%" }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 2.3);
+      out("#t1-a1 .w, #t1-a2 .w, #t1-chart", 2.72);
+
+      // 2.85 – 3.5  pull back: the close-up becomes the whole office, as a card in depth (source cut at 3.0 inside the move)
+      tl.to("#t1-plane", { ...CARDP(700), duration: 0.65, ease: "power3.inOut" }, 2.85);
+      tl.to("#t1-card", { rotationY: -12, duration: 0.65, ease: "power3.inOut" }, 2.85);
+      words("#t1-b1", [3.28, 3.49]);
+      words("#t1-b2", [3.82, 4.22, 4.38]);
+      words("#t1-b3", [4.98, 5.09]);
+      tl.fromTo("#t1-form", { opacity: 0, rotationX: -80, y: -30, transformPerspective: 900, transformOrigin: "50% 0%" },
+        { opacity: 1, rotationX: 0, y: 0, duration: 0.6, ease: "back.out(1.5)" }, 5.6);
+      tl.fromTo("#t1-stamp", { opacity: 0, scale: 2.4, rotation: -18 }, { opacity: 1, scale: 1, rotation: -8, duration: 0.24, ease: "power4.in" }, 6.2);
+      out("#t1-b1 .w, #t1-b2 .w, #t1-b3 .w, #t1-form", 6.9);
+
+      // 7.0  the card swings the other way: "Your competition is on video."
+      tl.to("#t1-card", { rotationY: 14, duration: 0.6, ease: "power3.inOut" }, 6.95);
+      tl.to("#t1-plane", { ...CARDP(760, 0.3), duration: 0.6, ease: "power3.inOut" }, 6.95);
+      words("#t1-c1", [7.06, 7.16]);
+      words("#t1-c2", [7.77, 8.32, 8.61]);
+      tl.fromTo("#t1-rec", { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, 8.66);
+      out("#t1-c1 .w, #t1-c2 .w", 9.12);
+
+      // 9.2  "You're not." — snap back to the face, hard
+      tl.to("#t1-card", { rotationY: 0, duration: 0.2, ease: "expo.out" }, 9.18);
+      tl.to("#t1-plane", { ...FRAME(614, 1.18), y: 120, duration: 0.22, ease: "expo.out" }, 9.18);
+      tl.to("#t1-scrim", { opacity: 1, duration: 0.2, ease: "power2.out" }, 9.2);
+      const d = $("#t1-d .w");
+      tl.fromTo(d[0], { opacity: 0, scale: 1.2, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.16, ease: "expo.out" }, 9.31);
+      tl.fromTo(d[1], { opacity: 0, scale: 1.2, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.16, ease: "expo.out" }, 9.44);
+
+      window.__timelines["t1"] = tl;
+    })();
+  </script>
+</template>
