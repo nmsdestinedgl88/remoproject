@@ -1,0 +1,170 @@
+[
+ {
+  "key": "welcome",
+  "title": "Welcome to Tennessee!",
+  "division": "Middle",
+  "nickname": "",
+  "fact": "Tennessee is the Volunteer State. Its flag has 3 stars for East, Middle and West!"
+ },
+ {
+  "key": "flag",
+  "title": "The Tennessee Flag",
+  "division": "Middle",
+  "nickname": "",
+  "fact": "Color the flag: red, white and blue. The 3 stars stand for East, Middle and West Tennessee!"
+ },
+ {
+  "key": "memphis",
+  "title": "Memphis",
+  "division": "West",
+  "nickname": "Home of the Blues",
+  "fact": "Ducks march to a fountain at Memphis's Peabody Hotel every day!"
+ },
+ {
+  "key": "tiptonville",
+  "title": "Tiptonville",
+  "division": "West",
+  "nickname": "",
+  "fact": "Earthquakes in 1811 and 1812 made Reelfoot Lake. Cypress trees grow in the water!"
+ },
+ {
+  "key": "paris",
+  "title": "Paris",
+  "division": "West",
+  "nickname": "",
+  "fact": "Paris, Tennessee has its own 70-foot Eiffel Tower!"
+ },
+ {
+  "key": "jackson",
+  "title": "Jackson",
+  "division": "West",
+  "nickname": "Hub City",
+  "fact": "Famous train engineer Casey Jones lived in Jackson!"
+ },
+ {
+  "key": "clarksville",
+  "title": "Clarksville",
+  "division": "Middle",
+  "nickname": "Queen City",
+  "fact": "Olympic star Wilma Rudolph grew up here and won 3 gold medals in 1960!"
+ },
+ {
+  "key": "nashville",
+  "title": "Nashville",
+  "division": "Middle",
+  "nickname": "Music City",
+  "fact": "Nashville has a full-size copy of the Parthenon from Greece!"
+ },
+ {
+  "key": "franklin",
+  "title": "Franklin",
+  "division": "Middle",
+  "nickname": "",
+  "fact": "Franklin's historic downtown has a movie theater that opened in 1937!"
+ },
+ {
+  "key": "columbia",
+  "title": "Columbia",
+  "division": "Middle",
+  "nickname": "Mule Capital",
+  "fact": "Columbia hosts Mule Day every spring with a big parade!"
+ },
+ {
+  "key": "murfreesboro",
+  "title": "Murfreesboro",
+  "division": "Middle",
+  "nickname": "",
+  "fact": "Murfreesboro was the capital of Tennessee from 1818 to 1826!"
+ },
+ {
+  "key": "cookeville",
+  "title": "Cookeville",
+  "division": "Middle",
+  "nickname": "",
+  "fact": "Cummins Falls near Cookeville tumbles 75 feet. You can see lots of waterfalls here!"
+ },
+ {
+  "key": "chattanooga",
+  "title": "Chattanooga",
+  "division": "East",
+  "nickname": "Scenic City",
+  "fact": "The Incline Railway up Lookout Mountain is one of the steepest in the world!"
+ },
+ {
+  "key": "sweetwater",
+  "title": "Sweetwater",
+  "division": "East",
+  "nickname": "",
+  "fact": "The Lost Sea in Sweetwater is America's largest underground lake!"
+ },
+ {
+  "key": "oak_ridge",
+  "title": "Oak Ridge",
+  "division": "East",
+  "nickname": "Secret City",
+  "fact": "In the 1940s Oak Ridge was a secret city. Today scientists there use super computers!"
+ },
+ {
+  "key": "knoxville",
+  "title": "Knoxville",
+  "division": "East",
+  "nickname": "Scruffy City",
+  "fact": "The Sunsphere is a gold glass ball 266 feet tall, built for the 1982 World's Fair!"
+ },
+ {
+  "key": "sevierville",
+  "title": "Sevierville",
+  "division": "East",
+  "nickname": "",
+  "fact": "A statue of singer Dolly Parton sits at the courthouse. She grew up nearby!"
+ },
+ {
+  "key": "pigeon_forge",
+  "title": "Pigeon Forge",
+  "division": "East",
+  "nickname": "",
+  "fact": "Dollywood in Pigeon Forge has roller coasters and a real steam train!"
+ },
+ {
+  "key": "gatlinburg",
+  "title": "Gatlinburg",
+  "division": "East",
+  "nickname": "",
+  "fact": "Gatlinburg is the door to the Great Smoky Mountains, America's most-visited national park!"
+ },
+ {
+  "key": "johnson_city",
+  "title": "Johnson City",
+  "division": "East",
+  "nickname": "",
+  "fact": "Scientists dug up animal fossils about 5 million years old at the Gray Fossil Site!"
+ },
+ {
+  "key": "kingsport",
+  "title": "Kingsport",
+  "division": "East",
+  "nickname": "Model City",
+  "fact": "Bays Mountain Park in Kingsport has a planetarium for looking at the stars!"
+ },
+ {
+  "key": "bristol",
+  "title": "Bristol",
+  "division": "East",
+  "nickname": "",
+  "fact": "Bristol sits in two states! Its main street is part Tennessee, part Virginia."
+ },
+ {
+  "key": "family",
+  "title": "My Family's Town",
+  "division": "Middle",
+  "nickname": "",
+  "fact": "My family is from ________. Draw your family inside the frame!"
+ },
+ {
+  "key": "goodbye",
+  "title": "Goodbye, Tennessee!",
+  "division": "Middle",
+  "nickname": "",
+  "fact": "Scout visited 20 towns in East, Middle and West Tennessee. Which was your favorite?"
+ }
+]
