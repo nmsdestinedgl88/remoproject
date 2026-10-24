@@ -1,0 +1,82 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; }
+    #s3-cam { position: absolute; inset: 0; perspective: 2000px; }
+    #s3-card { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; filter: drop-shadow(0 34px 54px rgba(34, 22, 47, 0.32)); }
+    #s3-frame { position: absolute; inset: 0; background: #15101b; }
+    #s3-video { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; object-fit: cover; }
+    #s3-pcam { position: absolute; inset: 0; perspective: 1400px; perspective-origin: 25% 40%; }
+    #s3-price { position: absolute; left: 130px; top: 230px; white-space: nowrap; line-height: 1; opacity: 0; }
+    .s3-num { font-size: 300px; font-weight: 800; letter-spacing: -0.04em; color: #FF6600;
+      text-shadow: 1px 1px 0 #E85D00, 2px 2px 0 #E25A00, 3px 3px 0 #DB5600, 4px 4px 0 #D45300, 5px 5px 0 #CD5000,
+        6px 6px 0 #C64C00, 7px 7px 0 #BF4900, 8px 8px 0 #B84600, 9px 9px 0 #B14300, 10px 10px 0 #AA4000,
+        12px 22px 40px rgba(34, 22, 47, 0.28); }
+    .s3-dwin { display: inline-block; height: 1em; overflow: hidden; vertical-align: top; }
+    .s3-dcol { display: block; }
+    .s3-dcol span { display: block; height: 1em; }
+    #s3-day { display: inline-block; font-size: 96px; font-weight: 700; margin-left: 14px; opacity: 0; }
+    .s3-cmp { position: absolute; left: 130px; width: 660px; height: 140px; border-radius: 30px; background: #fff;
+      box-shadow: 0 24px 50px rgba(34, 22, 47, 0.16); display: flex; align-items: center; gap: 26px; padding: 0 36px; opacity: 0; }
+    #s3-cmp1 { top: 610px; }
+    #s3-cmp2 { top: 780px; }
+    .s3-cmp svg { flex: 0 0 auto; }
+    .s3-cmp .lab { font-size: 46px; font-weight: 700; line-height: 1.05; white-space: nowrap; }
+    .s3-cmp .lab small { display: block; font-size: 28px; font-weight: 600; letter-spacing: 0.12em; color: #7851A9; margin-bottom: 6px; }
+  </style>
+  <div id="root" data-composition-id="s3" data-width="1920" data-height="1080">
+    <div id="s3-cam">
+      <div id="s3-card">
+        <div id="s3-frame">
+          <video id="s3-video" class="clip" data-start="0" data-duration="8.4" data-media-start="1.3" data-track-index="0" src="assets/footage/v3.mp4" data-has-audio="true" playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <div id="s3-pcam">
+      <div id="s3-price"><span class="s3-num">$<span class="s3-dwin"><span class="s3-dcol"><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span><span>0</span></span></span></span><span id="s3-day">/day</span></div>
+    </div>
+
+    <div id="s3-cmp1" class="s3-cmp">
+      <svg width="78" height="78" viewBox="0 0 48 48" fill="none" stroke="#22162F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 22c0-8 7.6-13 17-13s17 5 17 13z" fill="#FF6600" stroke="#22162F" />
+        <path d="M6 28h36" /><path d="M8 33h32" stroke="#7851A9" stroke-width="5" />
+        <path d="M9 38h30a0 0 0 0 1 0 0v1a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3z" />
+      </svg>
+      <div class="lab"><small>THAT'S LESS THAN</small>a Big Mac.</div>
+    </div>
+    <div id="s3-cmp2" class="s3-cmp">
+      <svg width="78" height="78" viewBox="0 0 48 48" fill="none" stroke="#22162F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18h26v11a10 10 0 0 1-10 10h-6A10 10 0 0 1 9 29z" fill="#FF6600" />
+        <path d="M35 21h3a5 5 0 0 1 0 10h-3" />
+        <path d="M16 6c-2 3 2 5 0 8M24 6c-2 3 2 5 0 8" stroke="#7851A9" />
+      </svg>
+      <div class="lab"><small>LESS THAN</small>your morning coffee.</div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const FULL = { x: 0, y: 0, scale: 1, rotationY: 0 };
+      const RIGHT = { x: 400, y: 0, scale: 0.5, rotationY: -21 };
+      const ROUND0 = "inset(0px 0px 0px 0px round 0px)";
+      const ROUND = "inset(0px 0px 0px 0px round 56px)";
+
+      tl.fromTo("#s3-card", { ...FULL, transformOrigin: "50% 50%" }, { ...RIGHT, duration: 0.62, ease: "power3.out" }, 0.1);
+      tl.fromTo("#s3-frame", { clipPath: ROUND0 }, { clipPath: ROUND, duration: 0.62, ease: "power3.out" }, 0.1);
+
+      // "$7" flies in from depth, swinging round to face the camera
+      tl.fromTo("#s3-price", { opacity: 0, z: -2200, rotationY: 75, x: -120, transformOrigin: "20% 50%" },
+        { opacity: 1, z: 0, rotationY: 0, x: 0, duration: 0.8, ease: "expo.out" }, 0.28);
+      tl.fromTo("#s3-day", { opacity: 0, x: 40, filter: "blur(10px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.28, ease: "power4.out" }, 1.07);
+
+      // The comparisons flip down like cards on a counter
+      tl.fromTo("#s3-cmp1", { opacity: 0, rotationX: -90, y: -20, transformPerspective: 900, transformOrigin: "50% 0%" },
+        { opacity: 1, rotationX: 0, y: 0, duration: 0.55, ease: "back.out(1.6)" }, 4.45);
+      tl.fromTo("#s3-cmp2", { opacity: 0, rotationX: -90, y: -20, transformPerspective: 900, transformOrigin: "50% 0%" },
+        { opacity: 1, rotationX: 0, y: 0, duration: 0.55, ease: "back.out(1.6)" }, 6.92);
+      tl.to("#s3-cmp1, #s3-cmp2", { opacity: 0, rotationX: 70, duration: 0.24, ease: "power3.in", stagger: 0.05 }, 7.95);
+
+      window.__timelines["s3"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,6 @@
+node_modules/
+.hyperframes/
+outro/out/*
+sevun/renders/*
+!sevun/renders/sevun_promo_50s.mp4
+*.log

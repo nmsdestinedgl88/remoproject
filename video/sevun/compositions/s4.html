@@ -1,0 +1,103 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; }
+    #s4-cam { position: absolute; inset: 0; perspective: 2000px; }
+    #s4-card { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; filter: drop-shadow(0 34px 54px rgba(34, 22, 47, 0.32)); }
+    #s4-frame { position: absolute; inset: 0; background: #15101b; }
+    #s4-video { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; object-fit: cover; }
+    #s4-pcam { position: absolute; inset: 0; perspective: 1400px; perspective-origin: 25% 40%; }
+    #s4-price { position: absolute; left: 130px; top: 230px; white-space: nowrap; line-height: 1; }
+    .s4-num { font-size: 300px; font-weight: 800; letter-spacing: -0.04em; color: #FF6600;
+      text-shadow: 1px 1px 0 #E85D00, 2px 2px 0 #E25A00, 3px 3px 0 #DB5600, 4px 4px 0 #D45300, 5px 5px 0 #CD5000,
+        6px 6px 0 #C64C00, 7px 7px 0 #BF4900, 8px 8px 0 #B84600, 9px 9px 0 #B14300, 10px 10px 0 #AA4000,
+        12px 22px 40px rgba(34, 22, 47, 0.28); }
+    .s4-dwin { display: inline-block; height: 1em; overflow: hidden; vertical-align: top; }
+    .s4-dcol { display: block; }
+    .s4-dcol span { display: block; height: 1em; }
+    #s4-day { display: inline-block; font-size: 96px; font-weight: 700; margin-left: 14px; }
+    .s4-txt { position: absolute; white-space: nowrap; line-height: 1; }
+    .s4-txt .w { display: inline-block; margin-right: 0.2em; opacity: 0; }
+    #s4-t1 { left: 130px; top: 150px; font-size: 62px; font-weight: 600; }
+    #s4-t2 { left: 130px; top: 226px; font-size: 136px; font-weight: 800; letter-spacing: -0.035em; }
+    #s4-t3 { left: 130px; top: 400px; font-size: 60px; font-weight: 600; color: rgba(34, 22, 47, 0.7); }
+    #s4-t4 { left: 440px; top: 580px; font-size: 104px; font-weight: 800; letter-spacing: -0.03em; }
+    .s4-o { color: #FF6600; }
+    #s4-dm { position: absolute; left: 110px; top: 790px; display: flex; align-items: center; gap: 24px; padding: 30px 46px 30px 34px;
+      border-radius: 48px 48px 48px 12px; background: #7851A9; color: #fff; font-size: 60px; font-weight: 700; white-space: nowrap;
+      box-shadow: 0 24px 50px rgba(34, 22, 47, 0.35); opacity: 0; }
+    #s4-dm svg { flex: 0 0 auto; }
+  </style>
+  <div id="root" data-composition-id="s4" data-width="1920" data-height="1080">
+    <div id="s4-cam">
+      <div id="s4-card">
+        <div id="s4-frame">
+          <video id="s4-video" class="clip" data-start="0" data-duration="9.7" data-media-start="0" data-track-index="0" src="assets/footage/v4.mp4" data-has-audio="true" playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <div id="s4-pcam">
+      <div id="s4-price"><span class="s4-num">$<span class="s4-dwin"><span class="s4-dcol"><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span><span>0</span></span></span></span><span id="s4-day">/day</span></div>
+    </div>
+
+    <div id="s4-t1" class="s4-txt"><span class="w">Try</span><span class="w">us</span><span class="w">with</span></div>
+    <div id="s4-t2" class="s4-txt"><span class="w s4-o">1</span><span class="w">video.</span></div>
+    <div id="s4-t3" class="s4-txt"><span class="w">Don't</span><span class="w">like</span><span class="w">it?</span></div>
+    <div id="s4-t4" class="s4-txt"><span class="w">Don't</span><span class="w">pay.</span></div>
+
+    <div id="s4-dm">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4z" fill="rgba(255,255,255,0.18)" />
+      </svg>
+      DM us to get started
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const $ = (s) => document.querySelectorAll(s);
+      const RIGHT = { x: 400, y: 0, scale: 0.5, rotationY: -21 };
+      const FULL = { x: 0, y: 0, scale: 1, rotationY: 0 };
+      const ROUND = "inset(0px 0px 0px 0px round 56px)";
+      const ROUND0 = "inset(0px 0px 0px 0px round 0px)";
+      const wordIn = (el, at) =>
+        tl.fromTo(el, { opacity: 0, y: 22, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.24, ease: "power4.out" }, at);
+
+      tl.fromTo("#s4-card", { ...RIGHT, transformOrigin: "50% 50%" }, { ...RIGHT, duration: 0.01 }, 0);
+      tl.fromTo("#s4-frame", { clipPath: ROUND }, { clipPath: ROUND, duration: 0.01 }, 0);
+
+      // The $7 carried over from the last scene steps down to make room for the offer
+      tl.fromTo("#s4-price", { y: 0, scale: 1, transformOrigin: "0% 0%" }, { y: 250, scale: 0.72, duration: 0.55, ease: "power3.inOut" }, 0.0);
+
+      const t1 = $("#s4-t1 .w");
+      [0.08, 0.34, 0.47].forEach((t, i) => wordIn(t1[i], t));
+      const t2 = $("#s4-t2 .w");
+      tl.fromTo(t2[0], { opacity: 0, scale: 1.4, filter: "blur(12px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.24, ease: "expo.out" }, 0.62);
+      wordIn(t2[1], 0.74);
+      const t3 = $("#s4-t3 .w");
+      [1.72, 1.99, 2.23].forEach((t, i) => wordIn(t3[i], t));
+
+      // "you don't pay": the price rolls all the way down to $0
+      tl.to("#s4-day", { opacity: 0, x: 30, filter: "blur(10px)", duration: 0.2, ease: "power2.in" }, 2.85);
+      tl.fromTo(".s4-dcol", { yPercent: 0 }, { yPercent: -87.5, duration: 0.5, ease: "power3.inOut" }, 2.9);
+      const t4 = $("#s4-t4 .w");
+      wordIn(t4[0], 3.12); wordIn(t4[1], 3.39);
+
+      // Clear the frame; one calm full-bleed hold
+      tl.to("#s4-t1 .w, #s4-t2 .w, #s4-t3 .w, #s4-t4 .w, #s4-price", { opacity: 0, filter: "blur(10px)", duration: 0.18, ease: "power2.in", stagger: 0.02 }, 4.25);
+      tl.to("#s4-card", { ...FULL, duration: 0.6, ease: "power3.inOut" }, 4.3);
+      tl.to("#s4-frame", { clipPath: ROUND0, duration: 0.6, ease: "power3.inOut" }, 4.3);
+      tl.to("#s4-card", { scale: 1.05, duration: 3.2, ease: "sine.inOut" }, 4.95);
+
+      // "DM us to get started"
+      tl.fromTo("#s4-dm", { opacity: 0, scale: 0.6, y: 40, transformOrigin: "0% 100%" }, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.8)" }, 8.05);
+
+      // Fly the film back into depth for the closing burst
+      tl.to("#s4-dm", { opacity: 0, x: -60, duration: 0.18, ease: "power3.in" }, 9.5);
+      tl.to("#s4-card", { scale: 0.32, rotationY: -8, duration: 0.32, ease: "power3.in" }, 9.38);
+      tl.to("#s4-frame", { clipPath: ROUND, duration: 0.32, ease: "power3.in" }, 9.38);
+
+      window.__timelines["s4"] = tl;
+    })();
+  </script>
+</template>

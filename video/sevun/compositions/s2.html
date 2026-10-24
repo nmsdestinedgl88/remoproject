@@ -1,0 +1,148 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; }
+    #s2-shake { position: absolute; inset: 0; }
+    #s2-ringcam { position: absolute; inset: 0; perspective: 1500px; perspective-origin: 50% 46%; }
+    #s2-ringpos { position: absolute; left: 960px; top: 540px; width: 0; height: 0; transform-style: preserve-3d; }
+    #s2-ring { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+    .s2-slot { position: absolute; left: -180px; top: -320px; width: 360px; height: 640px; transform-style: preserve-3d; }
+    .s2-slot img { position: absolute; inset: 0; width: 360px; height: 640px; object-fit: cover; border-radius: 30px;
+      filter: blur(2.5px) saturate(0.92); box-shadow: 0 30px 60px rgba(34, 22, 47, 0.25); }
+    .s2-chip { position: absolute; left: 24px; top: 24px; padding: 10px 22px; border-radius: 999px; background: #FF6600;
+      color: #fff; font-size: 54px; font-weight: 800; letter-spacing: 0.08em; opacity: 0; }
+    #s2-cam { position: absolute; inset: 0; perspective: 2000px; }
+    #s2-card { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; filter: drop-shadow(0 34px 54px rgba(34, 22, 47, 0.32)); }
+    #s2-frame { position: absolute; inset: 0; background: #15101b; }
+    #s2-video { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; object-fit: cover; }
+    .s2-txt { position: absolute; white-space: nowrap; line-height: 1; text-shadow: 0 0 28px rgba(247, 243, 238, 0.95), 0 0 10px rgba(247, 243, 238, 0.9); }
+    .s2-txt .w { display: inline-block; margin-right: 0.2em; opacity: 0; }
+    .s2-r { text-align: right; right: 1270px; }
+    .s2-l { left: 1270px; }
+    .s2-o { color: #FF6600; }
+    #s2-a1 { top: 350px; font-size: 64px; font-weight: 600; }
+    #s2-a2 { top: 425px; font-size: 150px; font-weight: 800; letter-spacing: -0.035em; }
+    #s2-b1 { top: 350px; font-size: 64px; font-weight: 600; }
+    #s2-b2 { top: 425px; font-size: 150px; font-weight: 800; letter-spacing: -0.035em; }
+    #s2-c { top: 440px; font-size: 140px; font-weight: 800; letter-spacing: -0.035em; }
+    #s2-d1 { top: 360px; font-size: 64px; font-weight: 600; }
+    #s2-d2 { top: 435px; font-size: 140px; font-weight: 800; letter-spacing: -0.035em; }
+    #s2-e { top: 430px; font-size: 118px; font-weight: 800; letter-spacing: -0.035em; }
+    #s2-f { top: 430px; font-size: 118px; font-weight: 800; letter-spacing: -0.035em; }
+    #s2-g { top: 570px; font-size: 44px; font-weight: 500; color: rgba(34, 22, 47, 0.7); }
+    #s2-daily { position: absolute; right: 1270px; top: 580px; padding: 14px 34px; border-radius: 999px; background: #7851A9; color: #fff;
+      font-size: 50px; font-weight: 800; letter-spacing: 0.14em; opacity: 0; }
+    #s2-h { left: 900px; top: 330px; font-size: 64px; font-weight: 600; }
+    #s2-i { left: 900px; top: 450px; font-size: 64px; font-weight: 600; }
+    #s2-j { left: 900px; top: 528px; font-size: 156px; font-weight: 800; letter-spacing: -0.035em; }
+  </style>
+  <div id="root" data-composition-id="s2" data-width="1920" data-height="1080">
+    <div id="s2-shake">
+      <div id="s2-ringcam" data-layout-ignore>
+        <div id="s2-ringpos">
+          <div id="s2-ring">
+            <div class="s2-slot" style="transform: rotateY(0deg) translateZ(1150px)"><img src="assets/img/card0.jpg" /><div class="s2-chip">MON</div></div>
+            <div class="s2-slot" style="transform: rotateY(36deg) translateZ(1150px)"><img src="assets/img/card3.jpg" /><div class="s2-chip">TUE</div></div>
+            <div class="s2-slot" style="transform: rotateY(72deg) translateZ(1150px)"><img src="assets/img/card6.jpg" /><div class="s2-chip">WED</div></div>
+            <div class="s2-slot" style="transform: rotateY(108deg) translateZ(1150px)"><img src="assets/img/card1.jpg" /><div class="s2-chip">THU</div></div>
+            <div class="s2-slot" style="transform: rotateY(144deg) translateZ(1150px)"><img src="assets/img/card8.jpg" /><div class="s2-chip">FRI</div></div>
+            <div class="s2-slot" style="transform: rotateY(180deg) translateZ(1150px)"><img src="assets/img/card4.jpg" /><div class="s2-chip">SAT</div></div>
+            <div class="s2-slot" style="transform: rotateY(216deg) translateZ(1150px)"><img src="assets/img/card7.jpg" /><div class="s2-chip">SUN</div></div>
+            <div class="s2-slot" style="transform: rotateY(252deg) translateZ(1150px)"><img src="assets/img/card2.jpg" /><div class="s2-chip">MON</div></div>
+            <div class="s2-slot" style="transform: rotateY(288deg) translateZ(1150px)"><img src="assets/img/card9.jpg" /><div class="s2-chip">TUE</div></div>
+            <div class="s2-slot" style="transform: rotateY(324deg) translateZ(1150px)"><img src="assets/img/card5.jpg" /><div class="s2-chip">WED</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="s2-cam">
+        <div id="s2-card">
+          <div id="s2-frame">
+            <video id="s2-video" class="clip" data-start="0" data-duration="9.7" data-media-start="0" data-track-index="0" src="assets/footage/v2.mp4" data-has-audio="true" playsinline></video>
+          </div>
+        </div>
+      </div>
+
+      <div id="s2-a1" class="s2-txt s2-r"><span class="w">Be</span><span class="w">the</span></div>
+      <div id="s2-a2" class="s2-txt s2-r"><span class="w s2-o">hero</span></div>
+      <div id="s2-b1" class="s2-txt s2-l"><span class="w">of</span><span class="w">their</span></div>
+      <div id="s2-b2" class="s2-txt s2-l"><span class="w">feed.</span></div>
+      <div id="s2-c" class="s2-txt s2-r"><span class="w">Every</span></div>
+      <div id="s2-d1" class="s2-txt s2-l"><span class="w">single</span></div>
+      <div id="s2-d2" class="s2-txt s2-l"><span class="w s2-o">day.</span></div>
+      <div id="s2-e" class="s2-txt s2-r"><span class="w">Scroll-</span></div>
+      <div id="s2-f" class="s2-txt s2-l"><span class="w s2-o">stopping</span></div>
+      <div id="s2-g" class="s2-txt s2-l"><span class="w">videos</span><span class="w">for</span><span class="w">your</span><span class="w">practice.</span></div>
+      <div id="s2-daily">DAILY</div>
+      <div id="s2-h" class="s2-txt"><span class="w">You</span><span class="w">focus</span><span class="w">on</span><span class="w">the</span><span class="w">cases.</span></div>
+      <div id="s2-i" class="s2-txt"><span class="w">I</span><span class="w">make</span><span class="w">sure</span><span class="w">you're</span></div>
+      <div id="s2-j" class="s2-txt"><span class="w">the</span><span class="w s2-o">name.</span></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const $ = (s) => document.querySelectorAll(s);
+      const LEFT = { x: -400, y: 0, scale: 0.5, rotationY: 21 };
+      const PHONE = { x: 0, y: 0, scale: 0.84, rotationY: 0 };
+      const PHONE_L = { x: -470, y: 0, scale: 0.8, rotationY: 18 };
+      const FULL = { x: 0, y: 0, scale: 1, rotationY: 0 };
+      const ROUND = "inset(0px 0px 0px 0px round 56px)";
+      const PHONE_CLIP = "inset(0px 656px 0px 656px round 60px)";
+      const ROUND0 = "inset(0px 0px 0px 0px round 0px)";
+      const wordIn = (el, at) =>
+        tl.fromTo(el, { opacity: 0, y: 22, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.24, ease: "power4.out" }, at);
+      const out = (sel, at) => {
+        tl.to(sel, { opacity: 0, filter: "blur(10px)", duration: 0.16, ease: "power2.in", stagger: 0.025 }, at);
+        tl.set(sel, { visibility: "hidden" }, at + 0.34);
+      };
+
+      tl.fromTo("#s2-card", { ...LEFT, transformOrigin: "50% 50%" }, { ...PHONE, duration: 0.7, ease: "power3.inOut" }, 0.02);
+      tl.fromTo("#s2-frame", { clipPath: ROUND }, { clipPath: PHONE_CLIP, duration: 0.7, ease: "power3.inOut" }, 0.02);
+
+      // The orbit: a ring of feed cards flies in from depth and turns slowly behind the phone
+      tl.fromTo("#s2-ringpos", { z: -3600, rotationX: -7, opacity: 0 }, { z: -1350, rotationX: -7, opacity: 0.62, duration: 1.3, ease: "expo.out" }, 0.25);
+      tl.fromTo("#s2-ring", { rotationY: 60 }, { rotationY: -6, duration: 1.4, ease: "expo.out" }, 0.25);
+      tl.to("#s2-ring", { rotationY: -18, duration: 2.05, ease: "none" }, 1.65);
+
+      // "Be the hero / of their feed."
+      const a1 = $("#s2-a1 .w"), b1 = $("#s2-b1 .w");
+      wordIn(a1[0], 0.45); wordIn(a1[1], 0.59); wordIn($("#s2-a2 .w")[0], 0.68);
+      wordIn(b1[0], 1.06); wordIn(b1[1], 1.15); wordIn($("#s2-b2 .w")[0], 1.29);
+      out("#s2-a1 .w, #s2-a2 .w, #s2-b1 .w, #s2-b2 .w", 1.66);
+
+      // "Every single day." — every card in the orbit gets its day
+      wordIn($("#s2-c .w")[0], 1.83); wordIn($("#s2-d1 .w")[0], 2.09); wordIn($("#s2-d2 .w")[0], 2.42);
+      tl.fromTo(".s2-chip", { opacity: 0, scale: 0.5, y: 14 }, { opacity: 1, scale: 1, y: 0, duration: 0.34, ease: "back.out(2.2)", stagger: 0.06 }, 1.85);
+      out("#s2-c .w, #s2-d1 .w, #s2-d2 .w", 3.0);
+      tl.to(".s2-chip", { opacity: 0, duration: 0.2, ease: "power2.in" }, 3.55);
+
+      // "scroll-stopping": the feed spins up like a thumb flick… and stops dead
+      tl.to("#s2-ring", { rotationY: -300, duration: 1.0, ease: "power2.in" }, 3.7);
+      tl.to("#s2-ring", { rotationY: -288, duration: 0.7, ease: "elastic.out(1, 0.45)" }, 4.7);
+      tl.to("#s2-shake", { keyframes: [{ x: -16, y: 7 }, { x: 11, y: -6 }, { x: -6, y: 3 }, { x: 2, y: -1 }, { x: 0, y: 0 }], duration: 0.36, ease: "none" }, 4.71);
+      wordIn($("#s2-e .w")[0], 4.4);
+      tl.fromTo("#s2-f .w", { opacity: 0, scale: 1.25, filter: "blur(12px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 4.71);
+      const g = $("#s2-g .w");
+      [5.12, 5.52, 5.61, 5.74].forEach((t, i) => wordIn(g[i], t));
+      tl.fromTo("#s2-daily", { opacity: 0, scale: 0.6, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(2.4)" }, 6.41);
+      out("#s2-e .w, #s2-f .w, #s2-g .w, #s2-daily", 6.88);
+
+      // The orbit recedes; the phone steps aside for the promise
+      tl.to("#s2-ringpos", { z: -4200, opacity: 0, duration: 0.6, ease: "power3.in" }, 6.9);
+      tl.to("#s2-card", { ...PHONE_L, duration: 0.6, ease: "power3.inOut" }, 6.95);
+      const h = $("#s2-h .w");
+      [7.07, 7.22, 7.59, 7.68, 7.74].forEach((t, i) => wordIn(h[i], t));
+      const i4 = $("#s2-i .w");
+      [8.25, 8.35, 8.54, 8.72].forEach((t, i) => wordIn(i4[i], t));
+      const j = $("#s2-j .w");
+      wordIn(j[0], 8.89); wordIn(j[1], 8.99);
+      out("#s2-h .w, #s2-i .w, #s2-j .w", 9.22);
+
+      // Zoom through the phone into the next scene
+      tl.to("#s2-card", { ...FULL, duration: 0.42, ease: "power3.in" }, 9.28);
+      tl.to("#s2-frame", { clipPath: ROUND0, duration: 0.42, ease: "power3.in" }, 9.28);
+
+      window.__timelines["s2"] = tl;
+    })();
+  </script>
+</template>

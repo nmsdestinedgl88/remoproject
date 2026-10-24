@@ -1,0 +1,36 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Outfit", sans-serif; color: #22162F; background: #F7F3EE; }
+    .bu-hit { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; opacity: 0; }
+    #bu-1 { font-size: 190px; }
+    #bu-2 { font-size: 300px; color: #7851A9; }
+    #bu-3 { font-size: 230px; }
+    .bu-o { color: #FF6600; margin-right: 0.18em; }
+    #bu-wipe { position: absolute; inset: 0; background: #FF6600; }
+  </style>
+  <div id="root" data-composition-id="burst" data-width="1920" data-height="1080">
+    <div id="bu-1" class="bu-hit">Scroll-stopping.</div>
+    <div id="bu-2" class="bu-hit">Daily.</div>
+    <div id="bu-3" class="bu-hit"><span class="bu-o">$7</span>a day.</div>
+    <div id="bu-wipe" data-layout-ignore></div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const hit = (sel, at, end) => {
+        tl.fromTo(sel, { opacity: 0, scale: 1.14, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.16, ease: "expo.out" }, at);
+        tl.set(sel, { opacity: 0 }, end);
+      };
+      hit("#bu-1", 0.0, 0.5);
+      hit("#bu-2", 0.5, 0.95);
+      hit("#bu-3", 0.95, 2.45);
+
+      // The orange stroke sweeps the frame full: the logo is built from it next
+      tl.fromTo("#bu-wipe", { clipPath: "polygon(-700px 0px, -690px 0px, -66px 1080px, -700px 1080px)" },
+        { clipPath: "polygon(-700px 0px, 1960px 0px, 2584px 1080px, -700px 1080px)", duration: 0.7, ease: "power3.in" }, 1.72);
+
+      window.__timelines["burst"] = tl;
+    })();
+  </script>
+</template>
