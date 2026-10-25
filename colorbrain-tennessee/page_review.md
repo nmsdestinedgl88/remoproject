@@ -47,3 +47,7 @@ Following your instruction, I used the initial uploaded batch and corrected star
 **Checked by eye after the edit: all 20 pages now show exactly 3 star badges.** (Bristol's badges are bare stars, not circled, in the original art - left as the generator drew them.) Remaining known imperfections: Nashville still has two guitars; Chattanooga's car sits on rails but the art still shows an overhead cable; added badges are a little plainer than the generator's hatched ones.
 
 **Still missing: sheet 1** (Welcome, Flag, Memphis, Tiptonville). Render it with `sheet_01_prompt.md` (the original wording) and upload it; I'll apply the same star-count fixes.
+
+
+## Update - sheet 1 received
+Sheet 1 (Welcome, Flag, Memphis, Tiptonville) arrived and was processed the same way. Star counts as drawn: Welcome 5 -> 3 (two erased), Flag 3 (the flag's own three stars), Memphis 4 -> 3 (one erased), Tiptonville 4 -> 3 (one erased). **All 24 art pages now have exactly three star badges** (checked by eye). Note: Memphis's riverboat has garbled, unreadable hull text from the generator; it reads as texture at print size.

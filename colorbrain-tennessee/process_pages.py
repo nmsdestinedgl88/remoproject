@@ -11,6 +11,9 @@ HEADER = 0.19                                  # fraction of page kept free for 
 # Star-count corrections, in 1x page pixels: erase excess badges with white discs,
 # draw missing badges (circle + five-point star, same weight as the generator's badges).
 EDITS = {
+ "01_welcome":       dict(erase=[(192, 187, 34), (656, 620, 34)]),
+ "03_memphis":       dict(erase=[(430, 765, 32)]),
+ "04_tiptonville":   dict(erase=[(652, 447, 30)]),
  "09_franklin":      dict(erase=[(627, 413, 34)]),
  "12_cookeville":    dict(erase=[(483, 311, 36), (636, 311, 18)]),
  "22_bristol":       dict(erase=[(20, 568, 34), (645, 576, 34), (434, 673, 30)]),
