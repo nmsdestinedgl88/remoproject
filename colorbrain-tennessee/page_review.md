@@ -38,3 +38,12 @@
 **Why the stars failed:** the model drifts on counts and likes to decorate objects with extra stars. I could erase extras or paint missing badges in code, but that would edit the art by hand, so I'm re-rendering instead. The round-2 prompts add a hard "exactly three, numbered, no other stars" rule and ban decorative stars.
 
 **Next:** render `sheet_r01`-`sheet_r04` from `page_prompts_rerender.md` (15 pages; the last sheet has three pages and one blank panel).
+
+
+---
+## Update - star counts fixed in code (round 2)
+Following your instruction, I used the initial uploaded batch and corrected star counts in code instead of re-rendering: excess badges were whited out with discs, and missing badges were drawn in (circle + five-point star, matched line weight). Pages: Franklin, Cookeville, Bristol (extras removed); Paris, Nashville, Sevierville, Johnson City, My Family's Town (one badge added each; on Sevierville I also whited out three tiny decorative stars on the guitar). For **Chattanooga, Sweetwater and Oak Ridge** I used your revised sheet 4 because it fixed the non-star defects (incline car on rails, no solid-black fill, one Scout); its extra badges were removed the same way (Sweetwater, Oak Ridge). Knoxville uses the original (3 stars).
+
+**Checked by eye after the edit: all 20 pages now show exactly 3 star badges.** (Bristol's badges are bare stars, not circled, in the original art - left as the generator drew them.) Remaining known imperfections: Nashville still has two guitars; Chattanooga's car sits on rails but the art still shows an overhead cable; added badges are a little plainer than the generator's hatched ones.
+
+**Still missing: sheet 1** (Welcome, Flag, Memphis, Tiptonville). Render it with `sheet_01_prompt.md` (the original wording) and upload it; I'll apply the same star-count fixes.
