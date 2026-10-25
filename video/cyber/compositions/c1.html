@@ -1,0 +1,173 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Inter", sans-serif; color: #fff; overflow: hidden; }
+    .ft { position: absolute; inset: 0; }
+    .ft video { position: absolute; left: 0; top: 0; width: 720px; height: 1280px; object-fit: cover; }
+    .shade { position: absolute; left: 0; right: 0; pointer-events: none; }
+    .shade.top { top: 0; height: 420px; background: linear-gradient(180deg, rgba(5, 8, 16, 0.55), rgba(5, 8, 16, 0)); }
+    .shade.bot { bottom: 0; height: 640px; background: linear-gradient(0deg, rgba(5, 8, 16, 0.6), rgba(5, 8, 16, 0)); }
+    .glass { position: absolute; border-radius: 32px; overflow: hidden; opacity: 0;
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.07));
+      backdrop-filter: blur(26px) saturate(1.7); -webkit-backdrop-filter: blur(26px) saturate(1.7);
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 -1px 0 rgba(255, 255, 255, 0.1); }
+    .glass.dark { background: linear-gradient(140deg, rgba(30, 32, 48, 0.55), rgba(12, 14, 24, 0.38)); }
+    .sheen { position: absolute; top: -30%; bottom: -30%; left: 0; width: 44%; pointer-events: none;
+      background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0)); }
+    .cap { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; }
+    .pill { display: inline-block; padding: 16px 30px 18px; border-radius: 30px; text-align: center; line-height: 1.08;
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06));
+      backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6);
+      border: 1px solid rgba(255, 255, 255, 0.34); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.5); opacity: 0; }
+    .pill .l1 { display: block; font-size: 40px; font-weight: 600; letter-spacing: -0.02em; }
+    .pill .l2 { display: block; font-size: 62px; font-weight: 800; letter-spacing: -0.035em; }
+    .w { display: inline-block; margin-right: 0.22em; opacity: 0; }
+    .o { color: #FF7A1F; }
+    .lab { font-size: 22px; font-weight: 700; letter-spacing: 0.14em; color: rgba(255, 255, 255, 0.78); }
+    .wipe-band { position: absolute; left: 0; top: 0; width: 420px; height: 1280px; background: #FF6600; transform-origin: 0 0; }
+
+    .notif { left: 24px; right: 24px; height: 118px; display: flex; align-items: center; gap: 20px; padding: 0 24px; border-radius: 30px; }
+    .notif .ic { width: 70px; height: 70px; border-radius: 18px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+    .notif .tx { flex: 1; min-width: 0; }
+    .notif .row { display: flex; justify-content: space-between; font-size: 20px; font-weight: 700; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.72); }
+    .notif .t { font-size: 29px; font-weight: 700; margin-top: 4px; }
+    .notif .s { font-size: 23px; font-weight: 500; color: rgba(255, 255, 255, 0.75); margin-top: 2px; }
+    #c1-n1 { top: 60px; } #c1-n2 { top: 192px; }
+    #c1-dash { left: 36px; width: 648px; top: 690px; height: 380px; padding: 26px 28px; }
+    #c1-dash .hd { display: flex; align-items: center; gap: 14px; }
+    #c1-dot { width: 16px; height: 16px; border-radius: 50%; background: #FF3B30; box-shadow: 0 0 14px #FF3B30; }
+    #c1-live { margin-left: auto; padding: 6px 14px; border-radius: 999px; background: rgba(255, 59, 48, 0.85); font-size: 20px; font-weight: 800; letter-spacing: 0.12em; }
+    #c1-radar { position: absolute; left: 26px; top: 86px; width: 268px; height: 268px; }
+    #c1-stats { position: absolute; left: 324px; top: 96px; right: 26px; }
+    #c1-stats .big { font-size: 70px; font-weight: 800; letter-spacing: -0.03em; margin-top: 6px; font-variant-numeric: tabular-nums; }
+    #c1-siege { display: inline-block; margin-top: 22px; padding: 10px 18px; border-radius: 14px; background: rgba(255, 59, 48, 0.9); font-size: 24px; font-weight: 800; letter-spacing: 0.08em; opacity: 0; }
+    #c1-player { left: 50px; width: 620px; top: 700px; height: 360px; }
+    #c1-screen { position: absolute; left: 16px; right: 16px; top: 16px; height: 250px; border-radius: 22px; overflow: hidden;
+      background: radial-gradient(120% 90% at 30% 20%, rgba(120, 81, 169, 0.55), rgba(10, 12, 22, 0.75)); }
+    #c1-play { position: absolute; left: 50%; top: 50%; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25); border: 1px solid rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; }
+    #c1-rec { position: absolute; left: 18px; top: 16px; padding: 6px 14px; border-radius: 999px; background: rgba(255, 59, 48, 0.9); font-size: 20px; font-weight: 800; letter-spacing: 0.12em; }
+    #c1-meta { position: absolute; left: 30px; right: 30px; bottom: 22px; display: flex; align-items: center; justify-content: space-between; }
+    #c1-meta b { font-size: 28px; font-weight: 700; }
+    #c1-bar { position: absolute; left: 16px; right: 16px; top: 262px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
+    #c1-fill { width: 100%; height: 100%; background: #FF3B30; transform-origin: 0 50%; }
+
+  </style>
+  <div id="root" data-composition-id="c1" data-width="720" data-height="1280">
+    <div id="c1-ft" class="ft">
+      <video id="c1-video" class="clip" data-start="0" data-duration="10.0" data-media-start="0.0" data-track-index="0" src="assets/footage/n1.mp4" data-has-audio="true" playsinline></video>
+    </div>
+    <div class="shade top"></div>
+    <div class="shade bot"></div>
+    <div class="wipe-band" id="c1-band"></div>
+    <div id="c1-n1" class="glass notif"><div class="ic" style="background: linear-gradient(140deg, #FF5A4E, #D8261C)">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5z"/><path d="M12 8v4M12 16h.01"/></svg></div>
+      <div class="tx"><div class="row"><span>SECURITY ALERT</span><span>now</span></div><div class="t">Unusual sign-in detected</div><div class="s">Unknown device · 2:14 AM</div></div><div class="sheen"></div></div>
+    <div id="c1-n2" class="glass notif"><div class="ic" style="background: linear-gradient(140deg, #FF9A3D, #FF6600)">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+      <div class="tx"><div class="row"><span>PASSWORDS</span><span>1m ago</span></div><div class="t">Password found in a leak</div><div class="s">Change it on 3 accounts</div></div><div class="sheen"></div></div>
+    <div id="c1-k1" class="cap" style="top: 1000px"><div class="pill"><span class="l1"><span class="w">Your</span><span class="w">clients</span><span class="w">don't</span><span class="w">know</span></span><span class="l2"><span class="w">they're</span><span class="w">at</span><span class="w o">risk.</span></span></div></div>
+
+    <div id="c1-dash" class="glass dark">
+      <div class="hd"><div id="c1-dot"></div><div class="lab">THREAT MONITOR</div><div id="c1-live">LIVE</div></div>
+      <svg id="c1-radar" viewBox="0 0 268 268" fill="none">
+        <circle cx="134" cy="134" r="128" stroke="rgba(255,255,255,0.28)" stroke-width="2"/>
+        <circle cx="134" cy="134" r="88" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+        <circle cx="134" cy="134" r="46" stroke="rgba(255,255,255,0.16)" stroke-width="2"/>
+        <path d="M134 6v256M6 134h256" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+        <g id="c1-sweep"><path d="M134 134 L134 6 A128 128 0 0 1 224 44 Z" fill="url(#c1-sg)"/></g>
+        <defs><linearGradient id="c1-sg" x1="134" y1="6" x2="224" y2="60" gradientUnits="userSpaceOnUse"><stop stop-color="#FF7A1F" stop-opacity="0.65"/><stop offset="1" stop-color="#FF7A1F" stop-opacity="0"/></linearGradient></defs>
+        <g id="c1-blips" fill="#FF3B30">
+          <circle cx="190" cy="80" r="8"/><circle cx="70" cy="96" r="7"/><circle cx="200" cy="180" r="8"/>
+          <circle cx="96" cy="200" r="7"/><circle cx="160" cy="120" r="6"/><circle cx="58" cy="160" r="7"/><circle cx="150" cy="226" r="6"/><circle cx="222" cy="128" r="7"/>
+        </g>
+      </svg>
+      <div id="c1-stats"><div class="lab">INTRUSION ATTEMPTS</div><div class="big" id="c1-count">0</div><div id="c1-siege">UNDER SIEGE</div></div>
+      <div class="sheen"></div>
+    </div>
+    <div id="c1-k2" class="cap" style="top: 96px"><div class="pill"><span class="l1"><span class="w">Right</span><span class="w">now,</span><span class="w">their</span><span class="w">data</span></span><span class="l2"><span class="w">could</span><span class="w">be</span><span class="w">under</span><span class="w o">siege.</span></span></div></div>
+
+    <div id="c1-k3" class="cap" style="top: 96px"><div class="pill"><span class="l1"><span class="w">Your</span><span class="w">clients</span><span class="w">would</span></span><span class="l2"><span class="w">have</span><span class="w">no</span><span class="w o">idea.</span></span></div></div>
+
+    <div id="c1-player" class="glass">
+      <div id="c1-screen"><div id="c1-rec">● ON VIDEO</div>
+        <div id="c1-play"><svg width="40" height="40" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div></div>
+      <div id="c1-bar"><div id="c1-fill"></div></div>
+      <div id="c1-meta"><b>Your competitor</b><span class="lab">POSTED TODAY</span></div>
+      <div class="sheen"></div>
+    </div>
+    <div id="c1-k4" class="cap" style="top: 96px"><div class="pill"><span class="l1"><span class="w">Your</span><span class="w">competition</span></span><span class="l2"><span class="w">is</span><span class="w">on</span><span class="w o">video.</span></span></div></div>
+
+    <div id="c1-k5" class="cap" style="top: 560px"><div class="pill"><span class="l2" style="font-size: 104px"><span class="w">You're</span><span class="w o">not.</span></span></div></div>
+
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const $ = (s) => document.querySelectorAll(s);
+      const one = (s) => document.querySelector(s);
+      // Apple-style motion: springs in (soft overshoot, blur clears), quick clean exits
+      const glassIn = (sel, at, extra = {}) =>
+        tl.fromTo(sel, { opacity: 0, scale: 0.9, y: 36, filter: "blur(14px)", ...extra },
+          { opacity: 1, scale: 1, y: 0, x: 0, rotationX: 0, rotationY: 0, filter: "blur(0px)", duration: 0.62, ease: "back.out(1.35)" }, at);
+      const glassOut = (sel, at) => {
+        tl.to(sel, { opacity: 0, scale: 0.95, y: -14, filter: "blur(12px)", duration: 0.26, ease: "power2.in" }, at);
+        tl.set(sel, { visibility: "hidden" }, at + 0.3);
+      };
+      const sheen = (sel, at) => tl.fromTo(sel + " .sheen", { x: -340, skewX: -18 }, { x: 900, skewX: -18, duration: 0.9, ease: "power2.inOut" }, at);
+      const wordIn = (el, at) =>
+        tl.fromTo(el, { opacity: 0, y: 14, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.24, ease: "power3.out" }, at);
+      // a caption pill: the glass lands first, then its words build on the voice
+      const cap = (id, times, outAt) => {
+        const p = "#" + id + " .pill";
+        tl.fromTo(p, { opacity: 0, scale: 0.86, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.42, ease: "back.out(1.6)" }, times[0] - 0.12);
+        const w = $("#" + id + " .w");
+        times.forEach((t, i) => wordIn(w[i], t));
+        if (outAt != null) glassOut(p, outAt);
+      };
+      const count = (sel, from, to, at, dur, fmt) => {
+        const o = { v: from }, el = one(sel);
+        tl.fromTo(o, { v: from }, { v: to, duration: dur, ease: "power2.out", onUpdate: () => { el.textContent = fmt(o.v); } }, at);
+      };
+      const comma = (v) => Math.round(v).toLocaleString("en-US");
+
+      tl.fromTo("#c1-ft", { scale: 1.06, transformOrigin: "50% 40%" }, { scale: 1.0, duration: 10.0, ease: "sine.out" }, 0);
+
+      // the orange stroke from the logo wipes the film open
+      tl.fromTo("#c1-band", { x: -1200, skewX: 30 }, { x: 800, skewX: 30, duration: 0.62, ease: "power3.inOut" }, 0);
+      tl.fromTo("#c1-ft", { clipPath: "polygon(-800px 0px, -790px 0px, -51px 1280px, -800px 1280px)" },
+        { clipPath: "polygon(-800px 0px, 800px 0px, 1539px 1280px, -800px 1280px)", duration: 0.62, ease: "power3.inOut" }, 0.02);
+      tl.set("#c1-ft", { clipPath: "none" }, 0.7);
+
+      // shot 1 (close-up): iOS-style alerts drop in over a face that doesn't know yet
+      glassIn("#c1-n1", 0.7, { y: -170, scale: 0.96 }); sheen("#c1-n1", 1.0);
+      glassIn("#c1-n2", 1.45, { y: -170, scale: 0.96 }); sheen("#c1-n2", 1.75);
+      cap("c1-k1", [0.42, 0.56, 0.91, 1.08, 1.22, 1.37, 1.44], 2.6);
+      tl.to("#c1-n1, #c1-n2", { y: -220, opacity: 0, filter: "blur(10px)", duration: 0.3, ease: "power3.in", stagger: 0.04 }, 2.6);
+
+      // shot 2 (control room): a live threat monitor
+      glassIn("#c1-dash", 3.0); sheen("#c1-dash", 3.5);
+      tl.fromTo("#c1-sweep", { rotation: 0, svgOrigin: "134 134" }, { rotation: 1080, svgOrigin: "134 134", duration: 3.9, ease: "none" }, 3.0);
+      tl.fromTo("#c1-blips circle", { opacity: 0, scale: 0, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(3)", stagger: 0.18 }, 3.4);
+      tl.fromTo("#c1-dot", { opacity: 1 }, { opacity: 0.25, duration: 0.4, ease: "sine.inOut", yoyo: true, repeat: 7 }, 3.1);
+      count("#c1-count", 0, 1284, 3.2, 3.4, comma);
+      tl.fromTo("#c1-siege", { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.24, ease: "expo.out" }, 4.97);
+      tl.to("#c1-dash", { keyframes: [{ x: -10 }, { x: 8 }, { x: -5 }, { x: 2 }, { x: 0 }], duration: 0.3, ease: "none" }, 4.98);
+      cap("c1-k2", [3.4, 3.57, 4.1, 4.24, 4.51, 4.67, 4.79, 4.97], 5.3);
+      cap("c1-k3", [5.55, 5.66, 6.02, 6.13, 6.25, 6.47], 6.85);
+      glassOut("#c1-dash", 6.9);
+
+      // "your competition is talking about it on video"
+      glassIn("#c1-player", 7.25); sheen("#c1-player", 7.8);
+      tl.fromTo("#c1-fill", { scaleX: 0 }, { scaleX: 1, duration: 1.9, ease: "none" }, 7.35);
+      tl.fromTo("#c1-play", { scale: 0.6 }, { scale: 1, duration: 0.5, ease: "back.out(2.4)" }, 7.5);
+      cap("c1-k4", [7.29, 7.4, 7.96, 8.65, 8.78], 9.2);
+      glassOut("#c1-player", 9.2);
+
+      // "You're not."
+      cap("c1-k5", [9.4, 9.53], null);
+
+      window.__timelines["c1"] = tl;
+    })();
+  </script>
+</template>

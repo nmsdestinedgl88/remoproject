@@ -8,3 +8,5 @@ mechanics/renders/*
 !mechanics/renders/sevun_mechanics_9x16.mp4
 tax/renders/*
 !tax/renders/sevun_tax_9x16.mp4
+cyber/renders/*
+!cyber/renders/sevun_cyber_9x16.mp4
