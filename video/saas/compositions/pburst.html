@@ -1,0 +1,38 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; font-family: "Inter", sans-serif; color: #fff; overflow: hidden; background: #0A0D16; }
+    .pb-blob { position: absolute; border-radius: 50%; }
+    #pb-a { width: 700px; height: 700px; left: -220px; top: 120px; background: radial-gradient(circle, rgba(255, 102, 0, 0.55), transparent 65%); }
+    #pb-b { width: 760px; height: 760px; right: -260px; bottom: 60px; background: radial-gradient(circle, rgba(120, 81, 169, 0.6), transparent 65%); }
+    .pb-hit { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; opacity: 0; }
+    .pb-hit div { padding: 26px 44px 30px; border-radius: 40px; font-size: 96px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.02; text-align: center;
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06)); backdrop-filter: blur(26px) saturate(1.7); -webkit-backdrop-filter: blur(26px) saturate(1.7);
+      border: 1px solid rgba(255, 255, 255, 0.38); box-shadow: 0 26px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.55); }
+    .o { color: #FF7A1F; }
+    #pb-wipe { position: absolute; inset: 0; background: #FF6600; }
+  </style>
+  <div id="root" data-composition-id="pburst" data-width="720" data-height="1280">
+    <div id="pb-a" class="pb-blob"></div><div id="pb-b" class="pb-blob"></div>
+    <div id="pb-1" class="pb-hit"><div>Tell the<br /><span class="o">story.</span></div></div>
+    <div id="pb-2" class="pb-hit"><div>Every<br />day.</div></div>
+    <div id="pb-3" class="pb-hit"><div><span class="o">$7</span><br />a day.</div></div>
+    <div id="pb-wipe" data-layout-ignore></div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#pb-a", { x: 0, y: 0 }, { x: 160, y: -120, duration: 2.35, ease: "sine.inOut" }, 0);
+      tl.fromTo("#pb-b", { x: 0, y: 0 }, { x: -140, y: 100, duration: 2.35, ease: "sine.inOut" }, 0);
+      const hit = (sel, at, end) => {
+        tl.fromTo(sel, { opacity: 0, scale: 1.12, filter: "blur(12px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, at);
+        tl.set(sel, { opacity: 0 }, end);
+      };
+      hit("#pb-1", 0.0, 0.5);
+      hit("#pb-2", 0.5, 0.95);
+      hit("#pb-3", 0.95, 2.35);
+      tl.fromTo("#pb-wipe", { clipPath: "polygon(-800px 0px, -790px 0px, -51px 1280px, -800px 1280px)" },
+        { clipPath: "polygon(-800px 0px, 760px 0px, 1499px 1280px, -800px 1280px)", duration: 0.66, ease: "power3.in" }, 1.66);
+      window.__timelines["pburst"] = tl;
+    })();
+  </script>
+</template>

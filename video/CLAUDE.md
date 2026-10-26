@@ -1,6 +1,6 @@
 # Sevun promo videos — house rules
 
-These apply to every edition in this folder (sevun, mechanics, tax, cyber, and any new one).
+These apply to every edition in this folder (sevun, mechanics, tax, cyber, saas, and any new one).
 
 ## Captions
 
