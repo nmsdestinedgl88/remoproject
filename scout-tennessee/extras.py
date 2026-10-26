@@ -80,7 +80,7 @@ def title_page():
     b = [f'<rect width="{W}" height="480" fill="{BLUE}"/><rect y="480" width="{W}" height="14" fill="{YEL}"/>']
     b.append(T(425, 210, "Scout Explores", 78, "white") + T(425, 360, "Tennessee", 134, "white"))
     b.append(f'<rect x="100" y="395" width="650" height="84" rx="42" fill="{YEL}"/>')
-    b.append(T(425, 428, "A Tennessee Coloring Book for Kids — Cities, Towns", 22) + T(425, 458, "& Fun Facts from Across the State (Ages 6–9)", 22))
+    b.append(T(425, 428, "A Tennessee Coloring Book for Kids: Towns & Fun Facts", 22) + T(425, 458, "from Across the Volunteer State (Ages 6-9)", 22))
     b.append(G(425, 880, scout("wave"), 1.45))
     b.append(T(425, 995, "Featuring Scout, the explorer fox", 23, PINK, weight="normal"))
     b.append(T(425, 1055, PUB, 28, NAVY))

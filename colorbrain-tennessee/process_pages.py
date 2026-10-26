@@ -6,7 +6,7 @@ from multiprocessing import Pool
 
 OUT = "pages_final"; os.makedirs(OUT, exist_ok=True)
 CW = 2680; CH = int(round(CW * 1.4142))       # 4x working canvas (A4 ratio)
-HEADER = 0.19                                  # fraction of page kept free for title + fact
+HEADER = 0.215                                 # fraction of page kept free for title + fact
 
 # Star-count corrections, in 1x page pixels: erase excess badges with white discs,
 # draw missing badges (circle + five-point star, same weight as the generator's badges).
@@ -26,9 +26,22 @@ EDITS = {
  "23_family":        dict(add=[(576, 830)]),
 }
 
+def hollow_solid(big, rim=10):
+    """Turn big solid-black fills into outlined shapes (keeps a rim of `rim` px at 4x)."""
+    from PIL import ImageFilter
+    mask = big.point(lambda v: 0 if v < 150 else 255)             # black = 0
+    core = mask.filter(ImageFilter.MaxFilter(2 * rim + 1))         # erode the black regions
+    arr = np.array(big); keep = np.array(core) == 0
+    arr[keep] = 255
+    return Image.fromarray(arr)
+
 def apply_edits(big, name):
     from PIL import ImageDraw
     import math
+    if name == "19_gatlinburg":          # shaded bear body (mid-grey) -> white; keep dark outline, eyes, nose
+        arr = np.array(big); y0, y1, x0, x1 = 575 * 4, 892 * 4, 225 * 4, 470 * 4
+        reg = arr[y0:y1, x0:x1]; reg[(reg >= 70) & (reg < 150)] = 255
+        big = Image.fromarray(arr)
     e = EDITS.get(name)
     if not e: return big
     d = ImageDraw.Draw(big)
@@ -65,7 +78,7 @@ def process(path):
     ys, xs = np.where(b)
     top = ys.min() / big.height
     # shrink so the art starts below the header zone
-    s = 1.0 if top >= HEADER - 0.02 else min(1.0, (1 - HEADER) / (1 - top))
+    s = 1.0 if top >= HEADER else min(1.0, (1 - HEADER) / (1 - top))
     pw, ph = int(big.width * s), int(big.height * s)
     pg = big.resize((pw, ph), Image.LANCZOS) if s < 1 else big
     canvas = Image.new("L", (CW, CH), 255)
