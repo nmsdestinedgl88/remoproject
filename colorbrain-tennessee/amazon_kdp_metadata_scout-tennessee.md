@@ -8,7 +8,7 @@ Order follows KDP's setup flow. **CHECK** = could not be confirmed live inside K
   - Checked against the accepted front cover: the cover reads "A Tennessee Coloring Book for Kids: Towns & Fun Facts from Across the Volunteer State (Ages 6-9)". (An earlier plan said "Cities, Towns"; the cover omits "Cities", so the metadata follows the cover.)
 - **Series:** Scout Explores - volume: leave blank (a Nigeria edition exists; add it to the series if it is already on KDP under the same series name - **CHECK**).
 - **Edition number:** 1
-- **Author:** KDP asks for first and last name boxes. The brand is "JCF Publishing". **CHECK:** reuse the author/contributor entry used for the Nigeria edition; if it used a person's name or the brand split across the two boxes, match it exactly. Publisher imprint name (optional field): JCF Publishing.
+- **Author:** JCF Publishing (as you specified). KDP has first/last name boxes: enter First name **JCF**, Last name **Publishing** - **CHECK** this matches the entry used for the Nigeria edition. Publisher imprint name (optional field): JCF Publishing.
 - **Contributors (illustrator):** optional; none entered (illustrations are AI-generated, see section 6).
 - **Publishing rights:** I own the copyright and I hold necessary publishing rights.
 - **Sexually explicit content:** No.
@@ -53,7 +53,7 @@ Top-10 sales/day thresholds: **not available** (kindlescout/Kindle Ranker unreac
 - **Trim size:** 8.27 x 11.69 in (A4) - **CHECK** that KDP lists this exact size for paperback and treats it as "large trim".
 - **Bleed:** No bleed (the print interior's art sits at least 0.5 in from the gutter edge and 0.3 in from the outer edge; front-matter color is inset, not full-bleed).
 - **Printed page count:** 56 (even). Interior file: `Scout-Explores-Tennessee_print_interior_A4.pdf` - page 1 is a half-title page that replaces the cover so single-sided pages keep their blank backs and printed page numbers stay true. The cover is NOT in the interior file.
-- **Cover:** KDP takes the cover as a separate file. **The wrap-around cover (back + spine + front) is not built yet:** the back cover has not been uploaded. Wrap spec: 56 pages x 0.002252 in = 0.126 in spine; full wrap 16.912 x 11.943 in = 5074 x 3583 px at 300 dpi (**CHECK** in KDP's cover calculator). Spine under 80 pages: no spine text.
+- **Cover:** KDP takes the cover as a separate file. **Wrap-around cover built:** `cover_scout-tennessee_wrap.pdf` (back + spine + front, 5074 x 3583 px at 300 dpi). Source art is only ~86 dpi at print size, so a 4K re-render of both covers is recommended before printing. Wrap spec: 56 pages x 0.002252 in = 0.126 in spine; full wrap 16.912 x 11.943 in = 5074 x 3583 px at 300 dpi (**CHECK** in KDP's cover calculator). Spine under 80 pages: no spine text.
 - **Cover finish:** matte or glossy - your choice.
 - **Expanded Distribution:** eligibility for this trim size - **CHECK**.
 - **Color in the interior:** the title page, copyright, belongs, checklist and end pages use brand colors; with a black-ink interior KDP prints them in grayscale.
