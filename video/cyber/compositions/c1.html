@@ -57,7 +57,6 @@
     <div id="c1-ft" class="ft">
       <video id="c1-video" class="clip" data-start="0" data-duration="10.0" data-media-start="0.0" data-track-index="0" src="assets/footage/n1.mp4" data-has-audio="true" playsinline></video>
     </div>
-    <div class="shade top"></div>
     <div class="shade bot"></div>
     <div class="wipe-band" id="c1-band"></div>
     <div id="c1-n1" class="glass notif"><div class="ic" style="background: linear-gradient(140deg, #FF5A4E, #D8261C)">
@@ -66,7 +65,6 @@
     <div id="c1-n2" class="glass notif"><div class="ic" style="background: linear-gradient(140deg, #FF9A3D, #FF6600)">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
       <div class="tx"><div class="row"><span>PASSWORDS</span><span>1m ago</span></div><div class="t">Password found in a leak</div><div class="s">Change it on 3 accounts</div></div><div class="sheen"></div></div>
-    <div id="c1-k1" class="cap" style="top: 1000px"><div class="pill"><span class="l1"><span class="w">Your</span><span class="w">clients</span><span class="w">don't</span><span class="w">know</span></span><span class="l2"><span class="w">they're</span><span class="w">at</span><span class="w o">risk.</span></span></div></div>
 
     <div id="c1-dash" class="glass dark">
       <div class="hd"><div id="c1-dot"></div><div class="lab">THREAT MONITOR</div><div id="c1-live">LIVE</div></div>
@@ -85,9 +83,7 @@
       <div id="c1-stats"><div class="lab">INTRUSION ATTEMPTS</div><div class="big" id="c1-count">0</div><div id="c1-siege">UNDER SIEGE</div></div>
       <div class="sheen"></div>
     </div>
-    <div id="c1-k2" class="cap" style="top: 96px"><div class="pill"><span class="l1"><span class="w">Right</span><span class="w">now,</span><span class="w">their</span><span class="w">data</span></span><span class="l2"><span class="w">could</span><span class="w">be</span><span class="w">under</span><span class="w o">siege.</span></span></div></div>
 
-    <div id="c1-k3" class="cap" style="top: 96px"><div class="pill"><span class="l1"><span class="w">Your</span><span class="w">clients</span><span class="w">would</span></span><span class="l2"><span class="w">have</span><span class="w">no</span><span class="w o">idea.</span></span></div></div>
 
     <div id="c1-player" class="glass">
       <div id="c1-screen"><div id="c1-rec">● ON VIDEO</div>
@@ -96,9 +92,7 @@
       <div id="c1-meta"><b>Your competitor</b><span class="lab">POSTED TODAY</span></div>
       <div class="sheen"></div>
     </div>
-    <div id="c1-k4" class="cap" style="top: 96px"><div class="pill"><span class="l1"><span class="w">Your</span><span class="w">competition</span></span><span class="l2"><span class="w">is</span><span class="w">on</span><span class="w o">video.</span></span></div></div>
 
-    <div id="c1-k5" class="cap" style="top: 560px"><div class="pill"><span class="l2" style="font-size: 104px"><span class="w">You're</span><span class="w o">not.</span></span></div></div>
 
   </div>
   <script>
@@ -119,6 +113,7 @@
         tl.fromTo(el, { opacity: 0, y: 14, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.24, ease: "power3.out" }, at);
       // a caption pill: the glass lands first, then its words build on the voice
       const cap = (id, times, outAt) => {
+        if (!one("#" + id)) return;  // captions switched off in build.py
         const p = "#" + id + " .pill";
         tl.fromTo(p, { opacity: 0, scale: 0.86, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.42, ease: "back.out(1.6)" }, times[0] - 0.12);
         const w = $("#" + id + " .w");

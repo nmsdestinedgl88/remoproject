@@ -10,6 +10,8 @@ import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ORANGE = "#FF7A1F"
+# On-screen caption pills. Off for this edition: the glass animations carry the shots, the voice carries the words.
+CAPTIONS = False
 
 # Root timeline: (id, start, duration, media file, media-start)
 SCENES = [("c1", 0.0, 10.0, "n1", 0.0), ("c2", 10.0, 9.75, "n2", 0.0), ("c3", 19.75, 7.3, "n3", 1.3), ("c4", 27.05, 9.6, "n4", 0.0)]
@@ -63,6 +65,7 @@ JS = """
         tl.fromTo(el, { opacity: 0, y: 14, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.24, ease: "power3.out" }, at);
       // a caption pill: the glass lands first, then its words build on the voice
       const cap = (id, times, outAt) => {
+        if (!one("#" + id)) return;  // captions switched off in build.py
         const p = "#" + id + " .pill";
         tl.fromTo(p, { opacity: 0, scale: 0.86, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.42, ease: "back.out(1.6)" }, times[0] - 0.12);
         const w = $("#" + id + " .w");
@@ -79,6 +82,8 @@ JS = """
 
 def cap(id_, top, l1, l2, big=None):
     """Two-line caption pill. l1/l2 are lists of words; a word wrapped as '*word*' is orange."""
+    if not CAPTIONS:
+        return ""
     def words(ws):
         out = []
         for w in ws:
@@ -100,8 +105,7 @@ def scene(sid, dur, media, mstart, css, body, js):
     <div id="{sid}-ft" class="ft">
       <video id="{sid}-video" class="clip" data-start="0" data-duration="{dur}" data-media-start="{mstart}" data-track-index="0" src="assets/footage/{media}.mp4" data-has-audio="true" playsinline></video>
     </div>
-    <div class="shade top"></div>
-    <div class="shade bot"></div>
+{'    <div class="shade top"></div>\n' if CAPTIONS else ''}    <div class="shade bot"></div>
 {body}  </div>
   <script>
     (function () {{{JS}
