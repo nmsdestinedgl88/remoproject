@@ -1,0 +1,170 @@
+[
+ {
+  "key": "welcome",
+  "title": "Welcome to Arizona!",
+  "zone": "Central",
+  "nickname": "",
+  "fact": "Arizona became the 48th state in 1912. Its flag has a copper star in the middle!"
+ },
+ {
+  "key": "flag",
+  "title": "The Arizona Flag",
+  "zone": "Central",
+  "nickname": "",
+  "fact": "Color the flag: red and gold rays, a copper star and a blue field. The 13 rays shine like a desert sunset!"
+ },
+ {
+  "key": "yuma",
+  "title": "Yuma",
+  "zone": "Western",
+  "nickname": "Sunniest City",
+  "fact": "Yuma is called the sunniest city on Earth by Guinness World Records!"
+ },
+ {
+  "key": "lake_havasu_city",
+  "title": "Lake Havasu City",
+  "zone": "Western",
+  "nickname": "",
+  "fact": "London Bridge was brought here from England and rebuilt in 1971!"
+ },
+ {
+  "key": "kingman",
+  "title": "Kingman",
+  "zone": "Western",
+  "nickname": "Heart of Route 66",
+  "fact": "Kingman sits on one of the longest stretches of old Route 66 left in America!"
+ },
+ {
+  "key": "williams",
+  "title": "Williams",
+  "zone": "Northern",
+  "nickname": "Gateway to the Grand Canyon",
+  "fact": "Williams has a train that rides 65 miles to the Grand Canyon!"
+ },
+ {
+  "key": "grand_canyon_village",
+  "title": "Grand Canyon Village",
+  "zone": "Northern",
+  "nickname": "",
+  "fact": "The Grand Canyon is more than a mile deep!"
+ },
+ {
+  "key": "page",
+  "title": "Page",
+  "zone": "Northern",
+  "nickname": "",
+  "fact": "Near Page, the Colorado River curves into a giant horseshoe at Horseshoe Bend!"
+ },
+ {
+  "key": "flagstaff",
+  "title": "Flagstaff",
+  "zone": "Northern",
+  "nickname": "",
+  "fact": "Pluto was discovered at Flagstaff's Lowell Observatory in 1930!"
+ },
+ {
+  "key": "sedona",
+  "title": "Sedona",
+  "zone": "Northern",
+  "nickname": "",
+  "fact": "Sedona is famous for its glowing red rock towers!"
+ },
+ {
+  "key": "prescott",
+  "title": "Prescott",
+  "zone": "Northern",
+  "nickname": "",
+  "fact": "Prescott was Arizona's first territorial capital, starting in 1864!"
+ },
+ {
+  "key": "holbrook",
+  "title": "Holbrook",
+  "zone": "Northern",
+  "nickname": "",
+  "fact": "Near Holbrook, the Petrified Forest has wood that turned into colorful stone!"
+ },
+ {
+  "key": "payson",
+  "title": "Payson",
+  "zone": "Central",
+  "nickname": "",
+  "fact": "Payson holds a big rodeo every August with cowboys and cowgirls!"
+ },
+ {
+  "key": "phoenix",
+  "title": "Phoenix",
+  "zone": "Central",
+  "nickname": "Valley of the Sun",
+  "fact": "Phoenix is named for a bird that rises from its ashes, and old Hohokam canals once watered the valley!"
+ },
+ {
+  "key": "scottsdale",
+  "title": "Scottsdale",
+  "zone": "Central",
+  "nickname": "",
+  "fact": "Scottsdale has Taliesin West, a desert home and school designed by Frank Lloyd Wright!"
+ },
+ {
+  "key": "tempe",
+  "title": "Tempe",
+  "zone": "Central",
+  "nickname": "",
+  "fact": "Tempe Town Lake was made by building dams on the Salt River!"
+ },
+ {
+  "key": "mesa",
+  "title": "Mesa",
+  "zone": "Central",
+  "nickname": "",
+  "fact": "Mesa is one of Arizona's biggest cities, and \"mesa\" means \"table\" in Spanish!"
+ },
+ {
+  "key": "casa_grande",
+  "title": "Casa Grande",
+  "zone": "Southern",
+  "nickname": "",
+  "fact": "Near Casa Grande, a huge building built by ancient desert people still stands!"
+ },
+ {
+  "key": "tucson",
+  "title": "Tucson",
+  "zone": "Southern",
+  "nickname": "",
+  "fact": "Saguaro National Park near Tucson protects giant saguaro cacti that can live 150 to 200 years!"
+ },
+ {
+  "key": "sierra_vista",
+  "title": "Sierra Vista",
+  "zone": "Southern",
+  "nickname": "Hummingbird Capital",
+  "fact": "Sierra Vista is called the Hummingbird Capital of the United States!"
+ },
+ {
+  "key": "tombstone",
+  "title": "Tombstone",
+  "zone": "Southern",
+  "nickname": "Town Too Tough to Die",
+  "fact": "Tombstone is called \"The Town Too Tough to Die\" and still looks like the Old West!"
+ },
+ {
+  "key": "bisbee",
+  "title": "Bisbee",
+  "zone": "Southern",
+  "nickname": "",
+  "fact": "In Bisbee, visitors can ride into the old Queen Mine wearing a hard hat and headlamp!"
+ },
+ {
+  "key": "family",
+  "title": "My Family's Town",
+  "zone": "Central",
+  "nickname": "",
+  "fact": "My family is from ________. Draw your family inside the frame!"
+ },
+ {
+  "key": "goodbye",
+  "title": "Goodbye, Arizona!",
+  "zone": "Central",
+  "nickname": "",
+  "fact": "Scout visited 20 towns across Arizona. Which was your favorite?"
+ }
+]
