@@ -8,3 +8,4 @@ onetake/*/*.log
 onetake/*/_frames/
 onetake/*/*.render.json
 onetake/*/fr/
+onetake/*/render*.log

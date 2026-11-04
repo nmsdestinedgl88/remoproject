@@ -1,0 +1,372 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Manetrust pitch bundle v3 · profiles</title>
+<style>
+  html, body { margin: 0; background: #E9E2E9; overflow: hidden; }
+  canvas { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+</style>
+<script src="assets.js"></script>
+<script src="motion.js"></script>
+</head><body>
+<canvas id="c"></canvas>
+<script>
+// v3 · five profiles in one take down a paper table. Each stop: the document animates while its title and three
+// bullets land (what it is · who it's for · what it does); the camera glides to the next. Ends on the call to action.
+'use strict';
+const W = 1080, H = 1920;
+const {clamp, lerp, seg, sstep, ease} = OM;
+const INK = '#333333', HOT = '#800080', BG = '#E9E2E9', CARD = '#FFFFFF', MUTE = '#8A7F8A', GREY = '#B9B5B9', LINE = '#D8CFD8';
+const cv = document.getElementById('c'), cx = cv.getContext('2d');
+const DPR = window.devicePixelRatio || 1;
+cv.width = W * DPR; cv.height = H * DPR;
+const SL = {w: 330, h: 186};
+const TAB = {w: 560, h: 760};
+const PHONE = {w: 340, h: 640};
+// timeline: stop i arrives at A[i]
+const STEP = 6.6, A = [0.25, 0, 0, 0, 0].map((_, i) => 0.25 + i * STEP);
+const END = A[4] + STEP;                  // the end card arrives
+const DUR = END + 4.6;
+const Y = i => 1000 + i * 2000;           // world centre of stop i
+const T = {
+  tabHit: A[3] + 0.15, scroll0: A[3] + 0.9, scroll1: A[3] + 4.6,
+  phoneHit: A[4] + 0.15, playStart: A[4] + 1.0, playEnd: A[4] + 4.8,
+};
+</script>
+<script src="shared.js"></script>
+<script>
+'use strict';
+// ---------- copy ----------
+const PROFILES = [
+  {title: 'BUSINESS PLAN', items: [
+    ['WHAT IT IS', 'The full blueprint of your business: market, model, operations and financials.'],
+    ['WHO IT’S FOR', 'Banks, investors, grant bodies and development finance institutions.'],
+    ['WHAT IT DOES', 'Shows lenders and investors your business can carry the funding you seek.']]},
+  {title: 'EXECUTIVE SUMMARY', items: [
+    ['WHAT IT IS', 'Your whole story on one page, readable at a glance.'],
+    ['WHO IT’S FOR', 'Busy investors, partners and decision-makers.'],
+    ['WHAT IT DOES', 'Built to win the first read and open the door to a meeting.']]},
+  {title: 'PITCH DECK', items: [
+    ['WHAT IT IS', 'Your story in five sharp sections, from vision to financials.'],
+    ['WHO IT’S FOR', 'Investors and partners in the meeting room.'],
+    ['WHAT IT DOES', 'Keeps your pitch clear, focused and on time.']]},
+  {title: 'PITCH SITE', items: [
+    ['WHAT IT IS', 'Your pitch live online, shared with a single link.'],
+    ['WHO IT’S FOR', 'Anyone you meet, message or follow up with.'],
+    ['WHAT IT DOES', 'Makes your pitch easy to find, read and pass on.']]},
+  {title: 'PITCH VIDEO', items: [
+    ['WHAT IT IS', 'Your pitch told in one minute, on camera.'],
+    ['WHO IT’S FOR', 'Investors and partners who watch before they meet.'],
+    ['WHAT IT DOES', 'Puts a face and a voice to your numbers.']]},
+];
+const TXT = {num: 0.2, title: 0.35, b: [1.4, 2.55, 3.7]};      // offsets from A[i]
+const DOC_DY = -395;                                             // document centre relative to the stop
+
+// ---------- camera ----------
+let KEYS = [], HITS = [];
+function buildCamera() {
+  KEYS = [{t: 0, x: 540, y: Y(0), zoom: 1}];
+  for (let i = 0; i < 5; i++) {
+    KEYS.push({t: A[i] + STEP - 1.0, x: 540, y: Y(i), zoom: 1, curve: ease.sineInOut});
+    const nt = i < 4 ? A[i + 1] : END, ny = Y(i + 1);
+    KEYS.push({t: nt, x: 540, y: ny, zoom: 1, curve: ease.cubicInOut});
+  }
+  KEYS.push({t: DUR, x: 540, y: Y(5), zoom: 1});
+  HITS = [[A[0] + 3.15, 6, 10], [A[1] + 2.25, 5, 11], [A[4] + 0.15, 4, 12], [END + 0.9, 8, 9]];
+}
+function camAt(t) {
+  const c = OM.camera(t, KEYS, {W, H});
+  let x = c.x, y = c.y, rot = c.rot;
+  for (const [th, amp, decay] of HITS) { const s = OM.shake(t, th, {amp, decay, seed: Math.round(th * 100)}); x += s.x; y += s.y; rot += s.rot; }
+  return {x: Math.round(x * 16) / 16, y: Math.round(y * 16) / 16, zoom: c.zoom, rot};
+}
+
+// ---------- ground (longer table than v2) ----------
+function ground() {
+  cx.setTransform(DPR, 0, 0, DPR, 0, 0); cx.fillStyle = BG; cx.fillRect(0, 0, W, H);
+  mat(VIEW);
+  const tw = 1500, th = tw * 1920 / 1080;
+  const r0 = Math.floor((CAM.y - 1400 + 900) / th), r1 = Math.floor((CAM.y + 1400 + 900) / th);
+  for (let r = r0; r <= r1; r++) for (let q = 0; q < 3; q++) {
+    cx.save(); cx.translate(-1260 + q * tw + (q % 2) * tw, -900 + r * th + (Math.abs(r) % 2) * th); cx.scale(q % 2 ? -1 : 1, Math.abs(r) % 2 ? -1 : 1);
+    cx.drawImage(PAPER, 0, 0, tw, th); cx.restore();
+  }
+  // a different brand shade at each stop
+  const shades = ['rgba(233,226,233,0.6)', 'rgba(214,196,214,0.6)', 'rgba(205,205,210,0.6)', 'rgba(222,208,222,0.6)', 'rgba(196,170,196,0.6)', 'rgba(233,226,233,0.6)'];
+  const g = cx.createLinearGradient(0, Y(0), 0, Y(5));
+  shades.forEach((s, i) => g.addColorStop(i / 5, s));
+  cx.globalCompositeOperation = 'multiply'; cx.fillStyle = g; cx.fillRect(-1200, CAM.y - 2000, 3500, 4000); cx.globalCompositeOperation = 'source-over';
+}
+
+// ---------- text ----------
+function wrap(c, text, maxW) {
+  const words = text.split(' '), out = []; let line = '';
+  for (const w of words) { const t = line ? line + ' ' + w : w; if (c.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; }
+  out.push(line); return out;
+}
+function profileText(i, t) {
+  const a = A[i], y0 = Y(i), P = PROFILES[i];
+  mat(VIEW);
+  const L = 84;
+  // number and title
+  const n = OM.wordRise(t, a + TXT.num);
+  cx.save(); cx.globalAlpha = n.op; label(cx, `0${i + 1} / 05`, L, y0 - 34 + n.y, 30, HOT, 'JBM', 'left', 4); cx.restore();
+  const tl = OM.wordRise(t, a + TXT.title, {dist: 40});
+  cx.save(); cx.globalAlpha = tl.op; cx.translate(L, y0 + 92 + tl.y); cx.scale(tl.s, tl.s); label(cx, P.title, 0, 0, 104, INK); cx.restore();
+  // underline that draws on
+  const ul = ease.expoOut(seg(t, a + TXT.title + 0.25, a + TXT.title + 0.85));
+  cx.fillStyle = HOT; cx.fillRect(L, y0 + 116, 160 * ul, 10);
+  // bullets
+  let by = y0 + 190;
+  P.items.forEach(([lab, body], k) => {
+    const tb = a + TXT.b[k], w = OM.wordRise(t, tb, {dist: 30});
+    const dot = OM.popIn(t, tb - 0.05);
+    cx.save(); cx.globalAlpha = dot.op; cx.translate(L + 12, by - 9); cx.scale(dot.s, dot.s); cx.fillStyle = HOT; cx.beginPath(); cx.arc(0, 0, 12, 0, 7); cx.fill(); cx.restore();
+    cx.save(); cx.globalAlpha = w.op; cx.translate(0, w.y);
+    label(cx, lab, L + 46, by, 26, HOT, 'JBM', 'left', 3);
+    cx.font = '500 36px Inter';
+    const lines2 = wrap(cx, body, W - L - 46 - 30);
+    lines2.forEach((ln, j) => label(cx, ln, L + 46, by + 46 + j * 44, 36, INK, 'Inter'));
+    cx.restore();
+    by += 160;
+  });
+}
+
+// ---------- 1 · business plan: open, pages flip, closes on the cover ----------
+const BP = {w: 400, h: 566};
+const FLIPS = [0.35, 0.8, 1.2, 1.55, 1.85].map(d => [d, d + 0.5]);   // pages, quickening
+const CLOSE = [2.5, 3.15];
+function innerPage(c, x, w, h, side, shade = 0) {
+  c.fillStyle = CARD; c.fillRect(x, -h / 2, w, h);
+  if (w > 40) {
+    const pad = 30 * (w / BP.w);
+    label(c, side ? 'FINANCIALS' : 'MARKET', x + pad, -h / 2 + 60, 26 * Math.min(1, w / BP.w + 0.2), HOT, 'Anton');
+    lines(c, x + pad, -h / 2 + 84, w - pad * 2, 9, 30, LINE, [1, 0.9, 0.95, 0.7, 1, 0.85, 0.6, 0.9, 0.5], 7);
+    if (side) for (let k = 0; k < 4; k++) { c.fillStyle = k === 3 ? HOT : GREY; const bh = (30 + k * 22); c.fillRect(x + pad + k * (w - 2 * pad) / 5, h / 2 - 40 - bh, (w - 2 * pad) / 7, bh); }
+  }
+  if (shade) { c.fillStyle = `rgba(51,51,51,${shade})`; c.fillRect(x, -h / 2, w, h); }
+}
+function drawBook(c, t) {
+  const a = A[0], w = BP.w, h = BP.h;
+  const close = ease.cubicInOut(seg(t, a + CLOSE[0], a + CLOSE[1]));
+  const centre = ease.quartOut(seg(t, a + CLOSE[1] - 0.05, a + CLOSE[1] + 0.45));
+  c.translate(-w / 2 * centre, 0);
+  // the open spread: left block, right block
+  if (close < 1) {
+    c.fillStyle = CARD; c.shadowColor = 'rgba(40,10,40,0.22)'; c.shadowBlur = 14 * DPR; c.shadowOffsetY = 10 * DPR;
+    c.fillRect(-w, -h / 2, w, h); noShadow(c);
+    innerPage(c, -w, w, h, 0);
+  }
+  c.fillStyle = CARD; c.shadowColor = 'rgba(40,10,40,0.22)'; c.shadowBlur = 14 * DPR; c.shadowOffsetY = 10 * DPR;
+  c.fillRect(0, -h / 2, w, h); noShadow(c);
+  innerPage(c, 0, w, h, 1);
+  // spine shading
+  if (close < 1) { const g = c.createLinearGradient(-30, 0, 30, 0); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.5, 'rgba(0,0,0,0.12)'); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(-30, -h / 2, 60, h); }
+  // pages turning right → left
+  FLIPS.forEach(([s, e]) => {
+    const u = seg(t, a + s, a + e); if (u <= 0 || u >= 1) return;
+    const th = Math.PI * ease.cubicInOut(u), cw = w * Math.cos(th);
+    if (cw > 0) innerPage(c, 0, cw, h, 1, 0.25 * (1 - Math.cos(th)));
+    else innerPage(c, cw, -cw, h, 0, 0.25 * (1 + Math.cos(th)));
+  });
+  // the cover closes over from the left and lands face up
+  if (close > 0) {
+    const th = Math.PI * close, cw = w * Math.cos(th);
+    if (cw > 0) innerPage(c, -cw, cw, h, 0, 0.2 * close);
+    else { c.save(); c.translate(-cw / 2, 0); c.scale(-cw / w, 1); c.scale(w / 420, w / 420); drawPlan(c, 420, 594); c.restore(); }
+  }
+}
+
+// ---------- 2 · executive summary flies out of a branded folder ----------
+function drawFolderBack(c, fw, fh) {
+  c.fillStyle = '#5E005E'; rrect(c, -fw / 2, -fh / 2, fw, fh, 16); c.fill();
+  c.fillStyle = '#5E005E'; rrect(c, -fw / 2, -fh / 2 - 34, 180, 50, 12); c.fill();
+}
+function drawFolderFront(c, fw, fh) {
+  const top = -fh / 2 + 90;
+  c.fillStyle = HOT; c.beginPath(); c.moveTo(-fw / 2, top); c.lineTo(-fw / 2 + 60, top - 30); c.lineTo(fw / 2, top - 30); c.lineTo(fw / 2, fh / 2 - 16); c.arcTo(fw / 2, fh / 2, fw / 2 - 16, fh / 2, 16); c.lineTo(-fw / 2 + 16, fh / 2); c.arcTo(-fw / 2, fh / 2, -fw / 2, fh / 2 - 16, 16); c.closePath(); c.fill();
+  noShadow(c);
+  circuit(c, fw / 2 - 20, top + 10, 0.7, 'rgba(255,255,255,0.45)', -1);
+  c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(-fw / 2 + 120, top + 120, 80, 0, 7); c.fill();
+  const lh = 120, lw = lh * LOGO.width / LOGO.height; c.drawImage(LOGO, -fw / 2 + 120 - lw / 2, top + 120 - lh / 2 - 4, lw, lh);
+  label(c, 'YOUR PITCH PACK', -fw / 2 + 230, top + 110, 34, '#FFFFFF');
+  label(c, 'MANETRUST SOLUTIONS', -fw / 2 + 232, top + 146, 18, 'rgba(255,255,255,0.8)', 'JBM', 'left', 2);
+}
+function folderScene(t, base) {
+  const a = A[1], fw = 600, fh = 440;
+  const rise = ease.cubicOut(seg(t, a + 0.45, a + 1.2));           // slides up out of the pocket
+  const fly = seg(t, a + 1.2, a + 2.25);                           // lifts, turns, lands beside the folder
+  const fk = ease.smoother(fly), z = 0.6 * Math.sin(Math.PI * fly);
+  const settle = ease.cubicInOut(seg(t, a + 1.2, a + 2.2));
+  // folder moves down-left and shrinks as the summary leaves
+  const fo = {x: base.x + lerp(0, -230, settle), y: base.y + lerp(150, 250, settle), rot: lerp(0, -0.1, settle), s: lerp(1, 0.62, settle)};
+  // the summary: inside the folder, then out
+  const sumIn = {x: base.x + 20, y: base.y + 150 - 30 - 300 * rise};
+  const so = {x: lerp(sumIn.x, base.x + 120, fk), y: lerp(sumIn.y, base.y - 30, fk), rot: lerp(0, Math.PI * 2 + 0.05, ease.cubicOut(fly)), s: lerp(0.9, 0.98, fk)};
+  const out = fly > 0;
+  // folder back
+  withBody(fo, 0, c => drawFolderBack(c, fw, fh));
+  const drawSum = () => withBody(so, z, c => drawSummary(c, 380, 537));
+  if (!out) {
+    // clipped by the folder's pocket: draw, then the front over it
+    drawSum();
+    withBody(fo, 0, c => drawFolderFront(c, fw, fh));
+  } else {
+    withBody(fo, 0, c => drawFolderFront(c, fw, fh));
+    const im = OM.impact(t, a + 2.25, {decay: 10, omega: 24, sqx: 0.04, sqy: 0.05});
+    if (t >= a + 2.25) { so.sx = im.sx; so.sy = im.sy; }
+    drawSum();
+  }
+  return {x: so.x - 190, y: so.y - 268, w: 380, h: 537};
+}
+
+// ---------- 3 · deck: the cover first, then all five spread vertically ----------
+function deckScene(t, base) {
+  const a = A[2];
+  const enter = spr(t - (a + 0.15));
+  const k = (i) => ease.expoOut(seg(t, a + 1.15 + i * 0.09, a + 2.05 + i * 0.09));
+  for (let i = 4; i >= 0; i--) {
+    const ki = k(i), s = lerp(1.32, 0.72, ease.cubicInOut(seg(t, a + 1.1, a + 2.1)));
+    const o = {x: base.x + lerp(i * 4, 0, ki), y: base.y + lerp(i * 4, (i - 2) * 140, ki), rot: lerp(-0.03, 0, ki), s: s * lerp(0.86, 1, enter)};
+    const z = i === 0 ? 0.6 * (1 - enter) : 0;
+    cx.save(); cx.globalAlpha = Math.min(1, enter * 1.6);
+    withBody(o, z, c => drawSlide(c, i));
+    cx.restore();
+  }
+  return {x: base.x - 220, y: base.y - 380, w: 440, h: 760};
+}
+const spr = tau => tau <= 0 ? 0 : OM.spring(tau, 0.62, 16);
+
+// ---------- 5 · a branded video in the phone ----------
+function videoFrame(c, x, y, w, h, t, playing) {
+  c.fillStyle = HOT; c.fillRect(x, y, w, h);
+  const g = c.createRadialGradient(x + w * 0.7, y + h * 0.2, 10, x + w * 0.6, y + h * 0.3, w); g.addColorStop(0, '#B04AB0'); g.addColorStop(1, 'rgba(128,0,128,0)'); c.fillStyle = g; c.fillRect(x, y, w, h);
+  circuit(c, x + w - 14, y + 24, 0.6, 'rgba(255,255,255,0.45)', -1);
+  const bob = playing ? Math.sin(t * 5.2) * 3 : 0;
+  c.fillStyle = '#F6F1F6'; c.beginPath(); c.arc(x + w * 0.5, y + h * 0.4 + bob, h * 0.14, 0, 7); c.fill();
+  c.beginPath(); c.ellipse(x + w * 0.5, y + h * 0.93 + bob, w * 0.32, h * 0.34, 0, Math.PI, 0); c.fill();
+  c.fillStyle = INK; c.fillRect(x + w * 0.38, y + h * 0.74 + bob, w * 0.24, h * 0.26);
+  // the brand: logo bug top-left, a lower third
+  c.fillStyle = 'rgba(255,255,255,0.92)'; rrect(c, x + 12, y + 12, 64, 64, 14); c.fill();
+  const lh = 54, lw = lh * LOGO.width / LOGO.height; c.drawImage(LOGO, x + 44 - lw / 2, y + 16, lw, lh);
+  const lt = playing ? ease.expoOut(seg(t, T.playStart + 0.5, T.playStart + 1.1)) : (t >= T.playEnd ? 1 : 0);
+  if (lt > 0) {
+    c.save(); c.globalAlpha = lt;
+    c.fillStyle = 'rgba(51,51,51,0.88)'; c.fillRect(x, y + h - 62, w * lt, 46);
+    c.fillStyle = '#FFFFFF'; c.fillRect(x, y + h - 62, 8, 46);
+    label(c, 'MANETRUST SOLUTIONS', x + 22, y + h - 32, 18, '#FFFFFF', 'JBM', 'left', 2);
+    c.restore();
+  }
+}
+
+// ---------- end card ----------
+function endCard(t) {
+  const y0 = Y(5);
+  mat(VIEW);
+  const lg = OM.popIn(t, END - 0.15);
+  cx.save(); cx.globalAlpha = lg.op; cx.translate(540, y0 - 420 + lg.dy); cx.scale(lg.s, lg.s);
+  cx.fillStyle = '#FFFFFF'; cx.shadowColor = 'rgba(40,10,40,0.2)'; cx.shadowBlur = 30 * DPR; cx.shadowOffsetY = 16 * DPR;
+  cx.beginPath(); cx.arc(0, 0, 190, 0, 7); cx.fill(); noShadow();
+  cx.strokeStyle = HOT; cx.lineWidth = 10; cx.beginPath(); cx.arc(0, 0, 176, 0, 7); cx.stroke();
+  const lh = 250, lw = lh * LOGO.width / LOGO.height; cx.drawImage(LOGO, -lw / 2, -lh / 2 - 6, lw, lh);
+  cx.restore();
+  [['WE ENSURE YOU', 120, INK, 'Anton', 0.25], ['STAY READY,', 120, HOT, 'Anton', 0.4]].forEach(([s, size, col, f, dl], i) => {
+    const w = OM.wordRise(t, END + dl, {dist: 40});
+    cx.save(); cx.globalAlpha = w.op; cx.translate(540, y0 - 30 + i * 140 + w.y); cx.scale(w.s, w.s); label(cx, s, 0, 0, size, col, f, 'center'); cx.restore();
+  });
+  const w2 = OM.wordRise(t, END + 0.7, {dist: 30});
+  cx.save(); cx.globalAlpha = w2.op; cx.translate(540, y0 + 230 + w2.y); label(cx, 'DM us for your pack today', 0, 0, 56, INK, 'Inter', 'center'); cx.restore();
+  const d = OM.popIn(t, END + 0.9);
+  cx.save(); cx.globalAlpha = d.op; cx.translate(540, y0 + 380 + d.dy); cx.scale(d.s, d.s);
+  cx.fillStyle = HOT; rrect(cx, -170, -58, 340, 116, 58); cx.fill(); label(cx, 'DM US', 0, 26, 72, '#FFFFFF', 'Anton', 'center', 2);
+  cx.restore();
+}
+
+// ---------- pinned logo (screen) ----------
+function pinnedLogo(t) {
+  const o = 1 - sstep(END - 0.6, END - 0.1, t);
+  if (o <= 0) return;
+  cx.setTransform(DPR, 0, 0, DPR, 0, 0); cx.globalAlpha = o;
+  cx.fillStyle = 'rgba(255,255,255,0.9)'; cx.shadowColor = 'rgba(40,10,40,0.12)'; cx.shadowBlur = 20 * DPR; cx.shadowOffsetY = 6 * DPR;
+  rrect(cx, 48, 40, 128, 140, 26); cx.fill(); noShadow();
+  const lh = 120, lw = lh * LOGO.width / LOGO.height; cx.drawImage(LOGO, 112 - lw / 2, 50, lw, lh);
+  cx.globalAlpha = 1;
+}
+
+// ---------- frame ----------
+let TRACK = {};
+const near = (t, i) => t > A[i] - 1.6 && t < (i < 4 ? A[i + 1] : END) + 0.2;
+function seek(t) {
+  CAM = camAt(t); VIEW = OM.view(CAM, {W, H});
+  ground(); TRACK = {};
+  const base = i => ({x: 540, y: Y(i) + DOC_DY, rot: 0});
+  // 1
+  if (near(t, 0)) {
+    const b = base(0), im = OM.impact(t, A[0] + CLOSE[1], {decay: 10, omega: 22, sqx: 0.04, sqy: 0.05});
+    withBody({...b, rot: -0.02, sx: t >= A[0] + CLOSE[1] ? im.sx : 1, sy: t >= A[0] + CLOSE[1] ? im.sy : 1}, 0, c => { noShadow(c); drawBook(c, t); });
+    TRACK.doc0 = OM.projectBox(VIEW, {x: 540 - BP.w, y: b.y - BP.h / 2, w: BP.w * 2, h: BP.h, op: 1});
+    profileText(0, t);
+  }
+  // 2
+  if (near(t, 1)) { TRACK.doc1 = OM.projectBox(VIEW, {...folderScene(t, base(1)), op: 1}); profileText(1, t); }
+  // 3
+  if (near(t, 2)) { TRACK.doc2 = OM.projectBox(VIEW, {...deckScene(t, base(2)), op: 1}); profileText(2, t); }
+  // 4
+  if (near(t, 3)) {
+    const b = base(3), e = spr(t - A[3]);
+    withBody({...b, s: 0.9 * lerp(0.9, 1, e)}, 0, c => drawTablet(c, t));
+    TRACK.doc3 = OM.projectBox(VIEW, {x: b.x - 252, y: b.y - 342, w: 504, h: 684, op: 1});
+    profileText(3, t);
+  }
+  // 5
+  if (near(t, 4)) {
+    const b = base(4), e = spr(t - A[4]);
+    withBody({...b, s: 1.08 * lerp(0.9, 1, e)}, 0, c => drawPhone(c, t));
+    TRACK.doc4 = OM.projectBox(VIEW, {x: b.x - 184, y: b.y - 346, w: 368, h: 692, op: 1});
+    profileText(4, t);
+  }
+  if (t > END - 1.4) { endCard(t); TRACK.end = OM.projectBox(VIEW, {x: 170, y: Y(5) - 620, w: 740, h: 1060, op: 1}); }
+  vignette();
+  pinnedLogo(t);
+}
+
+// ---------- contract ----------
+function stateKey(t) { seek(t); return JSON.parse(JSON.stringify(TRACK)); }
+window.__meta = {dur: DUR, fps: 30, inFrame: {doc0: [A[0], A[0] + 5], doc2: [A[2] + 0.5, A[2] + 5], doc4: [A[4] + 0.2, A[4] + 5], end: [END + 1.2, DUR, 'whole']}};
+window.__seek = async t => { seek(t); return true; };
+window.__track = t => stateKey(t);
+window.__motion = (t0, t1) => {
+  let d = OM.screenTravel(camAt(t0), camAt(t1), camAt((t0 + t1) / 2), {W, H});
+  const a = stateKey(t0), b = stateKey(t1);
+  for (const k in a) if (b[k]) d = Math.max(d, Math.hypot(a[k].x - b[k].x, a[k].y - b[k].y), Math.abs(a[k].w - b[k].w));
+  for (let i = 0; i < 5; i++) if (t1 > A[i] && t0 < A[i] + 5) d = Math.max(d, 40);   // things moving inside each stop
+  return d;
+};
+window.__events = () => {
+  const ev = [];
+  A.forEach((a, i) => {
+    if (i) ev.push([a - 0.9, 'travel', 540]);
+    ev.push([a + TXT.title, 'title', 540]);
+    TXT.b.forEach((o, k) => ev.push([a + o, 'bullet', 540, k]));
+  });
+  FLIPS.forEach(([s]) => ev.push([A[0] + s, 'page', 600]));
+  ev.push([A[0] + CLOSE[1], 'close', 540]);
+  ev.push([A[1] + 0.45, 'slide-out', 540], [A[1] + 1.2, 'launch', 540], [A[1] + 2.25, 'land-paper', 600]);
+  ev.push([A[2] + 0.15, 'card', 540]); for (let i = 0; i < 5; i++) ev.push([A[2] + 1.15 + i * 0.09, 'spread', 540, i]);
+  ev.push([T.tabHit, 'wake', 540], [T.scroll0, 'scroll', 540]);
+  ev.push([T.phoneHit, 'wake', 540], [T.playStart, 'play', 540], [T.playEnd, 'done', 540]);
+  ev.push([END - 0.9, 'travel', 540], [END + 0.25, 'end', 540], [END + 0.9, 'dm', 540]);
+  return ev.sort((p, q) => p[0] - q[0]);
+};
+window.T = T; window.A = A; window.DUR = DUR;
+
+function loadImg(src) { return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = src; }); }
+window.__ready = (async () => {
+  const faces = [new FontFace('Anton', `url(${ASSETS.anton})`), new FontFace('Inter', `url(${ASSETS.inter})`, {weight: '500'}), new FontFace('JBM', `url(${ASSETS.mono})`, {weight: '500'})];
+  for (const f of faces) { await f.load(); document.fonts.add(f); }
+  [PAPER, LOGO] = await Promise.all([loadImg(ASSETS.paper), loadImg(ASSETS.logo)]);
+  buildSite(); buildCamera(); seek(0);
+  const q = new URLSearchParams(location.search);
+  if (q.has('t')) seek(parseFloat(q.get('t')));
+  return true;
+})();
+</script>
+</body></html>
