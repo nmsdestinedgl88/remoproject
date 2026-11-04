@@ -67,7 +67,7 @@ export const STORIES: Story[] = [
       {text: 'Applied to Y Combinator **7** times.', hold: 3.5, icon: 'doc'},
       {text: '**3** interviews.', hold: 2.5, icon: 'magnifier'},
       {text: '**1** acceptance: Spring 2026.', hold: 3.5, icon: 'check'},
-      {text: 'Then Minicor raised **$3.8M**.', hold: 3.5, icon: 'coin'},
+      {text: 'Then Minicor raised **$3.8M.**', hold: 3.5, icon: 'coin'},
     ],
   },
   {
@@ -90,7 +90,7 @@ export const STORIES: Story[] = [
     tag: 'NETWORK',
     cards: [
       {text: 'Airbnb, 2008.', hold: 2.5, icon: 'pin'},
-      {text: 'Seeking **$150,000**.', hold: 3.0, icon: 'coin'},
+      {text: 'Seeking **$150,000.**', hold: 3.0, icon: 'coin'},
       {text: 'A friend introduced them to **7** investors.', hold: 3.5, icon: 'handshake'},
       {text: '**5** said no.', hold: 2.5, icon: 'xstamp'},
       {text: '**2** never replied.', hold: 2.5, icon: 'phone'},

@@ -321,7 +321,7 @@ export const PitchVideo: React.FC<{story: Story}> = ({story}) => {
       <Audio
         src={staticFile('pitch/bgm.mp3')}
         volume={(f) =>
-          0.26 *
+          0.4 *
           interpolate(f, [0, fps], [0, 1], clamp) *
           interpolate(f, [durationInFrames - fadeOut, durationInFrames - 1], [1, 0], clamp)
         }
