@@ -1,2 +1,9 @@
 node_modules
 out
+onetake/*/assets.js
+onetake/*/*.png
+onetake/*/*.wav
+onetake/*/*.mp4
+onetake/*/*.log
+onetake/*/_frames/
+onetake/*/*.render.json
