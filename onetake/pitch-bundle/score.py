@@ -5,7 +5,7 @@ import asyncio, json, os, subprocess, sys
 sys.path.insert(0, "/root/.claude/skills/onetake/scripts")
 from sfx_palette import Score, air, glass, wood, sub, bubble, pan_of
 from playwright.async_api import async_playwright
-HERE = os.path.dirname(os.path.abspath(__file__)); DUR = 15.0
+HERE = os.path.dirname(os.path.abspath(__file__)); DUR = 18.5
 
 async def events():
     async with async_playwright() as p:
@@ -22,6 +22,9 @@ for e in EV:
     elif kind == 'hang': P(glass(1046, 1.2, 0.5), t, 0.12, pan, 0.6)
     elif kind == 'land-paper': P(air(0.18, 1800, 600, 1.4, 0.2), t - 0.04, 0.3, pan, 0.3); P(wood(220, 0.09), t, 0.32, pan, 0.25)
     elif kind == 'slide': i = e[3]; P(wood(200 + 25 * i, 0.08), t, 0.34, pan, 0.25); P(glass(F[i], 0.55, 0.7), t, 0.12, pan, 0.4)
+    elif kind == 'tab-knock': P(wood(240, 0.1), t, 0.38, pan, 0.25); P(sub(66, 0.4), t, 0.22, pan, 0.2)
+    elif kind == 'scroll': P(air(1.2, 900, 300, 1.2, 0.15), t, 0.14, pan, 0.4)
+    elif kind == 'bump': P(wood(170, 0.12), t, 0.3, pan, 0.25)
     elif kind == 'phone-knock': P(wood(260, 0.1), t, 0.4, pan, 0.25); P(sub(70, 0.4), t, 0.25, pan, 0.2)
     elif kind == 'play': P(bubble(520, 0.22), t, 0.35, pan, 0.3)
     elif kind == 'done': P(glass(1318, 1.0, 0.6), t, 0.16, pan, 0.5); P(glass(1760, 1.0, 0.4), t + 0.03, 0.1, pan, 0.5)

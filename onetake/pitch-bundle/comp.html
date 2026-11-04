@@ -1,5 +1,5 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>Manetrust pitch bundle</title>
+<html><head><meta charset="utf-8"><title>Manetrust pitch bundle v2</title>
 <style>
   html, body { margin: 0; background: #E9E2E9; overflow: hidden; }
   canvas { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
@@ -9,57 +9,51 @@
 </head><body>
 <canvas id="c"></canvas>
 <script>
-// Manetrust · "Your pitch bundle" · concept C: a chain reaction on a paper tabletop, seen from above.
-// The plan lands → launches the one-page summary → the summary knocks the deck's slides over like dominoes →
-// the last slide lands on the phone's play button → the 1-minute video plays → the bundle gathers → the stamp seals it.
+// Manetrust · "Your pitch bundle" v2 · a chain reaction on a paper tabletop, seen from above.
+// plan lands → launches the one-page summary → summary knocks the 5 deck slides over → the last slide wakes the tablet,
+// the pitch site scrolls → its overscroll bounce knocks the phone → the pitch video plays → the bundle gathers → the stamp.
 'use strict';
-const W = 1080, H = 1920, DUR = 15.0;
+const W = 1080, H = 1920, DUR = 18.5;
 const {clamp, lerp, seg, sstep, ease} = OM;
-const INK = '#333333', HOT = '#800080', BG = '#E9E2E9', CARD = '#FFFFFF', MUTE = '#8A7F8A';
+const INK = '#333333', HOT = '#800080', BG = '#E9E2E9', CARD = '#FFFFFF', MUTE = '#8A7F8A', GREY = '#B9B5B9', LINE = '#D8CFD8';
 const cv = document.getElementById('c'), cx = cv.getContext('2d');
 const DPR = window.devicePixelRatio || 1;
 cv.width = W * DPR; cv.height = H * DPR;
 
 // ---------- timeline (s) ----------
-const T = {
-  planDrop: 0.55, planLand: 1.15,          // the plan falls onto the table
-  sumLaunch: 1.17, sumTop: 1.75, sumFall: 2.35, sumLand: 2.75, sumSkid: 3.0,
-  slide0: 3.0,                              // first slide tips when the summary's edge reaches it
-  phoneHit: 0,                              // set from the run
-  playEnd: 0,                               // 1-minute progress done
-  gather0: 0, gather1: 0, stampDrop: 0, stampHit: 0, lock: 0,
-};
-// slides: 5 standing on edge, falling toward +y
-const SL = {n: 5, x: 540, y0: 1795, gap: 104, w: 330, h: 176};
-const FALL = [];                            // [start, end] per slide
+const T = {planDrop: 0.55, planLand: 1.15, sumLaunch: 1.17, sumTop: 1.75, sumFall: 2.35, sumLand: 2.75, sumSkid: 3.0, slide0: 3.0};
+const SL = {n: 5, x: 540, y0: 1795, gap: 104, w: 330, h: 186};
+const FALL = [];
 (function run() {
   let t = T.slide0;
   for (let i = 0; i < SL.n; i++) {
     const d = 0.42 * Math.pow(0.86, i);
     FALL.push([t, t + d]);
-    // the next one starts when this one has leant far enough to touch it: asin(gap / h)
-    const reach = Math.asin(Math.min(1, SL.gap / SL.h)) / (Math.PI / 2);   // fraction of the fall angle
+    const reach = Math.asin(Math.min(1, SL.gap / SL.h)) / (Math.PI / 2);
     t = t + d * Math.pow(reach, 1 / 2.2);
   }
-  T.phoneHit = FALL[SL.n - 1][1];
-  T.playStart = T.phoneHit + 0.25;
-  T.playEnd = T.playStart + 2.6;
-  T.gather0 = T.playEnd + 0.55; T.gather1 = T.gather0 + 1.1;
+  T.tabHit = FALL[SL.n - 1][1];
+  T.scroll0 = T.tabHit + 0.55; T.scroll1 = T.scroll0 + 3.0;      // the site scrolls
+  T.bump = T.scroll1 + 0.12;                                     // overscroll: the tablet lurches into the phone
+  T.phoneHit = T.bump + 0.22;
+  T.playStart = T.phoneHit + 0.35; T.playEnd = T.playStart + 2.4;
+  T.gather0 = T.playEnd + 0.55; T.gather1 = T.gather0 + 1.15;
   T.stampDrop = T.gather1 + 0.35; T.stampHit = T.stampDrop + 0.55;
   T.lock = T.stampHit + 0.55;
 })();
 
-// ---------- layout (world px; zoom 1 = the frame) ----------
-const PLAN = {x: 540, y: 640, w: 420, h: 540, rot: -0.05};
-const SUM0 = {x: 560, y: 1030, w: 380, h: 500, rot: 0.04};     // tucked under the plan's lower edge
-const SUM1 = {x: 540, y: 1430, w: 380, h: 500, rot: -0.03};    // where it lands
-const PHONE = {x: 540, y: 2690, w: 340, h: 640, rot: 0};
-// the stack at the end, around (540, 1500)
+// ---------- layout (world px) ----------
+const PLAN = {x: 540, y: 640, w: 420, h: 594, rot: -0.05};
+const SUM0 = {x: 560, y: 1040, w: 380, h: 537, rot: 0.04};
+const SUM1 = {x: 540, y: 1430, w: 380, h: 537, rot: -0.03};
+const TAB = {x: 540, y: 2760, w: 560, h: 760, rot: 0};
+const PHONE = {x: 540, y: 3560, w: 340, h: 640, rot: 0};
 const STACK = {
-  plan: {x: 470, y: 1420, rot: -0.07, s: 0.86},
-  sum: {x: 700, y: 1450, rot: 0.08, s: 0.8},
-  deck: {x: 330, y: 1650, rot: -0.16, s: 0.82},
-  phone: {x: 820, y: 1640, rot: 0.12, s: 0.6},
+  plan: {x: 400, y: 1430, rot: -0.08, s: 0.74},
+  sum: {x: 640, y: 1440, rot: 0.08, s: 0.7},
+  deck: {x: 300, y: 1720, rot: -0.16, s: 0.78},
+  tab: {x: 640, y: 1730, rot: 0.05, s: 0.5},
+  phone: {x: 880, y: 1660, rot: 0.14, s: 0.5},
 };
 
 // ---------- camera ----------
@@ -68,22 +62,26 @@ function buildCamera() {
   const e = ease;
   KEYS = [
     {t: 0, x: 540, y: 760, zoom: 1.0},
-    {t: T.planLand, x: 540, y: 820, zoom: 1.08, curve: e.cubicInOut},
+    {t: T.planLand, x: 540, y: 820, zoom: 1.08},
     {t: T.sumTop - 0.1, x: 540, y: 1050, zoom: 1.0, curve: e.sineInOut},
     {t: T.sumLand, x: 540, y: 1420, zoom: 1.05, curve: e.sineInOut},
-    {t: FALL[2][0], x: 540, y: 1820, zoom: 1.02, curve: e.sineInOut},
-    {t: T.phoneHit, x: 540, y: 2420, zoom: 1.05, curve: e.sineInOut},
-    {t: T.playStart + 0.3, x: 540, y: 2640, zoom: 1.32, curve: e.expoInOut},
-    {t: T.playEnd, x: 540, y: 2660, zoom: 1.36, curve: e.sineInOut},
-    {t: T.gather0 + 0.1, x: 540, y: 1750, zoom: 0.62, curve: e.expoInOut},
-    {t: T.gather1, x: 560, y: 1520, zoom: 0.95, curve: e.cubicInOut},
-    {t: T.stampHit, x: 560, y: 1520, zoom: 1.0, curve: e.sineInOut},
-    {t: T.lock + 0.9, x: 560, y: 1800, zoom: 1.0, curve: e.cubicInOut},
-    {t: DUR, x: 560, y: 1800, zoom: 1.0},
+    {t: FALL[2][0], x: 540, y: 1840, zoom: 1.02, curve: e.sineInOut},
+    {t: T.tabHit, x: 540, y: 2420, zoom: 1.0, curve: e.sineInOut},
+    {t: T.scroll0, x: 540, y: 2760, zoom: 1.32, curve: e.expoInOut},
+    {t: T.scroll1, x: 540, y: 2770, zoom: 1.34, curve: e.sineInOut},
+    {t: T.phoneHit + 0.05, x: 540, y: 3380, zoom: 1.1, curve: e.expoInOut},
+    {t: T.playStart + 0.25, x: 540, y: 3540, zoom: 1.32, curve: e.sineInOut},
+    {t: T.playEnd, x: 540, y: 3550, zoom: 1.34, curve: e.sineInOut},
+    {t: T.gather0 + 0.15, x: 540, y: 2400, zoom: 0.5, curve: e.expoInOut},
+    {t: T.gather1, x: 580, y: 1560, zoom: 0.95, curve: e.cubicInOut},
+    {t: T.stampHit, x: 580, y: 1560, zoom: 1.0, curve: e.sineInOut},
+    {t: T.lock + 0.9, x: 570, y: 1830, zoom: 1.0, curve: e.cubicInOut},
+    {t: DUR, x: 570, y: 1830, zoom: 1.0},
   ];
-  HITS = [[T.planLand, 10, 9], [T.sumLand, 5, 11], [T.phoneHit, 7, 10], [T.stampHit, 14, 8]];
+  HITS = [[T.planLand, 10, 9], [T.sumLand, 5, 11], [T.tabHit, 6, 10], [T.phoneHit, 7, 10], [T.stampHit, 14, 8]];
 }
-const handEnv = t => sstep(0.2, 0.8, t) * (1 - sstep(T.playStart, T.playStart + 0.4, t) + sstep(T.playEnd - 0.2, T.playEnd, t)) * (1 - sstep(T.lock, T.lock + 0.6, t));
+const quiet = t => (1 - sstep(T.scroll0 - 0.1, T.scroll0 + 0.3, t) + sstep(T.scroll1, T.scroll1 + 0.2, t)) * (1 - sstep(T.playStart, T.playStart + 0.4, t) + sstep(T.playEnd - 0.2, T.playEnd, t));
+const handEnv = t => sstep(0.2, 0.8, t) * clamp(quiet(t)) * (1 - sstep(T.lock, T.lock + 0.6, t));
 function camAt(t) {
   const c = OM.camera(t, KEYS, {W, H});
   const e = handEnv(t) * 3.4;
@@ -97,184 +95,328 @@ function camAt(t) {
   return {x: Math.round(x * 16) / 16, y: Math.round(y * 16) / 16, zoom: Math.round(c.zoom * 2000) / 2000, rot};
 }
 
-// ---------- drawing helpers ----------
+// ---------- helpers ----------
 let CAM, VIEW;
 const mat = m => cx.setTransform(m[0] * DPR, m[1] * DPR, m[2] * DPR, m[3] * DPR, m[4] * DPR, m[5] * DPR);
-function rrect(x, y, w, h, r) {
-  cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(x + w, y, x + w, y + h, r); cx.arcTo(x + w, y + h, x, y + h, r);
-  cx.arcTo(x, y + h, x, y, r); cx.arcTo(x, y, x + w, y, r); cx.closePath();
+function rrect(c, x, y, w, h, r) {
+  c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
 }
-// a body at height z (0 = on the table): drawn bigger, shadow offset and softened with height
 function withBody(o, z, fn) {
   const k = DPR * CAM.zoom;
-  cx.save();
-  mat(VIEW);
+  cx.save(); mat(VIEW);
   cx.translate(o.x, o.y); cx.rotate(o.rot || 0);
-  const s = (o.s || 1) * (1 + 0.42 * z) * (o.sx ? 1 : 1);
+  const s = (o.s || 1) * (1 + 0.42 * z);
   cx.scale(s * (o.sx || 1), s * (o.sy || 1));
   cx.shadowColor = `rgba(40, 10, 40, ${0.26 - 0.1 * z})`;
-  cx.shadowBlur = (8 + 70 * z) * k;
-  cx.shadowOffsetX = (6 + 60 * z) * k; cx.shadowOffsetY = (10 + 90 * z) * k;
+  cx.shadowBlur = (8 + 70 * z) * k * s;
+  cx.shadowOffsetX = (6 + 60 * z) * k * s; cx.shadowOffsetY = (10 + 90 * z) * k * s;
   fn(cx);
   cx.restore();
 }
-const noShadow = () => { cx.shadowColor = 'transparent'; cx.shadowBlur = 0; cx.shadowOffsetX = 0; cx.shadowOffsetY = 0; };
-function label(text, x, y, size, color, font = 'Anton', align = 'left', track = 0) {
-  cx.font = `${font === 'Anton' ? '' : '500 '}${size}px ${font}`;
-  cx.fillStyle = color; cx.textAlign = align; cx.textBaseline = 'alphabetic';
-  if (track) cx.letterSpacing = `${track}px`; else cx.letterSpacing = '0px';
-  cx.fillText(text, x, y);
+const noShadow = (c = cx) => { c.shadowColor = 'transparent'; c.shadowBlur = 0; c.shadowOffsetX = 0; c.shadowOffsetY = 0; };
+function label(c, text, x, y, size, color, font = 'Anton', align = 'left', track = 0) {
+  c.font = `${font === 'Anton' ? '' : '500 '}${size}px ${font}`;
+  c.fillStyle = color; c.textAlign = align; c.textBaseline = 'alphabetic';
+  c.letterSpacing = `${track}px`;
+  c.fillText(text, x, y);
 }
-function lines(x, y, w, n, gap, color, widths) {
-  cx.fillStyle = color;
-  for (let i = 0; i < n; i++) { const ww = w * (widths ? widths[i % widths.length] : 1); rrect(x, y + i * gap, ww, 9, 4.5); cx.fill(); }
-}
-
-// ---------- the objects ----------
-function drawPlan(c, w, h) {
-  // a bound report: purple spine, cover title, page edges
-  c.fillStyle = CARD; rrect(-w / 2, -h / 2, w, h, 14); c.fill(); noShadow();
-  c.fillStyle = '#F1ECF1'; rrect(-w / 2 + 10, h / 2 - 16, w - 20, 10, 4); c.fill();   // page block edge
-  c.fillStyle = HOT; rrect(-w / 2, -h / 2, 46, h, 14); c.fill(); c.fillRect(-w / 2 + 30, -h / 2, 16, h);
-  label('BUSINESS', -w / 2 + 78, -h / 2 + 120, 74, INK);
-  label('PLAN', -w / 2 + 78, -h / 2 + 196, 74, HOT);
-  lines(-w / 2 + 80, -h / 2 + 250, w - 140, 6, 30, '#D8CFD8', [1, 0.86, 0.94, 0.7, 0.9, 0.55]);
-  label('MARKET · MODEL · FINANCIALS', -w / 2 + 80, h / 2 - 50, 22, MUTE, 'JBM', 'left', 1);
-}
-function drawSummary(c, w, h) {
-  c.fillStyle = CARD; rrect(-w / 2, -h / 2, w, h, 10); c.fill(); noShadow();
-  c.fillStyle = HOT; c.fillRect(-w / 2, -h / 2, w, 12);
-  label('EXECUTIVE', -w / 2 + 34, -h / 2 + 92, 58, INK);
-  label('SUMMARY', -w / 2 + 34, -h / 2 + 152, 58, INK);
-  c.fillStyle = BG; rrect(-w / 2 + 34, -h / 2 + 178, 150, 44, 22); c.fill();
-  label('ONE PAGE', -w / 2 + 109, -h / 2 + 209, 24, HOT, 'JBM', 'center', 2);
-  lines(-w / 2 + 34, -h / 2 + 258, w - 68, 7, 30, '#D8CFD8', [1, 0.92, 0.8, 1, 0.66, 0.9, 0.5]);
-}
-const SLIDE_FACES = [
-  c => { c.fillStyle = HOT; rrect(-SL.w / 2, -SL.h / 2, SL.w, SL.h, 10); c.fill(); label('PITCH DECK', 0, 18, 56, '#FFFFFF', 'Anton', 'center'); },
-  c => { label('PROBLEM', -SL.w / 2 + 26, -SL.h / 2 + 56, 38, INK); lines(-SL.w / 2 + 26, -SL.h / 2 + 82, SL.w - 52, 3, 24, '#D8CFD8', [1, 0.8, 0.6]); },
-  c => { label('MARKET', -SL.w / 2 + 26, -SL.h / 2 + 56, 38, INK); [40, 62, 92].forEach((bh, i) => { c.fillStyle = i === 2 ? HOT : '#CFC4CF'; c.fillRect(-SL.w / 2 + 30 + i * 52, SL.h / 2 - 20 - bh, 36, bh); }); },
-  c => { label('MODEL', -SL.w / 2 + 26, -SL.h / 2 + 56, 38, INK); c.strokeStyle = HOT; c.lineWidth = 7; c.beginPath(); c.arc(70, 14, 42, -1.6, 2.6); c.stroke(); lines(-SL.w / 2 + 26, -SL.h / 2 + 82, 130, 3, 24, '#D8CFD8'); },
-  c => { label('THE ASK', -SL.w / 2 + 26, -SL.h / 2 + 56, 38, INK); c.fillStyle = BG; rrect(-SL.w / 2 + 26, -SL.h / 2 + 86, 190, 56, 12); c.fill(); label('NEXT STEP', -SL.w / 2 + 121, -SL.h / 2 + 124, 26, HOT, 'JBM', 'center', 2); },
-];
-function slideFace(c, i) {
-  c.fillStyle = CARD; rrect(-SL.w / 2, -SL.h / 2, SL.w, SL.h, 10); c.fill(); noShadow();
-  c.strokeStyle = '#E2DAE2'; c.lineWidth = 3; rrect(-SL.w / 2, -SL.h / 2, SL.w, SL.h, 10); c.stroke();
-  SLIDE_FACES[i](c);
-}
-function drawDeckStack(c, n) {          // the deck as a neat pile (end stack)
-  for (let k = n - 1; k >= 0; k--) { c.save(); c.translate(k * 7, k * 7); slideFace(c, k === 0 ? 0 : 4 - (k - 1)); c.restore(); noShadow(); }
-}
-function drawPhone(c, w, h, t) {
-  c.fillStyle = '#2B2B2B'; rrect(-w / 2, -h / 2, w, h, 52); c.fill(); noShadow();
-  const sw = w - 30, sh = h - 30;
-  const on = sstep(T.phoneHit, T.phoneHit + 0.3, t);
-  c.fillStyle = on > 0 ? lerpColor('#1D1D1D', '#F6F1F6', on) : '#1D1D1D'; rrect(-sw / 2, -sh / 2, sw, sh, 40); c.fill();
-  c.fillStyle = '#111'; rrect(-40, -h / 2 + 26, 80, 18, 9); c.fill();
-  if (on <= 0) return;
-  c.globalAlpha = on;
-  // the video frame: a speaker silhouette in front of a purple block
-  c.save(); rrect(-sw / 2 + 18, -sh / 2 + 70, sw - 36, 300, 22); c.clip();
-  c.fillStyle = HOT; c.fillRect(-sw / 2, -sh / 2, sw, sh);
-  const bob = Math.sin(t * 5.2) * 2.5 * sstep(T.playStart, T.playStart + 0.3, t) * (1 - sstep(T.playEnd, T.playEnd + 0.2, t));
-  c.fillStyle = '#F6F1F6';
-  c.beginPath(); c.arc(0, -sh / 2 + 190 + bob, 44, 0, Math.PI * 2); c.fill();
-  c.beginPath(); c.ellipse(0, -sh / 2 + 340 + bob, 92, 80, 0, Math.PI, 0); c.fill();
-  c.restore();
-  // play / pause glyph
-  const pr = OM.press(t, T.playStart, {depth: 0.2});
-  const playing = t >= T.playStart && t < T.playEnd;
-  c.save(); c.translate(0, -sh / 2 + 220); c.scale(pr.s || 1, pr.s || 1);
-  const ga = playing ? 0.25 : 0.95;
-  c.globalAlpha = on * ga; c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(0, 0, 46, 0, Math.PI * 2); c.fill();
-  c.fillStyle = HOT; c.beginPath(); c.moveTo(-14, -22); c.lineTo(24, 0); c.lineTo(-14, 22); c.closePath(); c.fill();
-  c.restore(); c.globalAlpha = on;
-  // progress and the 1-minute clock
-  const p = OM.ease.smooth(seg(t, T.playStart, T.playEnd));
-  const by = -sh / 2 + 400;
-  c.fillStyle = '#DDD2DD'; rrect(-sw / 2 + 30, by, sw - 60, 10, 5); c.fill();
-  c.fillStyle = HOT; rrect(-sw / 2 + 30, by, Math.max(10, (sw - 60) * p), 10, 5); c.fill();
-  const secs = Math.round(60 * p);
-  label(secs >= 60 ? '1:00' : `0:${String(secs).padStart(2, '0')}`, -sw / 2 + 30, by + 52, 28, INK, 'JBM');
-  if (secs < 60) label('1:00', sw / 2 - 30, by + 52, 28, MUTE, 'JBM', 'right');
-  label('1-MINUTE', -sw / 2 + 30, by + 128, 54, INK);
-  label('PITCH VIDEO', -sw / 2 + 30, by + 186, 54, HOT);
-  // the finish tick
-  const done = OM.spring ? sstep(T.playEnd, T.playEnd + 0.25, t) : 0;
-  if (done > 0) {
-    c.save(); c.translate(sw / 2 - 70, -sh / 2 + 120); c.scale(0.6 + 0.4 * done, 0.6 + 0.4 * done); c.globalAlpha = on * done;
-    c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(0, 0, 34, 0, Math.PI * 2); c.fill();
-    c.strokeStyle = HOT; c.lineWidth = 8; c.lineCap = 'round'; c.beginPath(); c.moveTo(-14, 0); c.lineTo(-4, 11); c.lineTo(16, -12); c.stroke();
-    c.restore();
-  }
-  c.globalAlpha = 1;
+function lines(c, x, y, w, n, gap, color, widths, th = 8) {
+  c.fillStyle = color;
+  for (let i = 0; i < n; i++) { const ww = w * (widths ? widths[i % widths.length] : 1); rrect(c, x, y + i * gap, ww, th, th / 2); c.fill(); }
 }
 function lerpColor(a, b, k) {
   const pa = [1, 3, 5].map(i => parseInt(a.substr(i, 2), 16)), pb = [1, 3, 5].map(i => parseInt(b.substr(i, 2), 16));
   return `rgb(${pa.map((v, i) => Math.round(lerp(v, pb[i], k))).join(',')})`;
 }
+// circuit traces, as on the references' corners
+function circuit(c, x, y, s, col, flip = 1) {
+  c.save(); c.translate(x, y); c.scale(s * flip, s); c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 2.2 / s;
+  [[0, 0, 60, 0, 80, -20, 130, -20], [0, 14, 70, 14, 90, -6, 150, -6], [0, 28, 50, 28, 70, 48, 120, 48]].forEach(p => {
+    c.beginPath(); c.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) c.lineTo(p[i], p[i + 1]); c.stroke();
+    c.beginPath(); c.arc(p[p.length - 2], p[p.length - 1], 4, 0, 7); c.stroke();
+  });
+  c.restore();
+}
+// ---------- icons (line, from the references) ----------
+const IC = {
+  bulb(c, x, y, r, col) { c.save(); c.translate(x, y); c.strokeStyle = col; c.lineWidth = r * 0.12; c.lineCap = 'round';
+    c.beginPath(); c.arc(0, -r * 0.15, r * 0.5, Math.PI * 0.8, Math.PI * 0.2); c.lineTo(r * 0.22, r * 0.55); c.lineTo(-r * 0.22, r * 0.55); c.closePath(); c.stroke();
+    c.beginPath(); c.moveTo(-r * 0.2, r * 0.75); c.lineTo(r * 0.2, r * 0.75); c.stroke();
+    for (const a of [-2.4, -1.57, -0.74]) { c.beginPath(); c.moveTo(Math.cos(a) * r * 0.7, -r * 0.15 + Math.sin(a) * r * 0.7); c.lineTo(Math.cos(a) * r * 0.92, -r * 0.15 + Math.sin(a) * r * 0.92); c.stroke(); }
+    c.restore(); },
+  hands(c, x, y, r, col) { c.save(); c.translate(x, y); c.strokeStyle = col; c.lineWidth = r * 0.12; c.lineCap = 'round'; c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(-r * 0.9, -r * 0.1); c.lineTo(-r * 0.45, -r * 0.3); c.lineTo(r * 0.1, r * 0.2); c.lineTo(r * 0.3, r * 0.05); c.stroke();
+    c.beginPath(); c.moveTo(r * 0.9, -r * 0.1); c.lineTo(r * 0.45, -r * 0.3); c.lineTo(-r * 0.05, -r * 0.05); c.lineTo(-r * 0.25, r * 0.2); c.lineTo(-r * 0.05, r * 0.4); c.lineTo(r * 0.25, r * 0.35); c.stroke();
+    c.restore(); },
+  chart(c, x, y, r, col) { c.save(); c.translate(x, y); c.fillStyle = col; c.strokeStyle = col; c.lineWidth = r * 0.1; c.lineCap = 'round';
+    [0.3, 0.5, 0.75].forEach((h, i) => c.fillRect(-r * 0.6 + i * r * 0.42, r * 0.55 - h * r, r * 0.28, h * r));
+    c.beginPath(); c.moveTo(-r * 0.7, r * 0.0); c.lineTo(-r * 0.2, -r * 0.35); c.lineTo(r * 0.1, -r * 0.2); c.lineTo(r * 0.65, -r * 0.65); c.stroke();
+    c.beginPath(); c.moveTo(r * 0.4, -r * 0.68); c.lineTo(r * 0.68, -r * 0.68); c.lineTo(r * 0.68, -r * 0.4); c.stroke(); c.restore(); },
+  gear(c, x, y, r, col, rot = 0) { c.save(); c.translate(x, y); c.rotate(rot); c.fillStyle = col;
+    c.beginPath(); for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2, rr = i % 2 ? r * 0.8 : r; c.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } c.closePath(); c.fill();
+    c.globalCompositeOperation = 'destination-out'; c.beginPath(); c.arc(0, 0, r * 0.32, 0, 7); c.fill(); c.restore(); },
+  magnifier(c, x, y, r, col) { c.save(); c.translate(x, y); c.strokeStyle = col; c.lineWidth = r * 0.18; c.lineCap = 'round';
+    c.beginPath(); c.arc(-r * 0.15, -r * 0.15, r * 0.5, 0, 7); c.stroke(); c.beginPath(); c.moveTo(r * 0.22, r * 0.22); c.lineTo(r * 0.7, r * 0.7); c.stroke(); c.restore(); },
+  pie(c, x, y, r, col) { c.save(); c.translate(x, y); c.fillStyle = col;
+    c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, r * 0.8, -1.2, 3.6); c.closePath(); c.fill();
+    c.beginPath(); c.moveTo(r * 0.12, -r * 0.1); c.arc(r * 0.12, -r * 0.1, r * 0.8, -1.57, -1.25); c.closePath(); c.fill(); c.restore(); },
+  easel(c, x, y, r, col) { c.save(); c.translate(x, y); c.strokeStyle = col; c.fillStyle = col; c.lineWidth = r * 0.1;
+    c.strokeRect(-r * 0.75, -r * 0.6, r * 1.5, r * 0.95); c.beginPath(); c.moveTo(0, r * 0.35); c.lineTo(-r * 0.5, r * 0.9); c.moveTo(0, r * 0.35); c.lineTo(r * 0.5, r * 0.9); c.stroke();
+    IC.pie(c, -r * 0.3, -r * 0.13, r * 0.36, col); lines(c, r * 0.05, -r * 0.35, r * 0.5, 3, r * 0.2, col, null, r * 0.08); c.restore(); },
+  person(c, x, y, r, col) { c.save(); c.translate(x, y); c.fillStyle = col; c.beginPath(); c.arc(0, -r * 0.3, r * 0.32, 0, 7); c.fill();
+    c.beginPath(); c.ellipse(0, r * 0.55, r * 0.6, r * 0.45, 0, Math.PI, 0); c.fill(); c.restore(); },
+  tick(c, x, y, r, col) { c.save(); c.translate(x, y); c.strokeStyle = col; c.lineWidth = r * 0.3; c.lineCap = 'round'; c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(-r * 0.6, 0); c.lineTo(-r * 0.15, r * 0.45); c.lineTo(r * 0.7, -r * 0.5); c.stroke(); c.restore(); },
+};
 
-// ---------- per-object state at t ----------
+// ---------- 1 · business plan (after the cover reference) ----------
+function drawPlan(c, w, h) {
+  c.fillStyle = CARD; rrect(c, -w / 2, -h / 2, w, h, 8); c.fill(); noShadow(c);
+  c.save(); rrect(c, -w / 2, -h / 2, w, h, 8); c.clip();
+  const L = -w / 2, Tp = -h / 2;
+  label(c, 'BUSINESS PLAN', L + 26, Tp + 62, 44, INK);
+  label(c, 'YOUR COMPANY', L + 26, Tp + 96, 18, MUTE, 'Inter');
+  lines(c, L + 26, Tp + 106, 150, 2, 12, LINE, [1, 0.8], 5);
+  // logo top-right
+  const lh = 100, lw = lh * LOGO.width / LOGO.height; c.drawImage(LOGO, w / 2 - lw - 24, Tp + 84, lw, lh);
+  // the segmented fan on the left
+  const fx = L - 30, fy = Tp + h * 0.6, R = 250, r0 = 70;
+  const segs = [[-1.5, -1.0, INK], [-0.97, -0.5, '#5A585C'], [-0.47, 0, HOT], [0.03, 0.5, '#9A1E9A'], [0.53, 1.0, '#5A585C'], [1.03, 1.5, INK]];
+  segs.forEach(([a0, a1, col], i) => {
+    const RR = i === 2 || i === 3 ? R * 1.06 : R;
+    c.fillStyle = col; c.beginPath(); c.arc(fx, fy, RR, a0, a1); c.arc(fx, fy, r0, a1, a0, true); c.closePath(); c.fill();
+    c.fillStyle = 'rgba(255,255,255,0.08)'; c.beginPath(); c.moveTo(fx + Math.cos(a0) * r0, fy + Math.sin(a0) * r0); c.lineTo(fx + Math.cos(a1) * RR, fy + Math.sin(a1) * RR); c.lineTo(fx + Math.cos(a0) * RR, fy + Math.sin(a0) * RR); c.closePath(); c.fill();
+  });
+  // blurred city band
+  const bx = fx + R * 0.9, by = fy - 80;
+  const g = c.createLinearGradient(0, by, 0, by + 160); g.addColorStop(0, '#BFD3E2'); g.addColorStop(0.55, '#C8CDD1'); g.addColorStop(1, '#7E8A86');
+  c.fillStyle = g; c.fillRect(bx, by, w, 160);
+  c.fillStyle = 'rgba(120,128,132,0.55)'; [[20, 40, 60], [95, 18, 46], [150, 60, 40]].forEach(([dx, dy, ww]) => c.fillRect(bx + dx, by + dy, ww, 160 - dy));
+  // icon dots
+  for (let i = 0; i < 5; i++) { c.fillStyle = INK; c.beginPath(); c.arc(w / 2 - 150 + i * 30, by + 196, 11, 0, 7); c.fill(); }
+  label(c, 'MARKET · MODEL · FINANCIALS', w / 2 - 22, h / 2 - 34, 15, INK, 'JBM', 'right', 1);
+  c.restore();
+}
+// ---------- 2 · one-page executive summary (after the summary reference) ----------
+function drawSummary(c, w, h) {
+  c.fillStyle = '#C9C6C9'; rrect(c, -w / 2, -h / 2, w, h, 6); c.fill(); noShadow(c);
+  const L = -w / 2, Tp = -h / 2;
+  const lh = 66, lw = lh * LOGO.width / LOGO.height; c.drawImage(LOGO, L + 16, Tp + 14, lw, lh);
+  label(c, 'Executive', L + 96, Tp + 44, 34, INK, 'Inter');
+  label(c, 'Summary', L + 96, Tp + 82, 34, INK, 'Inter');
+  c.fillStyle = BG; rrect(c, w / 2 - 90, Tp + 60, 76, 26, 13); c.fill();
+  label(c, '1 PAGE', w / 2 - 52, Tp + 78, 13, HOT, 'JBM', 'center', 1);
+  const gx = L + 12, gy = Tp + 104, cw = (w - 24) / 2, ch = (h - 116) / 3;
+  const cells = [['Vision &', 'Mission', 'bulb'], ['Partner-', 'ship', 'hands'], ['Market', 'Opportunity', 'hands'], ['Financial', 'Overview', 'chart'], ['Key', 'Milestones', 'hands'], ['Operational', 'Roadmap', 'gear']];
+  cells.forEach(([a, b, ic], i) => {
+    const col = i % 2, row = (i / 2) | 0, purple = (row + col) % 2 === 1;
+    const x = gx + col * cw, y = gy + row * ch;
+    c.fillStyle = purple ? HOT : INK; c.fillRect(x, y, cw, ch);
+    c.fillStyle = '#D9D6D9'; c.beginPath(); c.arc(x + 40, y + ch / 2 + 6, 28, 0, 7); c.fill();
+    IC[ic](c, x + 40, y + ch / 2 + 6, 20, INK);
+    label(c, a, x + 78, y + 46, 17, '#FFFFFF', 'Inter'); label(c, b, x + 78, y + 66, 17, '#FFFFFF', 'Inter');
+    lines(c, x + 78, y + 80, cw - 92, 3, 12, 'rgba(255,255,255,0.45)', [1, 0.8, 0.6], 5);
+  });
+}
+// ---------- 3 · deck slides: white, purple, grey, charcoal, white (after the deck reference) ----------
+const SLIDE_BG = ['#FFFFFF', HOT, '#B4B1B4', INK, '#FFFFFF'];
+function drawSlide(c, i) {
+  const w = SL.w, h = SL.h, L = -w / 2, Tp = -h / 2;
+  c.fillStyle = SLIDE_BG[i]; rrect(c, L, Tp, w, h, 8); c.fill(); noShadow(c);
+  c.save(); rrect(c, L, Tp, w, h, 8); c.clip();
+  const onDark = i === 1 || i === 3, fg = onDark ? '#FFFFFF' : INK;
+  circuit(c, w / 2 - 12, Tp + 18, 0.55, onDark ? 'rgba(255,255,255,0.45)' : 'rgba(128,0,128,0.45)', -1);
+  if (i === 0) {
+    const lh = 92, lw = lh * LOGO.width / LOGO.height; c.drawImage(LOGO, L + 16, Tp + 26, lw, lh);
+    label(c, 'MANETRUST', L + 120, Tp + 66, 30, INK); label(c, 'SOLUTIONS', L + 120, Tp + 98, 30, INK);
+    label(c, 'PITCH DECK', L + 18, Tp + 146, 15, INK, 'Inter', 'left', 1);
+    c.fillStyle = INK; c.fillRect(L, h / 2 - 10, w * 0.6, 10); c.fillStyle = '#8D8A8D'; c.fillRect(L + w * 0.6, h / 2 - 10, w * 0.15, 10); c.fillStyle = HOT; c.fillRect(L + w * 0.75, h / 2 - 10, w * 0.25, 10);
+  } else if (i === 1) {
+    label(c, 'VISION & MISSION', L + 18, Tp + 44, 30, fg);
+    IC.bulb(c, L + 50, Tp + 108, 40, fg);
+    for (let k = 0; k < 3; k++) { c.strokeStyle = 'rgba(255,255,255,0.6)'; c.lineWidth = 2; rrect(c, L + 102 + k * 74, Tp + 78, 64, 72, 6); c.stroke(); lines(c, L + 110 + k * 74, Tp + 118, 48, 2, 12, 'rgba(255,255,255,0.6)', [1, 0.7], 5); }
+  } else if (i === 2) {
+    label(c, 'THE CHALLENGE', L + 18, Tp + 44, 30, fg);
+    IC.gear(c, L + 70, Tp + 100, 30, INK, 0.3); IC.gear(c, L + 118, Tp + 120, 20, HOT, 0.1); IC.gear(c, L + 210, Tp + 100, 30, '#777', 0.5); IC.gear(c, L + 255, Tp + 122, 18, HOT, 0.2);
+    lines(c, L + 18, Tp + 152, w - 60, 2, 14, 'rgba(51,51,51,0.45)', [1, 0.75], 6);
+  } else if (i === 3) {
+    label(c, 'OUR UNIQUE', L + 18, Tp + 44, 30, fg); label(c, 'SOLUTION', L + 18, Tp + 78, 30, fg);
+    c.strokeStyle = '#C77DC7'; c.lineWidth = 2.5;
+    for (let k = 0; k < 3; k++) { const bx = L + 200 + (k % 2) * 40, by = Tp + 60 + k * 28; c.beginPath(); c.moveTo(bx, by); c.lineTo(bx + 40, by - 16); c.lineTo(bx + 80, by); c.lineTo(bx + 40, by + 16); c.closePath(); c.stroke(); }
+    for (let k = 0; k < 3; k++) { c.fillStyle = 'rgba(199,125,199,0.8)'; c.beginPath(); c.arc(L + 26 + k * 70, Tp + 128, 8, 0, 7); c.fill(); lines(c, L + 40 + k * 70, Tp + 122, 40, 2, 12, 'rgba(255,255,255,0.5)', [1, 0.7], 5); }
+  } else {
+    c.fillStyle = HOT; c.fillRect(L + 14, Tp + 18, 5, 32);
+    label(c, 'MARKET & FINANCIALS', L + 28, Tp + 46, 26, fg);
+    for (let k = 0; k < 8; k++) { c.fillStyle = k % 2 ? HOT : '#8D8A8D'; const bh = 22 + k * 10; c.fillRect(L + 22 + k * 20, h / 2 - 16 - bh, 14, bh); }
+    c.globalAlpha = 0.95; c.fillStyle = HOT; c.beginPath(); c.arc(L + 250, Tp + 118, 50, 0, 7); c.fill();
+    c.fillStyle = '#8D8A8D'; c.beginPath(); c.arc(L + 250, Tp + 130, 34, 0, 7); c.fill(); c.fillStyle = INK; c.beginPath(); c.arc(L + 250, Tp + 142, 20, 0, 7); c.fill(); c.globalAlpha = 1;
+    label(c, 'TAM', L + 250, Tp + 92, 12, '#fff', 'JBM', 'center'); label(c, 'SAM', L + 250, Tp + 118, 11, '#fff', 'JBM', 'center'); label(c, 'SOM', L + 250, Tp + 146, 10, '#fff', 'JBM', 'center');
+  }
+  c.restore();
+  if (SLIDE_BG[i] === '#FFFFFF') { c.strokeStyle = '#E2DAE2'; c.lineWidth = 2; rrect(c, L, Tp, w, h, 8); c.stroke(); }
+}
+function drawDeckPile(c) { for (let k = 4; k >= 0; k--) { c.save(); c.translate(k * 7, k * 7); drawSlide(c, k); c.restore(); noShadow(c); } }
+
+// ---------- 4 · the pitch site, built once as a long page (after the landing-page reference) ----------
+let SITE, SITE_H = 0;
+const SW = 520;
+function buildSite() {
+  const S = 3, Hp = 2350; SITE_H = Hp;
+  SITE = document.createElement('canvas'); SITE.width = SW * S; SITE.height = Hp * S;
+  const c = SITE.getContext('2d'); c.scale(S, S);
+  const P = (y, h, col) => { c.fillStyle = col; c.fillRect(0, y, SW, h); };
+  // header
+  P(0, 64, HOT); c.fillStyle = '#fff'; rrect(c, 14, 8, 150, 48, 8); c.fill();
+  const lh = 40, lw = lh * LOGO.width / LOGO.height; c.drawImage(LOGO, 22, 12, lw, lh); label(c, 'Manetrust', 22 + lw + 6, 38, 17, INK, 'Inter');
+  // hero
+  P(64, 300, '#F1EAF1'); circuit(c, SW - 20, 96, 0.9, 'rgba(128,0,128,0.5)', -1); circuit(c, 20, 300, 0.9, 'rgba(128,0,128,0.5)');
+  label(c, 'Pitch Landing Page', SW / 2, 190, 44, HOT, 'Inter', 'center');
+  label(c, 'Crafting compelling stories that win', SW / 2, 228, 19, INK, 'Inter', 'center');
+  c.fillStyle = INK; rrect(c, SW / 2 - 110, 256, 220, 50, 10); c.fill(); label(c, 'Get Your Pitch Today', SW / 2, 288, 17, '#fff', 'Inter', 'center');
+  // process
+  P(364, 360, '#FFFFFF'); label(c, 'Our Proven Pitch Process', SW / 2, 420, 28, HOT, 'Inter', 'center');
+  [['chart', 'Step 1'], ['magnifier', 'Step 2'], ['easel', 'Step 3']].forEach(([ic, s], k) => {
+    const x = 90 + k * 170; IC[ic](c, x, 500, 40, k === 1 ? INK : HOT);
+    c.fillStyle = k === 2 ? INK : HOT; c.beginPath(); c.moveTo(x - 76, 560); c.lineTo(x + 62, 560); c.lineTo(x + 78, 580); c.lineTo(x + 62, 600); c.lineTo(x - 76, 600); c.lineTo(x - 62, 580); c.closePath(); c.fill();
+    label(c, s, x, 588, 17, '#fff', 'Inter', 'center'); lines(c, x - 60, 622, 120, 3, 16, LINE, [1, 0.85, 0.6], 6);
+  });
+  // testimonials
+  P(724, 330, '#F1EAF1'); label(c, 'TESTIMONIALS', SW / 2, 784, 30, HOT, 'Anton', 'center', 1);
+  for (let k = 0; k < 3; k++) { const x = 24 + k * 164; c.fillStyle = '#fff'; rrect(c, x, 812, 148, 200, 10); c.fill(); c.fillStyle = '#CFCACF'; c.beginPath(); c.arc(x + 74, 846, 22, 0, 7); c.fill(); IC.person(c, x + 74, 848, 20, '#8D8A8D'); lines(c, x + 16, 886, 116, 5, 16, LINE, [1, 0.9, 1, 0.7, 0.5], 6); }
+  // features
+  P(1054, 420, '#FFFFFF'); label(c, 'FEATURES & BENEFITS', SW / 2, 1112, 30, HOT, 'Anton', 'center', 1);
+  [['pie', 'Data Visualization'], ['bulb', 'Strategic Narrative'], ['easel', 'Compelling Design']].forEach(([ic, s], k) => {
+    const y = 1180 + k * 100; IC[ic](c, 70, y, 34, INK); label(c, s, 130, y - 6, 24, HOT, 'Inter'); lines(c, 130, y + 12, 330, 2, 16, LINE, [1, 0.7], 6);
+  });
+  // plans (no prices invented)
+  P(1474, 420, INK); label(c, 'PLANS & PACKAGES', SW / 2, 1532, 28, '#fff', 'Anton', 'center', 1);
+  ['Basic', 'Standard', 'Enterprise'].forEach((s, k) => {
+    const x = 24 + k * 164; c.fillStyle = '#F4F0F4'; rrect(c, x, 1560, 148, 290, 10); c.fill();
+    c.fillStyle = k === 1 ? HOT : '#4A484A'; rrect(c, x, 1560, 148, 70, 10); c.fill(); c.fillRect(x, 1600, 148, 30);
+    label(c, s, x + 74, 1604, 21, '#fff', 'Inter', 'center');
+    for (let j = 0; j < 4 + (k === 2); j++) { IC.tick(c, x + 20, 1660 + j * 28, 8, HOT); lines(c, x + 34, 1655 + j * 28, 90, 1, 0, '#BDB4BD', null, 7); }
+    c.fillStyle = HOT; rrect(c, x + 16, 1800, 116, 34, 7); c.fill(); label(c, 'Get Started', x + 74, 1823, 14, '#fff', 'Inter', 'center');
+  });
+  // contact
+  P(1894, 456, '#FFFFFF'); label(c, 'CONTACT US', SW / 2, 1952, 30, HOT, 'Anton', 'center', 1);
+  ['Name', 'Email', 'Phone'].forEach((s, k) => { c.strokeStyle = HOT; c.lineWidth = 2; rrect(c, 24, 1976 + k * 46, 240, 34, 6); c.stroke(); label(c, s, 34, 1999 + k * 46, 13, MUTE, 'Inter'); });
+  c.strokeStyle = HOT; rrect(c, 24, 2114, 240, 80, 6); c.stroke(); label(c, 'Message', 34, 2136, 13, MUTE, 'Inter');
+  c.fillStyle = HOT; rrect(c, 24, 2206, 240, 38, 6); c.fill(); label(c, 'SUBMIT', 144, 2231, 15, '#fff', 'Inter', 'center', 1);
+  c.fillStyle = '#E3EDE3'; rrect(c, 290, 2090, 206, 150, 8); c.fill(); c.strokeStyle = '#F2D46A'; c.lineWidth = 6; c.beginPath(); c.moveTo(300, 2230); c.lineTo(420, 2100); c.stroke();
+  c.fillStyle = '#D33'; c.beginPath(); c.arc(400, 2150, 10, 0, 7); c.fill();
+  [['Address'], ['Email'], ['Phone']].forEach(([s], k) => { c.fillStyle = HOT; c.beginPath(); c.arc(300, 1990 + k * 30, 7, 0, 7); c.fill(); label(c, s, 316, 1996 + k * 30, 15, INK, 'Inter'); });
+  const lh2 = 50, lw2 = lh2 * LOGO.width / LOGO.height; c.drawImage(LOGO, 24, 2270, lw2, lh2); label(c, 'Manetrust Solutions', 24 + lw2 + 10, 2302, 18, INK, 'Inter');
+}
+function drawTablet(c, t) {
+  const w = TAB.w, h = TAB.h;
+  c.fillStyle = '#2B2B2B'; rrect(c, -w / 2, -h / 2, w, h, 40); c.fill(); noShadow(c);
+  const sw = w - 40, sh = h - 40, L = -sw / 2, Tp = -sh / 2;
+  const on = sstep(T.tabHit, T.tabHit + 0.35, t);
+  c.fillStyle = '#1A1A1A'; rrect(c, L, Tp, sw, sh, 22); c.fill();
+  c.fillStyle = '#111'; c.beginPath(); c.arc(0, -h / 2 + 10, 4, 0, 7); c.fill();
+  if (on <= 0) return;
+  c.save(); rrect(c, L, Tp, sw, sh, 22); c.clip(); c.globalAlpha = on;
+  // the scroll: eased like a flick that decelerates, then an overscroll bounce at the bottom
+  const max = SITE_H * (sw / SW) - sh;
+  const u = seg(t, T.scroll0, T.scroll1);
+  const k = 0.45 * ease.quintOut(seg(u, 0, 0.4)) + 0.55 * ease.quartOut(seg(u, 0.45, 1));
+  const over = t > T.scroll1 ? 26 * Math.exp(-6 * (t - T.scroll1)) * Math.sin(Math.min(Math.PI, (t - T.scroll1) * 9)) : 0;
+  const y = -(k * max + over);
+  c.drawImage(SITE, L, Tp + y, sw, SITE_H * (sw / SW));
+  // scroll bar
+  c.fillStyle = 'rgba(51,51,51,0.35)'; const bh = sh * sh / (max + sh); rrect(c, sw / 2 - 10, Tp + (k * (sh - bh)), 5, bh, 3); c.fill();
+  c.restore(); c.globalAlpha = 1;
+}
+// ---------- 5 · the pitch video, a glass play button over it ----------
+function videoFrame(c, x, y, w, h, t, playing) {
+  c.fillStyle = HOT; c.fillRect(x, y, w, h);
+  const g = c.createRadialGradient(x + w * 0.7, y + h * 0.2, 10, x + w * 0.6, y + h * 0.3, w); g.addColorStop(0, '#B04AB0'); g.addColorStop(1, 'rgba(128,0,128,0)'); c.fillStyle = g; c.fillRect(x, y, w, h);
+  circuit(c, x + w - 14, y + 24, 0.6, 'rgba(255,255,255,0.45)', -1);
+  const bob = playing ? Math.sin(t * 5.2) * 3 : 0;
+  c.fillStyle = '#F6F1F6'; c.beginPath(); c.arc(x + w * 0.5, y + h * 0.42 + bob, h * 0.15, 0, 7); c.fill();
+  c.beginPath(); c.ellipse(x + w * 0.5, y + h * 0.95 + bob, w * 0.32, h * 0.34, 0, Math.PI, 0); c.fill();
+  c.fillStyle = INK; c.fillRect(x + w * 0.38, y + h * 0.76 + bob, w * 0.24, h * 0.24);   // jacket
+}
+function drawPhone(c, t) {
+  const w = PHONE.w, h = PHONE.h;
+  c.fillStyle = '#2B2B2B'; rrect(c, -w / 2, -h / 2, w, h, 52); c.fill(); noShadow(c);
+  const sw = w - 30, sh = h - 30, L = -sw / 2, Tp = -sh / 2;
+  const on = sstep(T.phoneHit, T.phoneHit + 0.3, t);
+  c.fillStyle = on > 0 ? lerpColor('#1D1D1D', '#F6F1F6', on) : '#1D1D1D'; rrect(c, L, Tp, sw, sh, 40); c.fill();
+  c.fillStyle = '#111'; rrect(c, -40, -h / 2 + 26, 80, 18, 9); c.fill();
+  if (on <= 0) return;
+  c.globalAlpha = on;
+  const vx = L + 16, vy = Tp + 64, vw = sw - 32, vh = 330;
+  const playing = t >= T.playStart && t < T.playEnd;
+  c.save(); rrect(c, vx, vy, vw, vh, 22); c.clip(); videoFrame(c, vx, vy, vw, vh, t, playing); c.restore();
+  // the glass play button: blurred copy of the frame behind it, a frosted fill, a bright rim, a highlight
+  const pr = OM.press(t, T.playStart, {depth: 0.18});
+  const fade = 1 - 0.55 * sstep(T.playStart + 0.15, T.playStart + 0.5, t) + 0.55 * sstep(T.playEnd, T.playEnd + 0.3, t);
+  const bx = 0, by = vy + vh * 0.5, R = 62 * (pr.s || 1);
+  c.save(); c.globalAlpha = on * fade;
+  c.beginPath(); c.arc(bx, by, R, 0, 7); c.clip();
+  c.filter = `blur(${10 * DPR * CAM.zoom}px)`; videoFrame(c, vx, vy, vw, vh, t, playing); c.filter = 'none';
+  c.fillStyle = 'rgba(255,255,255,0.26)'; c.fillRect(bx - R, by - R, 2 * R, 2 * R);
+  const hg = c.createLinearGradient(0, by - R, 0, by + R); hg.addColorStop(0, 'rgba(255,255,255,0.5)'); hg.addColorStop(0.45, 'rgba(255,255,255,0.05)'); hg.addColorStop(1, 'rgba(255,255,255,0.18)');
+  c.fillStyle = hg; c.fillRect(bx - R, by - R, 2 * R, 2 * R);
+  c.restore();
+  c.save(); c.globalAlpha = on * fade;
+  c.strokeStyle = 'rgba(255,255,255,0.75)'; c.lineWidth = 3; c.beginPath(); c.arc(bx, by, R - 1.5, 0, 7); c.stroke();
+  c.fillStyle = 'rgba(255,255,255,0.95)'; c.beginPath(); c.moveTo(bx - 16, by - 26); c.lineTo(bx + 28, by); c.lineTo(bx - 16, by + 26); c.closePath();
+  c.shadowColor = 'rgba(60,0,60,0.35)'; c.shadowBlur = 8 * DPR * CAM.zoom; c.fill(); noShadow(c);
+  c.restore(); c.globalAlpha = on;
+  // title and progress
+  const p = ease.smooth(seg(t, T.playStart, T.playEnd));
+  label(c, 'PITCH VIDEO', L + 22, vy + vh + 74, 62, INK);
+  label(c, 'Manetrust Solutions', L + 24, vy + vh + 110, 22, HOT, 'Inter');
+  const ly = vy + vh + 140;
+  c.fillStyle = '#DDD2DD'; rrect(c, L + 22, ly, sw - 44, 10, 5); c.fill();
+  c.fillStyle = HOT; rrect(c, L + 22, ly, Math.max(10, (sw - 44) * p), 10, 5); c.fill();
+  const secs = Math.round(60 * p);
+  label(c, secs >= 60 ? '1:00' : `0:${String(secs).padStart(2, '0')}`, L + 22, ly + 44, 24, INK, 'JBM');
+  if (secs < 60) label(c, '1:00', sw / 2 - 22, ly + 44, 24, MUTE, 'JBM', 'right');
+  c.globalAlpha = 1;
+}
+
+// ---------- states ----------
 function planState(t) {
-  const u = seg(t, T.planDrop, T.planLand);
-  const z = t < T.planDrop ? 1 : 1 - u * u;                       // gravity: height ∝ 1 − u²
+  const u = seg(t, T.planDrop, T.planLand), z = t < T.planDrop ? 1 : 1 - u * u;
   const im = OM.impact(t, T.planLand, {decay: 9, omega: 24, sqx: 0.05, sqy: 0.06});
-  const vis = sstep(T.planDrop - 0.5, T.planDrop - 0.1, t);       // its shadow arrives first, from above
-  return {x: PLAN.x, y: PLAN.y - 40 * z, rot: PLAN.rot + 0.08 * z, z: t < T.planLand ? z : 0, sx: t >= T.planLand ? im.sx : 1, sy: t >= T.planLand ? im.sy : 1, op: vis};
+  return {x: PLAN.x, y: PLAN.y - 40 * z, rot: PLAN.rot + 0.08 * z, z: t < T.planLand ? z : 0, sx: t >= T.planLand ? im.sx : 1, sy: t >= T.planLand ? im.sy : 1, op: sstep(T.planDrop - 0.5, T.planDrop - 0.1, t)};
 }
 function sumState(t) {
   if (t < T.sumLaunch) return {...SUM0, z: 0};
-  const up = ease.cubicOut(seg(t, T.sumLaunch, T.sumTop));
-  const hang = seg(t, T.sumTop, T.sumFall);
-  const dn = seg(t, T.sumFall, T.sumLand);
-  let z, x, y, rot;
-  if (t < T.sumFall) {
-    z = 0.95 * up + 0.04 * Math.sin(hang * Math.PI);
-    const k = ease.smoother(seg(t, T.sumLaunch, T.sumLand));
-    x = lerp(SUM0.x, SUM1.x, k) + Math.sin(t * 4.5) * 6 * hang; y = lerp(SUM0.y, SUM1.y, k);
-    rot = lerp(SUM0.rot, SUM1.rot + Math.PI * 2, ease.cubicOut(seg(t, T.sumLaunch, T.sumLand))) + Math.sin(t * 3.1) * 0.05 * hang;
-  } else {
-    z = 0.99 * (1 - dn * dn);
-    const k = ease.smoother(seg(t, T.sumLaunch, T.sumLand));
-    x = lerp(SUM0.x, SUM1.x, k); y = lerp(SUM0.y, SUM1.y, k);
-    rot = lerp(SUM0.rot, SUM1.rot + Math.PI * 2, ease.cubicOut(seg(t, T.sumLaunch, T.sumLand)));
-  }
-  if (t >= T.sumLand) {
-    // it lands skidding forward; its lower edge reaches the first slide
-    const sk = ease.quartOut(seg(t, T.sumLand, T.sumSkid));
-    z = 0; x = SUM1.x; y = SUM1.y + 70 * sk; rot = SUM1.rot;
-  }
-  return {x, y, rot, z, w: SUM1.w, h: SUM1.h};
+  const up = ease.cubicOut(seg(t, T.sumLaunch, T.sumTop)), hang = seg(t, T.sumTop, T.sumFall), dn = seg(t, T.sumFall, T.sumLand);
+  const k = ease.smoother(seg(t, T.sumLaunch, T.sumLand));
+  let x = lerp(SUM0.x, SUM1.x, k), y = lerp(SUM0.y, SUM1.y, k), rot = lerp(SUM0.rot, SUM1.rot + Math.PI * 2, ease.cubicOut(seg(t, T.sumLaunch, T.sumLand)));
+  let z;
+  if (t < T.sumFall) { z = 0.95 * up + 0.04 * Math.sin(hang * Math.PI); x += Math.sin(t * 4.5) * 6 * hang; rot += Math.sin(t * 3.1) * 0.05 * hang; }
+  else z = 0.99 * (1 - dn * dn);
+  if (t >= T.sumLand) { const sk = ease.quartOut(seg(t, T.sumLand, T.sumSkid)); z = 0; x = SUM1.x; y = SUM1.y + 70 * sk; rot = SUM1.rot; }
+  return {x, y, rot, z};
 }
-// slide i: angle fallen 0..1 (u^2.2 like a real domino)
-function slideFall(t, i) { const [a, b] = FALL[i]; return Math.pow(seg(t, a, b), 2.2); }
-
-// ---------- gather & stamp ----------
-function gathered(t, from, to, i) {
-  const g = OM.gather(t, T.gather0, T.gather1 - 0.24, i, 4, from, to, {stagger: 0.08, arc: 160, spin: 0.25});
-  return g;
+const slideFall = (t, i) => Math.pow(seg(t, FALL[i][0], FALL[i][1]), 2.2);
+const gathered = (t, from, to, i) => OM.gather(t, T.gather0, T.gather1 - 0.3, i, 5, from, to, {stagger: 0.07, arc: 160, spin: 0.25});
+function gatherObj(t, base, dest, i, baseRot = 0) {
+  const g = gathered(t, base, dest, i);
+  return {o: {x: g.x, y: g.y, rot: lerp(baseRot, dest.rot, g.k) + g.rot, s: lerp(1, dest.s, g.k)}, z: 0.5 * Math.sin(g.k * Math.PI)};
 }
 
 // ---------- ground ----------
 let PAPER, LOGO;
 function ground() {
-  cx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  cx.fillStyle = BG; cx.fillRect(0, 0, W, H);
+  cx.setTransform(DPR, 0, 0, DPR, 0, 0); cx.fillStyle = BG; cx.fillRect(0, 0, W, H);
   mat(VIEW);
-  // the crumpled paper covers the whole table, in three bands of shade
   const tw = 1500, th = tw * 1920 / 1080;
-  for (let r = 0; r < 2; r++) for (let q = 0; q < 2; q++) {
-    const x0 = -210 + q * tw * 0.98, y0 = -500 + r * th * 0.98;
-    cx.drawImage(PAPER, x0, y0, tw, th);
+  // mirrored tiles so the seams meet themselves
+  for (let r = 0; r < 3; r++) for (let q = 0; q < 3; q++) {
+    cx.save(); cx.translate(-1260 + q * tw + (q % 2) * tw, -900 + r * th + (r % 2) * th); cx.scale(q % 2 ? -1 : 1, r % 2 ? -1 : 1);
+    cx.drawImage(PAPER, 0, 0, tw, th); cx.restore();
   }
-  // shade the table: lilac at the top, a cooler mauve where the deck runs, deeper at the phone
-  const g = cx.createLinearGradient(0, 0, 0, 3300);
-  g.addColorStop(0, 'rgba(233, 226, 233, 0.55)');
-  g.addColorStop(0.45, 'rgba(214, 196, 214, 0.55)');
-  g.addColorStop(0.85, 'rgba(190, 160, 190, 0.55)');
-  g.addColorStop(1, 'rgba(233, 226, 233, 0.55)');
-  cx.globalCompositeOperation = 'multiply'; cx.fillStyle = g; cx.fillRect(-400, -700, 2000, 4400);
-  cx.globalCompositeOperation = 'source-over';
+  const g = cx.createLinearGradient(0, 0, 0, 4200);
+  g.addColorStop(0, 'rgba(233,226,233,0.55)'); g.addColorStop(0.35, 'rgba(214,196,214,0.55)'); g.addColorStop(0.62, 'rgba(205,205,210,0.55)'); g.addColorStop(0.85, 'rgba(190,160,190,0.55)'); g.addColorStop(1, 'rgba(233,226,233,0.55)');
+  cx.globalCompositeOperation = 'multiply'; cx.fillStyle = g; cx.fillRect(-1200, -1500, 3500, 6400); cx.globalCompositeOperation = 'source-over';
 }
 function vignette() {
   cx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -283,148 +425,122 @@ function vignette() {
   cx.fillStyle = g; cx.fillRect(0, 0, W, H);
 }
 
-// ---------- the frame ----------
+// ---------- frame ----------
 let TRACK = {};
 function seek(t) {
   CAM = camAt(t); VIEW = OM.view(CAM, {W, H});
-  ground();
-  TRACK = {};
-  const gk = seg(t, T.gather0, T.gather1 + 0.3);
-  const gathering = t >= T.gather0;
-
-  // the phone (drawn first: everything lands on or toward it)
+  ground(); TRACK = {};
+  const G = t >= T.gather0;
+  // 5 · phone
   {
-    const ph = OM.impact(t, T.phoneHit, {decay: 10, omega: 26, sqx: 0.03, sqy: 0.04});
-    let o = {x: PHONE.x, y: PHONE.y, rot: PHONE.rot, sx: t >= T.phoneHit ? ph.sx : 1, sy: t >= T.phoneHit ? ph.sy : 1};
-    let z = 0;
-    if (gathering) { const g = gathered(t, PHONE, STACK.phone, 3); o = {x: g.x, y: g.y, rot: lerp(0, STACK.phone.rot, g.k) + g.rot, s: lerp(1, STACK.phone.s, g.k)}; z = 0.5 * Math.sin(g.k * Math.PI); }
-    withBody(o, z, c => drawPhone(c, PHONE.w, PHONE.h, t));
+    const im = OM.impact(t, T.phoneHit, {decay: 10, omega: 26, sqx: 0.03, sqy: 0.04});
+    let o = {x: PHONE.x, y: PHONE.y + (t >= T.phoneHit ? 22 * ease.quartOut(seg(t, T.phoneHit, T.phoneHit + 0.3)) : 0), rot: 0, sx: t >= T.phoneHit ? im.sx : 1, sy: t >= T.phoneHit ? im.sy : 1}, z = 0;
+    if (G) ({o, z} = gatherObj(t, {x: PHONE.x, y: PHONE.y + 22}, STACK.phone, 4));
+    withBody(o, z, c => drawPhone(c, t));
     TRACK.phone = OM.projectBox(VIEW, {x: o.x - PHONE.w / 2, y: o.y - PHONE.h / 2, w: PHONE.w, h: PHONE.h, op: 1});
   }
-
-  // the deck: standing slides that fall, or (gathering) one pile flying to the stack
-  if (!gathering) {
+  // 4 · tablet
+  {
+    const im = OM.impact(t, T.tabHit, {decay: 10, omega: 26, sqx: 0.02, sqy: 0.03});
+    const lurch = t >= T.bump ? 40 * Math.sin(Math.PI * seg(t, T.bump, T.bump + 0.36)) : 0;
+    let o = {x: TAB.x, y: TAB.y + lurch, rot: 0, sx: t >= T.tabHit ? im.sx : 1, sy: t >= T.tabHit ? im.sy : 1}, z = 0;
+    if (G) ({o, z} = gatherObj(t, TAB, STACK.tab, 3));
+    withBody(o, z, c => drawTablet(c, t));
+    TRACK.tab = OM.projectBox(VIEW, {x: o.x - TAB.w / 2, y: o.y - TAB.h / 2, w: TAB.w, h: TAB.h, op: 1});
+  }
+  // 3 · deck
+  if (!G) {
+    const k = DPR * CAM.zoom;
     for (let i = SL.n - 1; i >= 0; i--) {
-      const f = slideFall(t, i), a = f * Math.PI / 2;     // 0 standing on edge, π/2 flat
-      const baseY = SL.y0 + i * SL.gap;
-      const len = SL.h * Math.sin(a);                     // foreshortened face seen from above
-      const k = DPR * CAM.zoom;
+      const a = slideFall(t, i) * Math.PI / 2, baseY = SL.y0 + i * SL.gap, len = SL.h * Math.sin(a);
       cx.save(); mat(VIEW); cx.translate(SL.x + (i % 2 ? 6 : -6), baseY);
-      // standing height shows as a long soft shadow
-      cx.fillStyle = `rgba(40,10,40,${0.18 * Math.cos(a) + 0.06})`;
-      cx.filter = `blur(${(4 + 10 * Math.cos(a)) * k}px)`;
+      cx.fillStyle = `rgba(40,10,40,${0.18 * Math.cos(a) + 0.06})`; cx.filter = `blur(${(4 + 10 * Math.cos(a)) * k}px)`;
       cx.beginPath(); cx.moveTo(-SL.w / 2, 0); cx.lineTo(SL.w / 2, 0); cx.lineTo(SL.w / 2 + 60 * Math.cos(a) + 8, 26 + 130 * Math.cos(a)); cx.lineTo(-SL.w / 2 + 60 * Math.cos(a) + 8, 26 + 130 * Math.cos(a)); cx.closePath(); cx.fill();
       cx.filter = 'none';
-      if (len < 10) {                                     // the top edge of a standing slide
-        cx.fillStyle = CARD; rrect(-SL.w / 2, -6, SL.w, 12, 4); cx.fill();
-        cx.fillStyle = i === 0 ? HOT : '#D9CED9'; rrect(-SL.w / 2, -6, SL.w, 4, 2); cx.fill();
-      } else {
+      if (len < 10) { cx.fillStyle = SLIDE_BG[i] === '#FFFFFF' ? '#F4F0F4' : SLIDE_BG[i]; rrect(cx, -SL.w / 2, -6, SL.w, 12, 4); cx.fill(); }
+      else {
         cx.save(); cx.translate(0, len / 2); cx.scale(1, len / SL.h);
         cx.shadowColor = 'rgba(40,10,40,0.18)'; cx.shadowBlur = 8 * k; cx.shadowOffsetY = 5 * k;
-        slideFace(cx, i);
-        // shade while it is still falling: the face turns into the light
-        cx.fillStyle = `rgba(51,51,51,${0.35 * Math.cos(a)})`; rrect(-SL.w / 2, -SL.h / 2, SL.w, SL.h, 10); cx.fill();
+        drawSlide(cx, i);
+        cx.fillStyle = `rgba(51,51,51,${0.35 * Math.cos(a)})`; rrect(cx, -SL.w / 2, -SL.h / 2, SL.w, SL.h, 8); cx.fill();
         cx.restore();
       }
       cx.restore();
     }
     TRACK.deck = OM.projectBox(VIEW, {x: SL.x - SL.w / 2, y: SL.y0, w: SL.w, h: SL.gap * (SL.n - 1) + SL.h, op: 1});
   } else {
-    const from = {x: SL.x, y: SL.y0 + SL.gap * 2}, g = gathered(t, from, STACK.deck, 2);
-    const o = {x: g.x, y: g.y, rot: lerp(0, STACK.deck.rot, g.k) + g.rot, s: lerp(1, STACK.deck.s, g.k)};
-    withBody(o, 0.5 * Math.sin(g.k * Math.PI), c => drawDeckStack(c, lerp(5, 3, g.k) | 0));
+    const {o, z} = gatherObj(t, {x: SL.x, y: SL.y0 + SL.gap * 2}, STACK.deck, 2);
+    withBody(o, z, c => drawDeckPile(c));
     TRACK.deck = OM.projectBox(VIEW, {x: o.x - SL.w / 2, y: o.y - SL.h / 2, w: SL.w, h: SL.h, op: 1});
   }
-
-  // the summary
+  // 2 · summary
   {
-    const s = sumState(t);
-    let o = {x: s.x, y: s.y, rot: s.rot}, z = s.z;
-    if (gathering) { const g = gathered(t, {x: s.x, y: s.y}, STACK.sum, 1); o = {x: g.x, y: g.y, rot: lerp(s.rot, STACK.sum.rot, g.k) + g.rot, s: lerp(1, STACK.sum.s, g.k)}; z = 0.5 * Math.sin(g.k * Math.PI); }
-    const im = OM.impact(t, T.sumLand, {decay: 10, omega: 24, sqx: 0.05, sqy: 0.06});
-    if (t >= T.sumLand && !gathering) { o.sx = im.sx; o.sy = im.sy; }
+    const s = sumState(t); let o = {x: s.x, y: s.y, rot: s.rot}, z = s.z;
+    if (G) ({o, z} = gatherObj(t, s, STACK.sum, 1, s.rot));
+    else if (t >= T.sumLand) { const im = OM.impact(t, T.sumLand, {decay: 10, omega: 24, sqx: 0.05, sqy: 0.06}); o.sx = im.sx; o.sy = im.sy; }
     withBody(o, z, c => drawSummary(c, SUM1.w, SUM1.h));
     TRACK.sum = OM.projectBox(VIEW, {x: o.x - SUM1.w / 2, y: o.y - SUM1.h / 2, w: SUM1.w, h: SUM1.h, op: 1});
   }
-
-  // the plan (top of the pile while it lands)
+  // 1 · plan
   {
-    const p = planState(t);
-    let o = {x: p.x, y: p.y, rot: p.rot, sx: p.sx, sy: p.sy}, z = p.z;
-    if (gathering) { const g = gathered(t, PLAN, STACK.plan, 0); o = {x: g.x, y: g.y, rot: lerp(PLAN.rot, STACK.plan.rot, g.k) + g.rot, s: lerp(1, STACK.plan.s, g.k)}; z = 0.5 * Math.sin(g.k * Math.PI); }
-    if (p.op > 0) {
-      cx.globalAlpha = 1;
-      if (t < T.planDrop) {
-        // only its shadow, growing as it nears
-        const k = DPR * CAM.zoom; cx.save(); mat(VIEW); cx.translate(PLAN.x + 60, PLAN.y + 90); cx.rotate(PLAN.rot);
-        cx.fillStyle = `rgba(40,10,40,${0.16 * p.op})`; cx.filter = `blur(${70 * k}px)`; rrect(-PLAN.w * 0.7, -PLAN.h * 0.7, PLAN.w * 1.4, PLAN.h * 1.4, 30); cx.fill(); cx.filter = 'none'; cx.restore();
-      } else withBody(o, z, c => drawPlan(c, PLAN.w, PLAN.h));
-    }
+    const p = planState(t); let o = {x: p.x, y: p.y, rot: p.rot, sx: p.sx, sy: p.sy}, z = p.z;
+    if (G) ({o, z} = gatherObj(t, PLAN, STACK.plan, 0, PLAN.rot));
+    if (t < T.planDrop) {
+      const k = DPR * CAM.zoom; cx.save(); mat(VIEW); cx.translate(PLAN.x + 60, PLAN.y + 90); cx.rotate(PLAN.rot);
+      cx.fillStyle = `rgba(40,10,40,${0.16 * p.op})`; cx.filter = `blur(${70 * k}px)`; rrect(cx, -PLAN.w * 0.7, -PLAN.h * 0.7, PLAN.w * 1.4, PLAN.h * 1.4, 30); cx.fill(); cx.filter = 'none'; cx.restore();
+    } else withBody(o, z, c => drawPlan(c, PLAN.w, PLAN.h));
     TRACK.plan = OM.projectBox(VIEW, {x: o.x - PLAN.w / 2, y: o.y - PLAN.h / 2, w: PLAN.w, h: PLAN.h, op: p.op});
   }
-
-  // the stamp: falls from above, slams the stack, lifts to leave the seal
+  // stamp
   if (t >= T.stampDrop - 0.4) {
-    const u = seg(t, T.stampDrop, T.stampHit);
-    const z = t < T.stampHit ? 1.4 * (1 - u * u) : 0;
-    const appear = sstep(T.stampDrop - 0.4, T.stampDrop, t);
+    const u = seg(t, T.stampDrop, T.stampHit), z = t < T.stampHit ? 1.4 * (1 - u * u) : 0;
     const im = OM.impact(t, T.stampHit, {decay: 8, omega: 20, sqx: 0.08, sqy: 0.1});
-    const o = {x: 560, y: 1590, rot: -0.12 + 0.2 * z, s: 0.82, sx: t >= T.stampHit ? im.sx : 1, sy: t >= T.stampHit ? im.sy : 1};
-    cx.save(); cx.globalAlpha = appear;
+    const o = {x: 520, y: 1590, rot: -0.12 + 0.2 * z, s: 0.66, sx: t >= T.stampHit ? im.sx : 1, sy: t >= T.stampHit ? im.sy : 1};
+    cx.save(); cx.globalAlpha = sstep(T.stampDrop - 0.4, T.stampDrop, t);
     withBody(o, z, c => {
-      const r = 150;
-      c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(0, 0, r, 0, Math.PI * 2); c.fill(); noShadow();
-      c.strokeStyle = HOT; c.lineWidth = 12; c.beginPath(); c.arc(0, 0, r - 12, 0, Math.PI * 2); c.stroke();
-      c.lineWidth = 3; c.setLineDash([10, 10]); c.beginPath(); c.arc(0, 0, r - 30, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
+      const r = 150; c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(0, 0, r, 0, 7); c.fill(); noShadow(c);
+      c.strokeStyle = HOT; c.lineWidth = 12; c.beginPath(); c.arc(0, 0, r - 12, 0, 7); c.stroke();
+      c.lineWidth = 3; c.setLineDash([10, 10]); c.beginPath(); c.arc(0, 0, r - 30, 0, 7); c.stroke(); c.setLineDash([]);
       const lh = 170, lw = lh * LOGO.width / LOGO.height; c.drawImage(LOGO, -lw / 2, -lh / 2 - 4, lw, lh);
     });
     cx.restore();
-    TRACK.stamp = OM.projectBox(VIEW, {x: 430, y: 1460, w: 260, h: 260, op: appear});
   }
-
-  // the lockup: words rise under the sealed stack
+  // lockup
   if (t >= T.lock - 0.1) {
     mat(VIEW);
-    const L = [
-      ['YOUR PITCH BUNDLE', 116, INK, 'Anton', 0],
-      ['Prepared and maintained', 54, INK, 'Inter', 0.18],
-      ['by Manetrust Solutions.', 54, HOT, 'Inter', 0.3],
-    ];
-    let y = 1960;
-    L.forEach(([txt, size, col, font, dl], i) => {
+    let y = 2000;
+    [['YOUR PITCH BUNDLE', 116, INK, 'Anton', 0], ['Prepared and maintained', 54, INK, 'Inter', 0.18], ['by Manetrust Solutions.', 54, HOT, 'Inter', 0.3]].forEach(([txt, size, col, font, dl], i) => {
       const w = OM.wordRise(t, T.lock + dl);
-      cx.save(); cx.globalAlpha = w.op; cx.translate(560, y + (w.y || 0)); cx.scale(w.s || 1, w.s || 1);
-      label(txt, 0, 0, size, col, font, 'center'); cx.restore();
+      cx.save(); cx.globalAlpha = w.op; cx.translate(570, y + w.y); cx.scale(w.s, w.s); label(cx, txt, 0, 0, size, col, font, 'center'); cx.restore();
       y += size * 1.35 + (i === 0 ? 14 : 0);
     });
-    // the action: a purple block slammed in
-    const d = OM.popIn ? OM.popIn(t, T.lock + 0.75) : {op: 1, s: 1, y: 0};
-    cx.save(); cx.globalAlpha = d.op; cx.translate(560, 2345 + (d.dy || 0)); cx.scale(d.s || 1, d.s || 1);
-    cx.fillStyle = HOT; rrect(-170, -58, 340, 116, 58); cx.fill();
-    label('DM US', 0, 26, 72, '#FFFFFF', 'Anton', 'center', 2);
+    const d = OM.popIn(t, T.lock + 0.75);
+    cx.save(); cx.globalAlpha = d.op; cx.translate(570, 2385 + d.dy); cx.scale(d.s, d.s);
+    cx.fillStyle = HOT; rrect(cx, -170, -58, 340, 116, 58); cx.fill(); label(cx, 'DM US', 0, 26, 72, '#FFFFFF', 'Anton', 'center', 2);
     cx.restore();
-    TRACK.lock = OM.projectBox(VIEW, {x: 180, y: 1860, w: 760, h: 560, op: 1});
+    TRACK.lock = OM.projectBox(VIEW, {x: 190, y: 1900, w: 760, h: 560, op: 1});
   }
-
   vignette();
 }
 
 // ---------- contract ----------
 function stateKey(t) { seek(t); return JSON.parse(JSON.stringify(TRACK)); }
-window.__meta = {dur: DUR, fps: 30, inFrame: {plan: [T.planDrop + 0.1, T.sumLand - 0.4], phone: [T.phoneHit, T.gather0], lock: [T.lock + 1.2, DUR, 'whole']}};
+window.__meta = {dur: DUR, fps: 30, inFrame: {plan: [T.planDrop + 0.1, T.sumLand - 0.4], tab: [T.scroll0, T.scroll1], phone: [T.playStart, T.gather0], lock: [T.lock + 1.2, DUR, 'whole']}};
 window.__seek = async t => { seek(t); return true; };
 window.__track = t => stateKey(t);
 window.__motion = (t0, t1) => {
-  const c0 = camAt(t0), c1 = camAt(t1), cm = camAt((t0 + t1) / 2);
-  let d = OM.screenTravel(c0, c1, cm, {W, H});
+  let d = OM.screenTravel(camAt(t0), camAt(t1), camAt((t0 + t1) / 2), {W, H});
   const a = stateKey(t0), b = stateKey(t1);
   for (const k in a) if (b[k]) d = Math.max(d, Math.hypot(a[k].x - b[k].x, a[k].y - b[k].y), Math.abs(a[k].w - b[k].w));
+  // the site scrolling inside the tablet
+  if (t1 > T.scroll0 && t0 < T.scroll1 + 0.5) d = Math.max(d, 60);
   return d;
 };
 window.__events = () => [
   [T.planLand, 'land-heavy', 540], [T.sumLaunch, 'launch', 560], [T.sumTop, 'hang', 540], [T.sumLand, 'land-paper', 540],
   ...FALL.map(([a, b], i) => [b, 'slide', 540, i]),
-  [T.phoneHit, 'phone-knock', 540], [T.playStart, 'play', 540], [T.playEnd, 'done', 540],
+  [T.tabHit, 'tab-knock', 540], [T.scroll0, 'scroll', 540], [T.bump, 'bump', 540], [T.phoneHit, 'phone-knock', 540],
+  [T.playStart, 'play', 540], [T.playEnd, 'done', 540],
   [T.gather0, 'gather', 540], [T.stampDrop, 'stamp-fall', 560], [T.stampHit, 'stamp', 560], [T.lock, 'lock', 560], [T.lock + 0.75, 'dm', 560],
 ];
 window.T = T;
@@ -434,11 +550,9 @@ window.__ready = (async () => {
   const faces = [new FontFace('Anton', `url(${ASSETS.anton})`), new FontFace('Inter', `url(${ASSETS.inter})`, {weight: '500'}), new FontFace('JBM', `url(${ASSETS.mono})`, {weight: '500'})];
   for (const f of faces) { await f.load(); document.fonts.add(f); }
   [PAPER, LOGO] = await Promise.all([loadImg(ASSETS.paper), loadImg(ASSETS.logo)]);
-  buildCamera();
-  seek(0);
+  buildSite(); buildCamera(); seek(0);
   const q = new URLSearchParams(location.search);
   if (q.has('t')) seek(parseFloat(q.get('t')));
-  if (q.has('play')) { const t0 = performance.now(); const tick = () => { seek(((performance.now() - t0) / 1000) % DUR); requestAnimationFrame(tick); }; tick(); }
   return true;
 })();
 </script>

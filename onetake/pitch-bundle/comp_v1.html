@@ -1,0 +1,445 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Manetrust pitch bundle</title>
+<style>
+  html, body { margin: 0; background: #E9E2E9; overflow: hidden; }
+  canvas { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+</style>
+<script src="assets.js"></script>
+<script src="motion.js"></script>
+</head><body>
+<canvas id="c"></canvas>
+<script>
+// Manetrust · "Your pitch bundle" · concept C: a chain reaction on a paper tabletop, seen from above.
+// The plan lands → launches the one-page summary → the summary knocks the deck's slides over like dominoes →
+// the last slide lands on the phone's play button → the 1-minute video plays → the bundle gathers → the stamp seals it.
+'use strict';
+const W = 1080, H = 1920, DUR = 15.0;
+const {clamp, lerp, seg, sstep, ease} = OM;
+const INK = '#333333', HOT = '#800080', BG = '#E9E2E9', CARD = '#FFFFFF', MUTE = '#8A7F8A';
+const cv = document.getElementById('c'), cx = cv.getContext('2d');
+const DPR = window.devicePixelRatio || 1;
+cv.width = W * DPR; cv.height = H * DPR;
+
+// ---------- timeline (s) ----------
+const T = {
+  planDrop: 0.55, planLand: 1.15,          // the plan falls onto the table
+  sumLaunch: 1.17, sumTop: 1.75, sumFall: 2.35, sumLand: 2.75, sumSkid: 3.0,
+  slide0: 3.0,                              // first slide tips when the summary's edge reaches it
+  phoneHit: 0,                              // set from the run
+  playEnd: 0,                               // 1-minute progress done
+  gather0: 0, gather1: 0, stampDrop: 0, stampHit: 0, lock: 0,
+};
+// slides: 5 standing on edge, falling toward +y
+const SL = {n: 5, x: 540, y0: 1795, gap: 104, w: 330, h: 176};
+const FALL = [];                            // [start, end] per slide
+(function run() {
+  let t = T.slide0;
+  for (let i = 0; i < SL.n; i++) {
+    const d = 0.42 * Math.pow(0.86, i);
+    FALL.push([t, t + d]);
+    // the next one starts when this one has leant far enough to touch it: asin(gap / h)
+    const reach = Math.asin(Math.min(1, SL.gap / SL.h)) / (Math.PI / 2);   // fraction of the fall angle
+    t = t + d * Math.pow(reach, 1 / 2.2);
+  }
+  T.phoneHit = FALL[SL.n - 1][1];
+  T.playStart = T.phoneHit + 0.25;
+  T.playEnd = T.playStart + 2.6;
+  T.gather0 = T.playEnd + 0.55; T.gather1 = T.gather0 + 1.1;
+  T.stampDrop = T.gather1 + 0.35; T.stampHit = T.stampDrop + 0.55;
+  T.lock = T.stampHit + 0.55;
+})();
+
+// ---------- layout (world px; zoom 1 = the frame) ----------
+const PLAN = {x: 540, y: 640, w: 420, h: 540, rot: -0.05};
+const SUM0 = {x: 560, y: 1030, w: 380, h: 500, rot: 0.04};     // tucked under the plan's lower edge
+const SUM1 = {x: 540, y: 1430, w: 380, h: 500, rot: -0.03};    // where it lands
+const PHONE = {x: 540, y: 2690, w: 340, h: 640, rot: 0};
+// the stack at the end, around (540, 1500)
+const STACK = {
+  plan: {x: 470, y: 1420, rot: -0.07, s: 0.86},
+  sum: {x: 700, y: 1450, rot: 0.08, s: 0.8},
+  deck: {x: 330, y: 1650, rot: -0.16, s: 0.82},
+  phone: {x: 820, y: 1640, rot: 0.12, s: 0.6},
+};
+
+// ---------- camera ----------
+let KEYS = [], HITS = [];
+function buildCamera() {
+  const e = ease;
+  KEYS = [
+    {t: 0, x: 540, y: 760, zoom: 1.0},
+    {t: T.planLand, x: 540, y: 820, zoom: 1.08, curve: e.cubicInOut},
+    {t: T.sumTop - 0.1, x: 540, y: 1050, zoom: 1.0, curve: e.sineInOut},
+    {t: T.sumLand, x: 540, y: 1420, zoom: 1.05, curve: e.sineInOut},
+    {t: FALL[2][0], x: 540, y: 1820, zoom: 1.02, curve: e.sineInOut},
+    {t: T.phoneHit, x: 540, y: 2420, zoom: 1.05, curve: e.sineInOut},
+    {t: T.playStart + 0.3, x: 540, y: 2640, zoom: 1.32, curve: e.expoInOut},
+    {t: T.playEnd, x: 540, y: 2660, zoom: 1.36, curve: e.sineInOut},
+    {t: T.gather0 + 0.1, x: 540, y: 1750, zoom: 0.62, curve: e.expoInOut},
+    {t: T.gather1, x: 560, y: 1520, zoom: 0.95, curve: e.cubicInOut},
+    {t: T.stampHit, x: 560, y: 1520, zoom: 1.0, curve: e.sineInOut},
+    {t: T.lock + 0.9, x: 560, y: 1800, zoom: 1.0, curve: e.cubicInOut},
+    {t: DUR, x: 560, y: 1800, zoom: 1.0},
+  ];
+  HITS = [[T.planLand, 10, 9], [T.sumLand, 5, 11], [T.phoneHit, 7, 10], [T.stampHit, 14, 8]];
+}
+const handEnv = t => sstep(0.2, 0.8, t) * (1 - sstep(T.playStart, T.playStart + 0.4, t) + sstep(T.playEnd - 0.2, T.playEnd, t)) * (1 - sstep(T.lock, T.lock + 0.6, t));
+function camAt(t) {
+  const c = OM.camera(t, KEYS, {W, H});
+  const e = handEnv(t) * 3.4;
+  let x = c.x + e * (Math.sin(1.7 * t) + 0.6 * Math.sin(2.9 * t + 1)) / c.zoom;
+  let y = c.y + e * (Math.sin(1.3 * t + 2) + 0.5 * Math.sin(3.3 * t)) / c.zoom;
+  let rot = c.rot;
+  for (const [th, amp, decay] of HITS) {
+    const s = OM.shake(t, th, {amp, decay, seed: Math.round(th * 100)});
+    x += s.x / c.zoom; y += s.y / c.zoom; rot += s.rot;
+  }
+  return {x: Math.round(x * 16) / 16, y: Math.round(y * 16) / 16, zoom: Math.round(c.zoom * 2000) / 2000, rot};
+}
+
+// ---------- drawing helpers ----------
+let CAM, VIEW;
+const mat = m => cx.setTransform(m[0] * DPR, m[1] * DPR, m[2] * DPR, m[3] * DPR, m[4] * DPR, m[5] * DPR);
+function rrect(x, y, w, h, r) {
+  cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(x + w, y, x + w, y + h, r); cx.arcTo(x + w, y + h, x, y + h, r);
+  cx.arcTo(x, y + h, x, y, r); cx.arcTo(x, y, x + w, y, r); cx.closePath();
+}
+// a body at height z (0 = on the table): drawn bigger, shadow offset and softened with height
+function withBody(o, z, fn) {
+  const k = DPR * CAM.zoom;
+  cx.save();
+  mat(VIEW);
+  cx.translate(o.x, o.y); cx.rotate(o.rot || 0);
+  const s = (o.s || 1) * (1 + 0.42 * z) * (o.sx ? 1 : 1);
+  cx.scale(s * (o.sx || 1), s * (o.sy || 1));
+  cx.shadowColor = `rgba(40, 10, 40, ${0.26 - 0.1 * z})`;
+  cx.shadowBlur = (8 + 70 * z) * k;
+  cx.shadowOffsetX = (6 + 60 * z) * k; cx.shadowOffsetY = (10 + 90 * z) * k;
+  fn(cx);
+  cx.restore();
+}
+const noShadow = () => { cx.shadowColor = 'transparent'; cx.shadowBlur = 0; cx.shadowOffsetX = 0; cx.shadowOffsetY = 0; };
+function label(text, x, y, size, color, font = 'Anton', align = 'left', track = 0) {
+  cx.font = `${font === 'Anton' ? '' : '500 '}${size}px ${font}`;
+  cx.fillStyle = color; cx.textAlign = align; cx.textBaseline = 'alphabetic';
+  if (track) cx.letterSpacing = `${track}px`; else cx.letterSpacing = '0px';
+  cx.fillText(text, x, y);
+}
+function lines(x, y, w, n, gap, color, widths) {
+  cx.fillStyle = color;
+  for (let i = 0; i < n; i++) { const ww = w * (widths ? widths[i % widths.length] : 1); rrect(x, y + i * gap, ww, 9, 4.5); cx.fill(); }
+}
+
+// ---------- the objects ----------
+function drawPlan(c, w, h) {
+  // a bound report: purple spine, cover title, page edges
+  c.fillStyle = CARD; rrect(-w / 2, -h / 2, w, h, 14); c.fill(); noShadow();
+  c.fillStyle = '#F1ECF1'; rrect(-w / 2 + 10, h / 2 - 16, w - 20, 10, 4); c.fill();   // page block edge
+  c.fillStyle = HOT; rrect(-w / 2, -h / 2, 46, h, 14); c.fill(); c.fillRect(-w / 2 + 30, -h / 2, 16, h);
+  label('BUSINESS', -w / 2 + 78, -h / 2 + 120, 74, INK);
+  label('PLAN', -w / 2 + 78, -h / 2 + 196, 74, HOT);
+  lines(-w / 2 + 80, -h / 2 + 250, w - 140, 6, 30, '#D8CFD8', [1, 0.86, 0.94, 0.7, 0.9, 0.55]);
+  label('MARKET · MODEL · FINANCIALS', -w / 2 + 80, h / 2 - 50, 22, MUTE, 'JBM', 'left', 1);
+}
+function drawSummary(c, w, h) {
+  c.fillStyle = CARD; rrect(-w / 2, -h / 2, w, h, 10); c.fill(); noShadow();
+  c.fillStyle = HOT; c.fillRect(-w / 2, -h / 2, w, 12);
+  label('EXECUTIVE', -w / 2 + 34, -h / 2 + 92, 58, INK);
+  label('SUMMARY', -w / 2 + 34, -h / 2 + 152, 58, INK);
+  c.fillStyle = BG; rrect(-w / 2 + 34, -h / 2 + 178, 150, 44, 22); c.fill();
+  label('ONE PAGE', -w / 2 + 109, -h / 2 + 209, 24, HOT, 'JBM', 'center', 2);
+  lines(-w / 2 + 34, -h / 2 + 258, w - 68, 7, 30, '#D8CFD8', [1, 0.92, 0.8, 1, 0.66, 0.9, 0.5]);
+}
+const SLIDE_FACES = [
+  c => { c.fillStyle = HOT; rrect(-SL.w / 2, -SL.h / 2, SL.w, SL.h, 10); c.fill(); label('PITCH DECK', 0, 18, 56, '#FFFFFF', 'Anton', 'center'); },
+  c => { label('PROBLEM', -SL.w / 2 + 26, -SL.h / 2 + 56, 38, INK); lines(-SL.w / 2 + 26, -SL.h / 2 + 82, SL.w - 52, 3, 24, '#D8CFD8', [1, 0.8, 0.6]); },
+  c => { label('MARKET', -SL.w / 2 + 26, -SL.h / 2 + 56, 38, INK); [40, 62, 92].forEach((bh, i) => { c.fillStyle = i === 2 ? HOT : '#CFC4CF'; c.fillRect(-SL.w / 2 + 30 + i * 52, SL.h / 2 - 20 - bh, 36, bh); }); },
+  c => { label('MODEL', -SL.w / 2 + 26, -SL.h / 2 + 56, 38, INK); c.strokeStyle = HOT; c.lineWidth = 7; c.beginPath(); c.arc(70, 14, 42, -1.6, 2.6); c.stroke(); lines(-SL.w / 2 + 26, -SL.h / 2 + 82, 130, 3, 24, '#D8CFD8'); },
+  c => { label('THE ASK', -SL.w / 2 + 26, -SL.h / 2 + 56, 38, INK); c.fillStyle = BG; rrect(-SL.w / 2 + 26, -SL.h / 2 + 86, 190, 56, 12); c.fill(); label('NEXT STEP', -SL.w / 2 + 121, -SL.h / 2 + 124, 26, HOT, 'JBM', 'center', 2); },
+];
+function slideFace(c, i) {
+  c.fillStyle = CARD; rrect(-SL.w / 2, -SL.h / 2, SL.w, SL.h, 10); c.fill(); noShadow();
+  c.strokeStyle = '#E2DAE2'; c.lineWidth = 3; rrect(-SL.w / 2, -SL.h / 2, SL.w, SL.h, 10); c.stroke();
+  SLIDE_FACES[i](c);
+}
+function drawDeckStack(c, n) {          // the deck as a neat pile (end stack)
+  for (let k = n - 1; k >= 0; k--) { c.save(); c.translate(k * 7, k * 7); slideFace(c, k === 0 ? 0 : 4 - (k - 1)); c.restore(); noShadow(); }
+}
+function drawPhone(c, w, h, t) {
+  c.fillStyle = '#2B2B2B'; rrect(-w / 2, -h / 2, w, h, 52); c.fill(); noShadow();
+  const sw = w - 30, sh = h - 30;
+  const on = sstep(T.phoneHit, T.phoneHit + 0.3, t);
+  c.fillStyle = on > 0 ? lerpColor('#1D1D1D', '#F6F1F6', on) : '#1D1D1D'; rrect(-sw / 2, -sh / 2, sw, sh, 40); c.fill();
+  c.fillStyle = '#111'; rrect(-40, -h / 2 + 26, 80, 18, 9); c.fill();
+  if (on <= 0) return;
+  c.globalAlpha = on;
+  // the video frame: a speaker silhouette in front of a purple block
+  c.save(); rrect(-sw / 2 + 18, -sh / 2 + 70, sw - 36, 300, 22); c.clip();
+  c.fillStyle = HOT; c.fillRect(-sw / 2, -sh / 2, sw, sh);
+  const bob = Math.sin(t * 5.2) * 2.5 * sstep(T.playStart, T.playStart + 0.3, t) * (1 - sstep(T.playEnd, T.playEnd + 0.2, t));
+  c.fillStyle = '#F6F1F6';
+  c.beginPath(); c.arc(0, -sh / 2 + 190 + bob, 44, 0, Math.PI * 2); c.fill();
+  c.beginPath(); c.ellipse(0, -sh / 2 + 340 + bob, 92, 80, 0, Math.PI, 0); c.fill();
+  c.restore();
+  // play / pause glyph
+  const pr = OM.press(t, T.playStart, {depth: 0.2});
+  const playing = t >= T.playStart && t < T.playEnd;
+  c.save(); c.translate(0, -sh / 2 + 220); c.scale(pr.s || 1, pr.s || 1);
+  const ga = playing ? 0.25 : 0.95;
+  c.globalAlpha = on * ga; c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(0, 0, 46, 0, Math.PI * 2); c.fill();
+  c.fillStyle = HOT; c.beginPath(); c.moveTo(-14, -22); c.lineTo(24, 0); c.lineTo(-14, 22); c.closePath(); c.fill();
+  c.restore(); c.globalAlpha = on;
+  // progress and the 1-minute clock
+  const p = OM.ease.smooth(seg(t, T.playStart, T.playEnd));
+  const by = -sh / 2 + 400;
+  c.fillStyle = '#DDD2DD'; rrect(-sw / 2 + 30, by, sw - 60, 10, 5); c.fill();
+  c.fillStyle = HOT; rrect(-sw / 2 + 30, by, Math.max(10, (sw - 60) * p), 10, 5); c.fill();
+  const secs = Math.round(60 * p);
+  label(secs >= 60 ? '1:00' : `0:${String(secs).padStart(2, '0')}`, -sw / 2 + 30, by + 52, 28, INK, 'JBM');
+  if (secs < 60) label('1:00', sw / 2 - 30, by + 52, 28, MUTE, 'JBM', 'right');
+  label('1-MINUTE', -sw / 2 + 30, by + 128, 54, INK);
+  label('PITCH VIDEO', -sw / 2 + 30, by + 186, 54, HOT);
+  // the finish tick
+  const done = OM.spring ? sstep(T.playEnd, T.playEnd + 0.25, t) : 0;
+  if (done > 0) {
+    c.save(); c.translate(sw / 2 - 70, -sh / 2 + 120); c.scale(0.6 + 0.4 * done, 0.6 + 0.4 * done); c.globalAlpha = on * done;
+    c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(0, 0, 34, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = HOT; c.lineWidth = 8; c.lineCap = 'round'; c.beginPath(); c.moveTo(-14, 0); c.lineTo(-4, 11); c.lineTo(16, -12); c.stroke();
+    c.restore();
+  }
+  c.globalAlpha = 1;
+}
+function lerpColor(a, b, k) {
+  const pa = [1, 3, 5].map(i => parseInt(a.substr(i, 2), 16)), pb = [1, 3, 5].map(i => parseInt(b.substr(i, 2), 16));
+  return `rgb(${pa.map((v, i) => Math.round(lerp(v, pb[i], k))).join(',')})`;
+}
+
+// ---------- per-object state at t ----------
+function planState(t) {
+  const u = seg(t, T.planDrop, T.planLand);
+  const z = t < T.planDrop ? 1 : 1 - u * u;                       // gravity: height ∝ 1 − u²
+  const im = OM.impact(t, T.planLand, {decay: 9, omega: 24, sqx: 0.05, sqy: 0.06});
+  const vis = sstep(T.planDrop - 0.5, T.planDrop - 0.1, t);       // its shadow arrives first, from above
+  return {x: PLAN.x, y: PLAN.y - 40 * z, rot: PLAN.rot + 0.08 * z, z: t < T.planLand ? z : 0, sx: t >= T.planLand ? im.sx : 1, sy: t >= T.planLand ? im.sy : 1, op: vis};
+}
+function sumState(t) {
+  if (t < T.sumLaunch) return {...SUM0, z: 0};
+  const up = ease.cubicOut(seg(t, T.sumLaunch, T.sumTop));
+  const hang = seg(t, T.sumTop, T.sumFall);
+  const dn = seg(t, T.sumFall, T.sumLand);
+  let z, x, y, rot;
+  if (t < T.sumFall) {
+    z = 0.95 * up + 0.04 * Math.sin(hang * Math.PI);
+    const k = ease.smoother(seg(t, T.sumLaunch, T.sumLand));
+    x = lerp(SUM0.x, SUM1.x, k) + Math.sin(t * 4.5) * 6 * hang; y = lerp(SUM0.y, SUM1.y, k);
+    rot = lerp(SUM0.rot, SUM1.rot + Math.PI * 2, ease.cubicOut(seg(t, T.sumLaunch, T.sumLand))) + Math.sin(t * 3.1) * 0.05 * hang;
+  } else {
+    z = 0.99 * (1 - dn * dn);
+    const k = ease.smoother(seg(t, T.sumLaunch, T.sumLand));
+    x = lerp(SUM0.x, SUM1.x, k); y = lerp(SUM0.y, SUM1.y, k);
+    rot = lerp(SUM0.rot, SUM1.rot + Math.PI * 2, ease.cubicOut(seg(t, T.sumLaunch, T.sumLand)));
+  }
+  if (t >= T.sumLand) {
+    // it lands skidding forward; its lower edge reaches the first slide
+    const sk = ease.quartOut(seg(t, T.sumLand, T.sumSkid));
+    z = 0; x = SUM1.x; y = SUM1.y + 70 * sk; rot = SUM1.rot;
+  }
+  return {x, y, rot, z, w: SUM1.w, h: SUM1.h};
+}
+// slide i: angle fallen 0..1 (u^2.2 like a real domino)
+function slideFall(t, i) { const [a, b] = FALL[i]; return Math.pow(seg(t, a, b), 2.2); }
+
+// ---------- gather & stamp ----------
+function gathered(t, from, to, i) {
+  const g = OM.gather(t, T.gather0, T.gather1 - 0.24, i, 4, from, to, {stagger: 0.08, arc: 160, spin: 0.25});
+  return g;
+}
+
+// ---------- ground ----------
+let PAPER, LOGO;
+function ground() {
+  cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  cx.fillStyle = BG; cx.fillRect(0, 0, W, H);
+  mat(VIEW);
+  // the crumpled paper covers the whole table, in three bands of shade
+  const tw = 1500, th = tw * 1920 / 1080;
+  for (let r = 0; r < 2; r++) for (let q = 0; q < 2; q++) {
+    const x0 = -210 + q * tw * 0.98, y0 = -500 + r * th * 0.98;
+    cx.drawImage(PAPER, x0, y0, tw, th);
+  }
+  // shade the table: lilac at the top, a cooler mauve where the deck runs, deeper at the phone
+  const g = cx.createLinearGradient(0, 0, 0, 3300);
+  g.addColorStop(0, 'rgba(233, 226, 233, 0.55)');
+  g.addColorStop(0.45, 'rgba(214, 196, 214, 0.55)');
+  g.addColorStop(0.85, 'rgba(190, 160, 190, 0.55)');
+  g.addColorStop(1, 'rgba(233, 226, 233, 0.55)');
+  cx.globalCompositeOperation = 'multiply'; cx.fillStyle = g; cx.fillRect(-400, -700, 2000, 4400);
+  cx.globalCompositeOperation = 'source-over';
+}
+function vignette() {
+  cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const g = cx.createRadialGradient(W / 2, H / 2, H * 0.32, W / 2, H / 2, H * 0.72);
+  g.addColorStop(0, 'rgba(40,10,40,0)'); g.addColorStop(1, 'rgba(40,10,40,0.22)');
+  cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+}
+
+// ---------- the frame ----------
+let TRACK = {};
+function seek(t) {
+  CAM = camAt(t); VIEW = OM.view(CAM, {W, H});
+  ground();
+  TRACK = {};
+  const gk = seg(t, T.gather0, T.gather1 + 0.3);
+  const gathering = t >= T.gather0;
+
+  // the phone (drawn first: everything lands on or toward it)
+  {
+    const ph = OM.impact(t, T.phoneHit, {decay: 10, omega: 26, sqx: 0.03, sqy: 0.04});
+    let o = {x: PHONE.x, y: PHONE.y, rot: PHONE.rot, sx: t >= T.phoneHit ? ph.sx : 1, sy: t >= T.phoneHit ? ph.sy : 1};
+    let z = 0;
+    if (gathering) { const g = gathered(t, PHONE, STACK.phone, 3); o = {x: g.x, y: g.y, rot: lerp(0, STACK.phone.rot, g.k) + g.rot, s: lerp(1, STACK.phone.s, g.k)}; z = 0.5 * Math.sin(g.k * Math.PI); }
+    withBody(o, z, c => drawPhone(c, PHONE.w, PHONE.h, t));
+    TRACK.phone = OM.projectBox(VIEW, {x: o.x - PHONE.w / 2, y: o.y - PHONE.h / 2, w: PHONE.w, h: PHONE.h, op: 1});
+  }
+
+  // the deck: standing slides that fall, or (gathering) one pile flying to the stack
+  if (!gathering) {
+    for (let i = SL.n - 1; i >= 0; i--) {
+      const f = slideFall(t, i), a = f * Math.PI / 2;     // 0 standing on edge, π/2 flat
+      const baseY = SL.y0 + i * SL.gap;
+      const len = SL.h * Math.sin(a);                     // foreshortened face seen from above
+      const k = DPR * CAM.zoom;
+      cx.save(); mat(VIEW); cx.translate(SL.x + (i % 2 ? 6 : -6), baseY);
+      // standing height shows as a long soft shadow
+      cx.fillStyle = `rgba(40,10,40,${0.18 * Math.cos(a) + 0.06})`;
+      cx.filter = `blur(${(4 + 10 * Math.cos(a)) * k}px)`;
+      cx.beginPath(); cx.moveTo(-SL.w / 2, 0); cx.lineTo(SL.w / 2, 0); cx.lineTo(SL.w / 2 + 60 * Math.cos(a) + 8, 26 + 130 * Math.cos(a)); cx.lineTo(-SL.w / 2 + 60 * Math.cos(a) + 8, 26 + 130 * Math.cos(a)); cx.closePath(); cx.fill();
+      cx.filter = 'none';
+      if (len < 10) {                                     // the top edge of a standing slide
+        cx.fillStyle = CARD; rrect(-SL.w / 2, -6, SL.w, 12, 4); cx.fill();
+        cx.fillStyle = i === 0 ? HOT : '#D9CED9'; rrect(-SL.w / 2, -6, SL.w, 4, 2); cx.fill();
+      } else {
+        cx.save(); cx.translate(0, len / 2); cx.scale(1, len / SL.h);
+        cx.shadowColor = 'rgba(40,10,40,0.18)'; cx.shadowBlur = 8 * k; cx.shadowOffsetY = 5 * k;
+        slideFace(cx, i);
+        // shade while it is still falling: the face turns into the light
+        cx.fillStyle = `rgba(51,51,51,${0.35 * Math.cos(a)})`; rrect(-SL.w / 2, -SL.h / 2, SL.w, SL.h, 10); cx.fill();
+        cx.restore();
+      }
+      cx.restore();
+    }
+    TRACK.deck = OM.projectBox(VIEW, {x: SL.x - SL.w / 2, y: SL.y0, w: SL.w, h: SL.gap * (SL.n - 1) + SL.h, op: 1});
+  } else {
+    const from = {x: SL.x, y: SL.y0 + SL.gap * 2}, g = gathered(t, from, STACK.deck, 2);
+    const o = {x: g.x, y: g.y, rot: lerp(0, STACK.deck.rot, g.k) + g.rot, s: lerp(1, STACK.deck.s, g.k)};
+    withBody(o, 0.5 * Math.sin(g.k * Math.PI), c => drawDeckStack(c, lerp(5, 3, g.k) | 0));
+    TRACK.deck = OM.projectBox(VIEW, {x: o.x - SL.w / 2, y: o.y - SL.h / 2, w: SL.w, h: SL.h, op: 1});
+  }
+
+  // the summary
+  {
+    const s = sumState(t);
+    let o = {x: s.x, y: s.y, rot: s.rot}, z = s.z;
+    if (gathering) { const g = gathered(t, {x: s.x, y: s.y}, STACK.sum, 1); o = {x: g.x, y: g.y, rot: lerp(s.rot, STACK.sum.rot, g.k) + g.rot, s: lerp(1, STACK.sum.s, g.k)}; z = 0.5 * Math.sin(g.k * Math.PI); }
+    const im = OM.impact(t, T.sumLand, {decay: 10, omega: 24, sqx: 0.05, sqy: 0.06});
+    if (t >= T.sumLand && !gathering) { o.sx = im.sx; o.sy = im.sy; }
+    withBody(o, z, c => drawSummary(c, SUM1.w, SUM1.h));
+    TRACK.sum = OM.projectBox(VIEW, {x: o.x - SUM1.w / 2, y: o.y - SUM1.h / 2, w: SUM1.w, h: SUM1.h, op: 1});
+  }
+
+  // the plan (top of the pile while it lands)
+  {
+    const p = planState(t);
+    let o = {x: p.x, y: p.y, rot: p.rot, sx: p.sx, sy: p.sy}, z = p.z;
+    if (gathering) { const g = gathered(t, PLAN, STACK.plan, 0); o = {x: g.x, y: g.y, rot: lerp(PLAN.rot, STACK.plan.rot, g.k) + g.rot, s: lerp(1, STACK.plan.s, g.k)}; z = 0.5 * Math.sin(g.k * Math.PI); }
+    if (p.op > 0) {
+      cx.globalAlpha = 1;
+      if (t < T.planDrop) {
+        // only its shadow, growing as it nears
+        const k = DPR * CAM.zoom; cx.save(); mat(VIEW); cx.translate(PLAN.x + 60, PLAN.y + 90); cx.rotate(PLAN.rot);
+        cx.fillStyle = `rgba(40,10,40,${0.16 * p.op})`; cx.filter = `blur(${70 * k}px)`; rrect(-PLAN.w * 0.7, -PLAN.h * 0.7, PLAN.w * 1.4, PLAN.h * 1.4, 30); cx.fill(); cx.filter = 'none'; cx.restore();
+      } else withBody(o, z, c => drawPlan(c, PLAN.w, PLAN.h));
+    }
+    TRACK.plan = OM.projectBox(VIEW, {x: o.x - PLAN.w / 2, y: o.y - PLAN.h / 2, w: PLAN.w, h: PLAN.h, op: p.op});
+  }
+
+  // the stamp: falls from above, slams the stack, lifts to leave the seal
+  if (t >= T.stampDrop - 0.4) {
+    const u = seg(t, T.stampDrop, T.stampHit);
+    const z = t < T.stampHit ? 1.4 * (1 - u * u) : 0;
+    const appear = sstep(T.stampDrop - 0.4, T.stampDrop, t);
+    const im = OM.impact(t, T.stampHit, {decay: 8, omega: 20, sqx: 0.08, sqy: 0.1});
+    const o = {x: 560, y: 1590, rot: -0.12 + 0.2 * z, s: 0.82, sx: t >= T.stampHit ? im.sx : 1, sy: t >= T.stampHit ? im.sy : 1};
+    cx.save(); cx.globalAlpha = appear;
+    withBody(o, z, c => {
+      const r = 150;
+      c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(0, 0, r, 0, Math.PI * 2); c.fill(); noShadow();
+      c.strokeStyle = HOT; c.lineWidth = 12; c.beginPath(); c.arc(0, 0, r - 12, 0, Math.PI * 2); c.stroke();
+      c.lineWidth = 3; c.setLineDash([10, 10]); c.beginPath(); c.arc(0, 0, r - 30, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
+      const lh = 170, lw = lh * LOGO.width / LOGO.height; c.drawImage(LOGO, -lw / 2, -lh / 2 - 4, lw, lh);
+    });
+    cx.restore();
+    TRACK.stamp = OM.projectBox(VIEW, {x: 430, y: 1460, w: 260, h: 260, op: appear});
+  }
+
+  // the lockup: words rise under the sealed stack
+  if (t >= T.lock - 0.1) {
+    mat(VIEW);
+    const L = [
+      ['YOUR PITCH BUNDLE', 116, INK, 'Anton', 0],
+      ['Prepared and maintained', 54, INK, 'Inter', 0.18],
+      ['by Manetrust Solutions.', 54, HOT, 'Inter', 0.3],
+    ];
+    let y = 1960;
+    L.forEach(([txt, size, col, font, dl], i) => {
+      const w = OM.wordRise(t, T.lock + dl);
+      cx.save(); cx.globalAlpha = w.op; cx.translate(560, y + (w.y || 0)); cx.scale(w.s || 1, w.s || 1);
+      label(txt, 0, 0, size, col, font, 'center'); cx.restore();
+      y += size * 1.35 + (i === 0 ? 14 : 0);
+    });
+    // the action: a purple block slammed in
+    const d = OM.popIn ? OM.popIn(t, T.lock + 0.75) : {op: 1, s: 1, y: 0};
+    cx.save(); cx.globalAlpha = d.op; cx.translate(560, 2345 + (d.dy || 0)); cx.scale(d.s || 1, d.s || 1);
+    cx.fillStyle = HOT; rrect(-170, -58, 340, 116, 58); cx.fill();
+    label('DM US', 0, 26, 72, '#FFFFFF', 'Anton', 'center', 2);
+    cx.restore();
+    TRACK.lock = OM.projectBox(VIEW, {x: 180, y: 1860, w: 760, h: 560, op: 1});
+  }
+
+  vignette();
+}
+
+// ---------- contract ----------
+function stateKey(t) { seek(t); return JSON.parse(JSON.stringify(TRACK)); }
+window.__meta = {dur: DUR, fps: 30, inFrame: {plan: [T.planDrop + 0.1, T.sumLand - 0.4], phone: [T.phoneHit, T.gather0], lock: [T.lock + 1.2, DUR, 'whole']}};
+window.__seek = async t => { seek(t); return true; };
+window.__track = t => stateKey(t);
+window.__motion = (t0, t1) => {
+  const c0 = camAt(t0), c1 = camAt(t1), cm = camAt((t0 + t1) / 2);
+  let d = OM.screenTravel(c0, c1, cm, {W, H});
+  const a = stateKey(t0), b = stateKey(t1);
+  for (const k in a) if (b[k]) d = Math.max(d, Math.hypot(a[k].x - b[k].x, a[k].y - b[k].y), Math.abs(a[k].w - b[k].w));
+  return d;
+};
+window.__events = () => [
+  [T.planLand, 'land-heavy', 540], [T.sumLaunch, 'launch', 560], [T.sumTop, 'hang', 540], [T.sumLand, 'land-paper', 540],
+  ...FALL.map(([a, b], i) => [b, 'slide', 540, i]),
+  [T.phoneHit, 'phone-knock', 540], [T.playStart, 'play', 540], [T.playEnd, 'done', 540],
+  [T.gather0, 'gather', 540], [T.stampDrop, 'stamp-fall', 560], [T.stampHit, 'stamp', 560], [T.lock, 'lock', 560], [T.lock + 0.75, 'dm', 560],
+];
+window.T = T;
+
+function loadImg(src) { return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = src; }); }
+window.__ready = (async () => {
+  const faces = [new FontFace('Anton', `url(${ASSETS.anton})`), new FontFace('Inter', `url(${ASSETS.inter})`, {weight: '500'}), new FontFace('JBM', `url(${ASSETS.mono})`, {weight: '500'})];
+  for (const f of faces) { await f.load(); document.fonts.add(f); }
+  [PAPER, LOGO] = await Promise.all([loadImg(ASSETS.paper), loadImg(ASSETS.logo)]);
+  buildCamera();
+  seek(0);
+  const q = new URLSearchParams(location.search);
+  if (q.has('t')) seek(parseFloat(q.get('t')));
+  if (q.has('play')) { const t0 = performance.now(); const tick = () => { seek(((performance.now() - t0) / 1000) % DUR); requestAnimationFrame(tick); }; tick(); }
+  return true;
+})();
+</script>
+</body></html>
