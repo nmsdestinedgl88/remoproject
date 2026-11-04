@@ -411,7 +411,7 @@ function seek(t) {
 
 // ---------- contract ----------
 function stateKey(t) { seek(t); return JSON.parse(JSON.stringify(TRACK)); }
-window.__meta = {dur: DUR, fps: 30, inFrame: {plan: [T.planDrop + 0.1, T.gather0], phone: [T.phoneHit, T.gather0], lock: [T.lock + 1.2, DUR, 'whole']}};
+window.__meta = {dur: DUR, fps: 30, inFrame: {plan: [T.planDrop + 0.1, T.sumLand - 0.4], phone: [T.phoneHit, T.gather0], lock: [T.lock + 1.2, DUR, 'whole']}};
 window.__seek = async t => { seek(t); return true; };
 window.__track = t => stateKey(t);
 window.__motion = (t0, t1) => {
