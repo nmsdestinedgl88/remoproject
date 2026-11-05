@@ -197,7 +197,7 @@ function folderScene(t, base) {
   const fk = ease.smoother(fly), z = 0.6 * Math.sin(Math.PI * fly);
   const settle = ease.cubicInOut(seg(t, a + 1.2, a + 2.2));
   // folder moves down-left and shrinks as the summary leaves
-  const fo = {x: base.x + lerp(0, -230, settle), y: base.y + lerp(150, 250, settle), rot: lerp(0, -0.1, settle), s: lerp(1, 0.62, settle)};
+  const fo = {x: base.x + lerp(0, -230, settle), y: base.y + lerp(150, 120, settle), rot: lerp(0, -0.1, settle), s: lerp(1, 0.62, settle)};
   // the summary: inside the folder, then out
   const sumIn = {x: base.x + 20, y: base.y + 150 - 30 - 300 * rise};
   const so = {x: lerp(sumIn.x, base.x + 120, fk), y: lerp(sumIn.y, base.y - 30, fk), rot: lerp(0, Math.PI * 2 + 0.05, ease.cubicOut(fly)), s: lerp(0.9, 0.98, fk)};
