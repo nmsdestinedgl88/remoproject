@@ -1,6 +1,7 @@
 import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
 import {CreditVideo, CREDIT_SECONDS} from './credit/CreditVideo';
+import {EliakimVideo, ELIAKIM_SECONDS} from './eliakim/EliakimVideo';
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -20,6 +21,15 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="EliakimVideo"
+        component={EliakimVideo}
+        durationInFrames={ELIAKIM_SECONDS * 30}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{}}
       />
     </>
   );
