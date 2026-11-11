@@ -1,5 +1,6 @@
 import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
+import {QuickreachPromo, QR_FRAMES} from './qr/Promo';
 import {CreditVideo, CREDIT_SECONDS} from './credit/CreditVideo';
 
 export const RemotionRoot: React.FC = () => {
@@ -21,6 +22,7 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Composition id="QuickreachPromo" component={QuickreachPromo} durationInFrames={QR_FRAMES} fps={30} width={1080} height={1920} />
     </>
   );
 };
