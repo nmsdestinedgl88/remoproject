@@ -83,7 +83,14 @@ export const QuickreachPromo: React.FC = () => {
 };
 
 export const QuickreachStatus: React.FC = () => (
-  <StatusCtx.Provider value={true}>
+  <StatusCtx.Provider value={{h: 64, m: 90}}>
+    <QuickreachPromo />
+  </StatusCtx.Provider>
+);
+
+// Instagram Reels: top ~250 px and bottom ~340 px are covered by app UI
+export const QuickreachReels: React.FC = () => (
+  <StatusCtx.Provider value={{h: 90, m: 150}}>
     <QuickreachPromo />
   </StatusCtx.Provider>
 );

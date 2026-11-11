@@ -213,7 +213,7 @@ export const Headline: React.FC<{
   size?: number;
 }> = ({T, start, mode, words, top: topIn = 236, size = 92}) => {
   const base = textOn(mode);
-  const top = topIn + 64 * useStatusShift();
+  const top = topIn + useStatusShift().h;
   return (
     <div
       style={{
@@ -336,7 +336,7 @@ export const Background: React.FC<{T: number; mode: Mode; seed: string; spotligh
 
 /** persistent corner mark; hidden by caller in scenes 8, 14, 15 */
 export const CornerMark: React.FC<{mode: Mode}> = ({mode}) => {
-  const dy = 90 * useStatusShift();
+  const dy = useStatusShift().m;
   return (
   <>
     {mode === 'grey' ? (
@@ -353,5 +353,5 @@ export const CornerMark: React.FC<{mode: Mode}> = ({mode}) => {
 export const lerp = interpolate;
 
 /** WhatsApp Status variant: shifts top chrome below the profile bar */
-export const StatusCtx = React.createContext(false);
-export const useStatusShift = () => (React.useContext(StatusCtx) ? 1 : 0);
+export const StatusCtx = React.createContext<{h: number; m: number}>({h: 0, m: 0});
+export const useStatusShift = () => React.useContext(StatusCtx);

@@ -554,7 +554,7 @@ export const S15: React.FC<P> = ({T}) => {
         <Ripple key={k} T={T} t0={46.2 + k * 1.5} cx={540} cy={1180} maxR={700} dur={1.5} color={HOT} />
       ))}
       <Headline T={T} start={s} mode="ink" top={560} words={[{w: 'School', t: 44.94}, {w: 'owners,', t: 45.28}, {w: 'free', t: 47.48}, {w: 'demo', t: 47.62, key: true}]} />
-      <img src={img.cimpleWhite} style={{position: 'absolute', left: 540 - 110, top: 120 + 90 * sh, width: 220, opacity: clamp01(pop(T, s + 0.3) * 2)}} />
+      <img src={img.cimpleWhite} style={{position: 'absolute', left: 540 - 110, top: 120 + sh.m, width: 220, opacity: clamp01(pop(T, s + 0.3) * 2)}} />
       <div style={abs(190, 1100, 700, 160, {borderRadius: 80, background: HOT, boxShadow: '0 0 60px rgba(55,200,113,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: DISPLAY, fontWeight: 800, fontSize: 56, letterSpacing: '-0.02em', color: INK, opacity: clamp01(bp * 2), transform: `scale(${(0.8 + 0.2 * bp) * pulse})`})}>
         Free demo
       </div>
