@@ -211,8 +211,9 @@ export const Headline: React.FC<{
   words: {w: string; t: number; key?: boolean}[];
   top?: number;
   size?: number;
-}> = ({T, start, mode, words, top = 236, size = 92}) => {
+}> = ({T, start, mode, words, top: topIn = 236, size = 92}) => {
   const base = textOn(mode);
+  const top = topIn + 64 * useStatusShift();
   return (
     <div
       style={{
@@ -334,16 +335,23 @@ export const Background: React.FC<{T: number; mode: Mode; seed: string; spotligh
 );
 
 /** persistent corner mark; hidden by caller in scenes 8, 14, 15 */
-export const CornerMark: React.FC<{mode: Mode}> = ({mode}) => (
+export const CornerMark: React.FC<{mode: Mode}> = ({mode}) => {
+  const dy = 90 * useStatusShift();
+  return (
   <>
     {mode === 'grey' ? (
-      <div style={{position: 'absolute', left: 1080 - 56 - 72 + 36 - 56, top: 100 - 56, width: 112, height: 112, borderRadius: '50%', background: WHITE}} />
+      <div style={{position: 'absolute', left: 1080 - 56 - 72 + 36 - 56, top: 100 - 56 + dy, width: 112, height: 112, borderRadius: '50%', background: WHITE}} />
     ) : null}
     <img
       src={mode === 'ink' ? img.markWhite : img.markColor}
-      style={{position: 'absolute', left: 1080 - 56 - 72, top: 64, width: 72, height: 72}}
+      style={{position: 'absolute', left: 1080 - 56 - 72, top: 64 + dy, width: 72, height: 72}}
     />
   </>
-);
+  );
+};
 
 export const lerp = interpolate;
+
+/** WhatsApp Status variant: shifts top chrome below the profile bar */
+export const StatusCtx = React.createContext(false);
+export const useStatusShift = () => (React.useContext(StatusCtx) ? 1 : 0);

@@ -1,6 +1,6 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
-import {Background, CornerMark, FPS, H, INK, W, clamp01, prog} from './base';
+import {Background, CornerMark, StatusCtx, FPS, H, INK, W, clamp01, prog} from './base';
 import {END, HIDE_MARK, MODES, SCENE_COMPONENTS, STARTS} from './scenes';
 import {random} from 'remotion';
 
@@ -81,3 +81,9 @@ export const QuickreachPromo: React.FC = () => {
     </AbsoluteFill>
   );
 };
+
+export const QuickreachStatus: React.FC = () => (
+  <StatusCtx.Provider value={true}>
+    <QuickreachPromo />
+  </StatusCtx.Provider>
+);
