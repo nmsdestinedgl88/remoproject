@@ -1,6 +1,7 @@
 import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
 import {CreditVideo, CREDIT_SECONDS} from './credit/CreditVideo';
+import {ManetrustVideo, MT_SECONDS} from './manetrust/ManetrustVideo';
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -17,6 +18,14 @@ export const RemotionRoot: React.FC = () => {
         id="CreditVideo"
         component={CreditVideo}
         durationInFrames={CREDIT_SECONDS * 30}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="ManetrustVideo"
+        component={ManetrustVideo}
+        durationInFrames={MT_SECONDS * 30}
         fps={30}
         width={1080}
         height={1920}
