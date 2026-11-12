@@ -705,21 +705,21 @@ const Notif: React.FC<{at: number; tag: string; title: string; sub: string; icon
         borderRadius: 36,
         background: '#fff',
         boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
-        padding: '34px 40px',
+        padding: '22px 36px',
         display: 'flex',
         alignItems: 'center',
-        gap: 34,
+        gap: 30,
         opacity: Math.min(1, p * 1.5),
         transform: `translateY(${(1 - p) * 90}px) scale(${0.94 + 0.06 * p})`,
       }}
     >
-      <div style={{width: 120, height: 120, borderRadius: 30, background: C.lilac, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-        <Icon kind={icon} size={78} />
+      <div style={{width: 104, height: 104, borderRadius: 28, background: C.lilac, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <Icon kind={icon} size={68} />
       </div>
       <div style={{flex: 1}}>
-        <div style={{fontFamily: B, fontWeight: 500, fontSize: 28, letterSpacing: 5, color: C.purple}}>{tag}</div>
-        <div style={{fontFamily: F, fontWeight: 800, fontSize: 48, color: C.ink, lineHeight: 1.1, marginTop: 4}}>{title}</div>
-        <div style={{fontFamily: B, fontWeight: 400, fontSize: 30, color: '#6f6f6f', marginTop: 6}}>{sub}</div>
+        <div style={{fontFamily: B, fontWeight: 500, fontSize: 26, letterSpacing: 5, color: C.purple}}>{tag}</div>
+        <div style={{fontFamily: F, fontWeight: 800, fontSize: 44, color: C.ink, lineHeight: 1.1, marginTop: 2}}>{title}</div>
+        <div style={{fontFamily: B, fontWeight: 400, fontSize: 28, color: '#6f6f6f', marginTop: 4}}>{sub}</div>
       </div>
       {done && <Check size={64} draw={sp(t, at + 0.7)} />}
     </div>
@@ -729,26 +729,28 @@ const Notif: React.FC<{at: number; tag: string; title: string; sub: string; icon
 const S6: React.FC = () => (
   <Center top={250} bottom={400} gap={34}>
     <Reveal at={52.2}>
-      <Words text="Never miss *out.*" at={52.2} size={96} color="#fff" hero="#f2c6f2" />
+      <Words text="Opportunities, *covered.*" at={52.2} size={84} color="#fff" hero="#f2c6f2" />
     </Reveal>
-    <Notif at={52.7} tag="WE NOTIFY YOU" title="New: BOI GLOW" sub="A fresh opportunity just opened" icon="bell" />
-    <Notif at={55.7} tag="WE UPDATE" title="Documents stack ready" sub="Plan, pitch, deck and page refreshed" icon="files" done />
-    <Notif at={57.3} tag="WE APPLY" title="Application submitted" sub="You do not miss the window" icon="send" done />
+    <Notif at={52.7} tag="NEW OPPORTUNITY" title="BOI GLOW" sub="A fresh opportunity just opened" icon="bell" />
+    <Notif at={55.85} tag="WE NOTIFY YOU" title="Alert sent to you" sub="You hear about it first" icon="send" done />
+    <Notif at={57.5} tag="WE UPDATE" title="Documents stack ready" sub="Plan, pitch, deck and page refreshed" icon="files" done />
+    <Notif at={59.3} tag="WE APPLY" title="Application submitted" sub="You do not miss out" icon="send" done />
   </Center>
 );
 
 // ---------------------------------------------------------------- scene 7: pricing
 const S7: React.FC = () => {
   const t = useT();
-  const p = sp(t, 59.5, POP);
+  const p = sp(t, 63.8, POP);
+  const m = sp(t, 65.2);
   return (
     <Center top={250} bottom={420} gap={20}>
-      <Reveal at={59.3}>
+      <Reveal at={62.2}>
         <div style={{fontFamily: B, fontWeight: 500, fontSize: 44, letterSpacing: 8, color: '#e7c4e7', textAlign: 'center'}}>PLANS START FROM</div>
       </Reveal>
       <div style={{opacity: Math.min(1, p * 1.5), transform: `scale(${0.9 + 0.1 * p})`, textAlign: 'center'}}>
         <div style={{fontFamily: F, fontWeight: 800, fontSize: 210, lineHeight: 1, color: '#fff'}}>₦10,000</div>
-        <div style={{fontFamily: F, fontWeight: 600, fontSize: 70, color: '#e59be5', marginTop: 6}}>a month</div>
+        <div style={{fontFamily: F, fontWeight: 600, fontSize: 70, color: '#e59be5', marginTop: 6, opacity: Math.min(1, m * 1.5), transform: `translateY(${(1 - m) * 24}px)`}}>a month</div>
       </div>
     </Center>
   );
@@ -757,15 +759,15 @@ const S7: React.FC = () => {
 // ---------------------------------------------------------------- scene 8: CTA
 const S8: React.FC = () => {
   const t = useT();
-  const lp = sp(t, 62.4, SOFT);
-  const cta = sp(t, 66.8, POP);
-  const pulse = t > 67.8 ? 1 + Math.sin((t - 67.8) * 3.2) * 0.025 : 1;
+  const lp = sp(t, 66.5, SOFT);
+  const cta = sp(t, 70.5, POP);
+  const pulse = t > 71.5 ? 1 + Math.sin((t - 71.5) * 3.2) * 0.025 : 1;
   return (
     <AbsoluteFill style={{padding: '170px 72px 380px', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'column', gap: 36}}>
       <div style={{opacity: Math.min(1, lp * 1.5), transform: `translateY(${(1 - lp) * 50}px) scale(${0.92 + 0.08 * lp})`}}>
         <Img src={staticFile('manetrust/logo.png')} style={{width: 470, height: 627, display: 'block'}} />
       </div>
-      <Words text="Let’s open your business to *more opportunities* today." at={62.9} size={66} per={0.2} />
+      <Words text="Let’s open your business to *more opportunities* today." at={66.9} size={66} per={0.3} />
       <div
         style={{
           marginTop: 12,
@@ -803,12 +805,13 @@ const PHRASES: [number, number, string][] = [
   [45.1, 46.5, 'your presentation decks,'],
   [46.9, 47.8, 'a pitch page'],
   [48.2, 51.4, 'and even a 1 minute video pitch for your business.'],
-  [52.4, 55.4, 'Any opportunities like the BOI GLOW that come up, we notify you,'],
-  [55.8, 56.95, 'update your documents stack'],
-  [57.4, 58.95, 'and apply so you do not miss out.'],
-  [59.3, 61.4, 'Our plans start from just 10,000 a month.'],
-  [62.1, 66.0, 'Let’s open your business to more opportunities today.'],
-  [66.8, 69.8, 'DM us.'],
+  [52.4, 55.35, 'Any opportunities like the BOI GLOW that come up,'],
+  [55.82, 56.96, 'we notify you,'],
+  [57.45, 58.88, 'update your documents stack'],
+  [59.22, 61.15, 'and apply so you do not miss out.'],
+  [62.14, 66.08, 'Our plans start from just 10,000 a month.'],
+  [66.8, 69.88, 'Let’s open your business to more opportunities today.'],
+  [70.57, 71.45, 'DM us.'],
 ];
 
 const CHUNKS: [number, number, string][] = PHRASES.flatMap(([s, e, text]) => {
@@ -829,7 +832,7 @@ const CHUNKS: [number, number, string][] = PHRASES.flatMap(([s, e, text]) => {
 
 const DARK_RANGES: [number, number][] = [
   [30.4, 39.2],
-  [52.0, 62.0],
+  [52.0, 66.4],
 ];
 
 const Captions: React.FC = () => {
@@ -891,13 +894,14 @@ const SFX: [number, 'whoosh' | 'pop' | 'tick' | 'thump', number][] = [
   [50.2, 'whoosh', 0.28],
   [52.0, 'whoosh', 0.25],
   [52.7, 'pop', 0.4],
-  [55.7, 'pop', 0.4],
-  [57.3, 'pop', 0.4],
-  [59.1, 'whoosh', 0.25],
-  [59.6, 'thump', 0.4],
-  [62.0, 'whoosh', 0.25],
-  [62.5, 'pop', 0.3],
-  [66.9, 'thump', 0.45],
+  [55.85, 'pop', 0.4],
+  [57.5, 'pop', 0.4],
+  [59.3, 'pop', 0.4],
+  [61.7, 'whoosh', 0.25],
+  [63.8, 'thump', 0.4],
+  [66.3, 'whoosh', 0.25],
+  [66.6, 'pop', 0.3],
+  [70.5, 'thump', 0.45],
 ];
 
 const bgmVolume = (f: number) => {
@@ -934,13 +938,13 @@ export const ManetrustVideo: React.FC = () => (
     <Scene start={39.2} end={52.0} bg="cream">
       <S5 />
     </Scene>
-    <Scene start={52.0} end={59.1} bg="purple" dark>
+    <Scene start={52.0} end={61.8} bg="purple" dark>
       <S6 />
     </Scene>
-    <Scene start={59.1} end={62.0} bg="charcoal" dark>
+    <Scene start={61.8} end={66.4} bg="charcoal" dark>
       <S7 />
     </Scene>
-    <Scene start={62.0} end={MT_SECONDS} bg="cream" last brand={false}>
+    <Scene start={66.4} end={MT_SECONDS} bg="cream" last brand={false}>
       <S8 />
     </Scene>
     <Captions />
