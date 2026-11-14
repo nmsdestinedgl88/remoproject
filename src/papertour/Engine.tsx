@@ -34,6 +34,7 @@ export type Station = {
   n: keyof typeof CELL;
   start: number; // voiceover line start (s)
   end: number; // voiceover line end (s)
+  k?: number; // stretch of in-station offsets: recorded length / placeholder length
   node: React.ReactNode;
 };
 
@@ -139,7 +140,7 @@ const Sheet: React.FC<{t: number; st: Station[]; pullbackAt: number}> = ({t, st,
       </svg>
       {st.map((s, i) => (
         <div key={i} style={{position: 'absolute', left: CELL[s.n].x - 540, top: CELL[s.n].y - 480, width: 1080, height: 960}}>
-          {s.node}
+          <TCtx.Provider value={s.k ? s.start + (t - s.start) / s.k : t}>{s.node}</TCtx.Provider>
         </div>
       ))}
     </div>
@@ -237,3 +238,17 @@ export const Label: React.FC<{at: number; x?: number; y?: number; size?: number;
 
 export const stroke = {fill: 'none', stroke: C.ink, strokeWidth: 7, strokeLinecap: 'round', strokeLinejoin: 'round'} as const;
 export {clamp, inOut};
+
+/** Piecewise-linear map from old times to new times, given [old, new] anchor pairs. */
+export const makeMapT = (anchors: [number, number][]) => (t: number) => {
+  const a = [...anchors].sort((x, y) => x[0] - y[0]);
+  if (t <= a[0][0]) return t + (a[0][1] - a[0][0]);
+  for (let i = 0; i < a.length - 1; i++) {
+    if (t <= a[i + 1][0]) {
+      const u = (t - a[i][0]) / Math.max(1e-6, a[i + 1][0] - a[i][0]);
+      return a[i][1] + u * (a[i + 1][1] - a[i][1]);
+    }
+  }
+  const l = a[a.length - 1];
+  return t + (l[1] - l[0]);
+};

@@ -1,19 +1,12 @@
 import React from 'react';
-import {Head, Label, PaperTour, Rise, Station, B, C, F, clamp, ease, sp, stroke, useT, POP, SOFT} from './Engine';
+import {Head, Label, PaperTour, makeMapT, Rise, Station, B, C, F, clamp, ease, sp, stroke, useT, POP, SOFT} from './Engine';
 
 // Voiceover line starts and ends (seconds), from the recorded British narration.
-const L = {
-  1: {s: 0.5, e: 7.88},
-  2: {s: 8.68, e: 11.014},
-  3: {s: 11.814, e: 21.582},
-  4: {s: 22.383, e: 24.297},
-  5: {s: 25.097, e: 31.745},
-  6: {s: 32.545, e: 37.331},
-  7: {s: 38.131, e: 41.422},
-  8: {s: 42.222, e: 50.202},
-};
-export const MON_PULLBACK = 50.4;
-export const MON_SECONDS = 56;
+const REC = {"1": [0.31, 8.08], "2": [8.788, 10.8], "3": [11.786, 23.64], "4": [24.365, 26.28], "5": [26.919, 33.92], "6": [34.704, 39.62], "7": [40.395, 43.72], "8": [44.501, 52.64]} as Record<string, [number, number]>;
+const REF_DUR = {"1": 7.38, "2": 2.334, "3": 9.768, "4": 1.914, "5": 6.648, "6": 4.786, "7": 3.291, "8": 7.98} as Record<string, number>;
+const L = Object.fromEntries(Object.entries(REC).map(([n, [s, e]]) => [n, {s, e, k: (e - s) / REF_DUR[n]}])) as Record<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8, {s: number; e: number; k: number}>;
+export const MON_PULLBACK = Math.round((L[8].e + 0.2) * 100) / 100;
+export const MON_SECONDS = Math.round((MON_PULLBACK + 5.6) * 100) / 100;
 
 export const Svg: React.FC<{at: number; x?: number; y?: number; w: number; h: number; children: React.ReactNode}> = ({at, x = 0, y = 0, w, h, children}) => (
   <Rise at={at} x={x} y={y} cfg={POP}>
@@ -377,9 +370,9 @@ const stations: Station[] = [
   {n: 6, ...L[6], node: <S6 />},
   {n: 7, ...L[7], node: <S7 />},
   {n: 8, ...L[8], node: <S8 />},
-].map((x) => ({n: x.n as Station['n'], start: x.s, end: x.e, node: x.node}));
+].map((x) => ({n: x.n as Station['n'], start: x.s, end: x.e, k: x.k, node: x.node}));
 
-const sfx: [number, 'whoosh' | 'pop' | 'tick' | 'thump', number][] = [
+const oldSfx: [number, 'whoosh' | 'pop' | 'tick' | 'thump', number][] = [
   [0.6, 'pop', 0.3], [1.0, 'pop', 0.3],
   [7.28, 'whoosh', 0.22], [9.0, 'pop', 0.3], [9.6, 'thump', 0.3],
   [10.4, 'whoosh', 0.22], [12.0, 'pop', 0.3], [15.6, 'pop', 0.3], [18.0, 'pop', 0.3],
@@ -390,6 +383,14 @@ const sfx: [number, 'whoosh' | 'pop' | 'tick' | 'thump', number][] = [
   [36.7, 'whoosh', 0.22], [38.4, 'pop', 0.3], [39.2, 'pop', 0.3], [39.8, 'thump', 0.3], [40.8, 'whoosh', 0.22],
   [42.6, 'pop', 0.3], [45.4, 'pop', 0.35], [46.7, 'pop', 0.35], [48.0, 'pop', 0.35],
   [49.2, 'thump', 0.45], [50.4, 'whoosh', 0.3],
+];
+
+const OLD_L = [[0.5, 7.88], [8.68, 11.014], [11.814, 21.582], [22.383, 24.297], [25.097, 31.745], [32.545, 37.331], [38.131, 41.422], [42.222, 50.202]];
+const mapT = makeMapT(OLD_L.flatMap(([a, b], i) => [[a, L[(i + 1) as 1].s], [b, L[(i + 1) as 1].e]] as [number, number][]));
+const sfx: [number, 'whoosh' | 'pop' | 'tick' | 'thump', number][] = [
+  ...oldSfx.filter(([, n]) => n !== 'whoosh').map(([t, n, v]) => [mapT(t), n, v] as [number, 'pop' | 'tick' | 'thump', number]),
+  ...stations.slice(0, -1).map((st) => [st.end - 0.6, 'whoosh', 0.22] as [number, 'whoosh', number]),
+  [MON_PULLBACK, 'whoosh', 0.3],
 ];
 
 export const MondayVideo: React.FC = () => (

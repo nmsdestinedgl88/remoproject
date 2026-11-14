@@ -1,5 +1,5 @@
 import React from 'react';
-import {Head, Label, PaperTour, Rise, Station, C, F, B, ease, sp, stroke, useT, POP, SOFT} from './Engine';
+import {Head, Label, PaperTour, makeMapT, Rise, Station, C, F, B, ease, sp, stroke, useT, POP, SOFT} from './Engine';
 import {Chip, Svg} from './Monday';
 
 const Tick: React.FC<{r?: number}> = ({r = 28}) => (
@@ -35,13 +35,19 @@ const Card: React.FC<{at: number; y: number; children: React.ReactNode; h?: numb
 );
 
 // =========================================================== WEDNESDAY: three funding lines
+const WT = {"s1_0": {"s": 0.36, "e": 4.56}, "s2_0": {"s": 5.224, "e": 5.62}, "s3_0": {"s": 6.717, "e": 11.84}, "s3_1": {"s": 12.773, "e": 18.14}, "s3_2": {"s": 18.89, "e": 26.78}, "s4_0": {"s": 27.501, "e": 29.72}, "s5_0": {"s": 30.323, "e": 35.16}, "s5_1": {"s": 35.644, "e": 41.86}, "s6_0": {"s": 42.594, "e": 43.82}, "s6_1": {"s": 44.264, "e": 45.38}, "s7_0": {"s": 45.876, "e": 48.76}, "s8_0": {"s": 49.229, "e": 50.54}, "s8_1": {"s": 51.131, "e": 58.84}, "s8_2": {"s": 59.495, "e": 60.04}} as Record<string, {s: number; e: number}>;
 const W = {
-  1: {s: 0.5, e: 4.68}, 2: {s: 5.48, e: 6.536}, 3: {s: 7.336, e: 25.524, a: [7.336, 12.44, 17.511]},
-  4: {s: 26.324, e: 28.319}, 5: {s: 29.119, e: 39.841, a: [29.119, 33.872]}, 6: {s: 40.641, e: 43.553, a: [40.641, 42.228]},
-  7: {s: 44.353, e: 46.613}, 8: {s: 47.413, e: 57.4, a: [47.413, 48.814, 56.351]},
+  1: {s: WT.s1_0.s, e: WT.s1_0.e},
+  2: {s: WT.s2_0.s, e: WT.s2_0.e},
+  3: {s: WT.s3_0.s, e: WT.s3_2.e, a: [WT.s3_0.s, WT.s3_1.s, WT.s3_2.s]},
+  4: {s: WT.s4_0.s, e: WT.s4_0.e},
+  5: {s: WT.s5_0.s, e: WT.s5_1.e, a: [WT.s5_0.s, WT.s5_1.s]},
+  6: {s: WT.s6_0.s, e: WT.s6_1.e, a: [WT.s6_0.s, WT.s6_1.s]},
+  7: {s: WT.s7_0.s, e: WT.s7_0.e},
+  8: {s: WT.s8_0.s, e: WT.s8_2.e, a: [WT.s8_0.s, WT.s8_1.s, WT.s8_2.s]},
 };
-export const WED_PULLBACK = 57.6;
-export const WED_SECONDS = 63.4;
+export const WED_PULLBACK = Math.round((W[8].e + 0.2) * 100) / 100;
+export const WED_SECONDS = Math.round((WED_PULLBACK + 5.6) * 100) / 100;
 
 const Pipes: React.FC<{s: number}> = ({s}) => {
   const t = useT();
@@ -249,7 +255,7 @@ const wedStations: Station[] = [
   {n: 7, node: <Wed7 />, ...{start: W[7].s, end: W[7].e}},
   {n: 8, node: <Wed8 />, ...{start: W[8].s, end: W[8].e}},
 ];
-const wedSfx: [number, 'whoosh' | 'pop' | 'tick' | 'thump', number][] = [
+const wedOld: [number, 'whoosh' | 'pop' | 'tick' | 'thump', number][] = [
   ...wedStations.slice(0, -1).map((s) => [s.end - 0.6, 'whoosh', 0.22] as [number, 'whoosh', number]),
   [0.9, 'pop', 0.3], [1.6, 'pop', 0.3], [2.3, 'pop', 0.3], [5.9, 'pop', 0.3],
   [7.6, 'pop', 0.35], [12.7, 'pop', 0.35], [17.8, 'pop', 0.35],
@@ -257,6 +263,14 @@ const wedSfx: [number, 'whoosh' | 'pop' | 'tick' | 'thump', number][] = [
   [45.4, 'thump', 0.35], [49.0, 'pop', 0.3], [50.8, 'pop', 0.3], [52.0, 'pop', 0.3], [53.2, 'pop', 0.3],
   [56.45, 'thump', 0.45], [WED_PULLBACK, 'whoosh', 0.3],
 ];
+const WED_OLD = [[0.5, 4.68], [5.48, 6.536], [7.336, 25.524], [26.324, 28.319], [29.119, 39.841], [40.641, 43.553], [44.353, 46.613], [47.413, 57.4]];
+const wedMap = makeMapT(WED_OLD.flatMap(([a, b], i) => [[a, W[(i + 1) as 1].s], [b, W[(i + 1) as 1].e]] as [number, number][]));
+const wedSfx: [number, 'whoosh' | 'pop' | 'tick' | 'thump', number][] = [
+  ...wedOld.filter(([, n]) => n !== 'whoosh').map(([t, n, v]) => [wedMap(t), n, v] as [number, 'pop' | 'tick' | 'thump', number]),
+  ...wedStations.slice(0, -1).map((st) => [st.end - 0.6, 'whoosh', 0.22] as [number, 'whoosh', number]),
+  [WED_PULLBACK, 'whoosh', 0.3],
+];
+
 export const WednesdayVideo: React.FC = () => (
   <PaperTour stations={wedStations} total={WED_SECONDS} pullbackAt={WED_PULLBACK} voSrc="wed/vo.wav" bgmSrc="shared/bgm2.mp3" sfx={wedSfx} />
 );
