@@ -10,18 +10,18 @@ export const SOFT = {damping: 24, stiffness: 70, mass: 1.1};
 export const POP = {damping: 15, stiffness: 95, mass: 1};
 const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
 
-export const WORLD_W = 2160;
-export const WORLD_H = 4900;
+export const WORLD_W = 2280;
+export const WORLD_H = 5300;
 /** Station centres on the sheet: a snake path, left column then right column, top to bottom. */
 export const CELL = {
   1: {x: 540, y: 980},
-  2: {x: 1620, y: 980},
-  3: {x: 1620, y: 1940},
-  4: {x: 540, y: 1940},
-  5: {x: 540, y: 2900},
-  6: {x: 1620, y: 2900},
-  7: {x: 1620, y: 3860},
-  8: {x: 540, y: 3860},
+  2: {x: 1740, y: 980},
+  3: {x: 1740, y: 2080},
+  4: {x: 540, y: 2080},
+  5: {x: 540, y: 3180},
+  6: {x: 1740, y: 3180},
+  7: {x: 1740, y: 4280},
+  8: {x: 540, y: 4280},
 } as const;
 
 const TCtx = createContext(0);
@@ -80,13 +80,16 @@ export const cameraAt = (st: Station[], pullbackAt: number, t: number): Cam => {
 const Sheet: React.FC<{t: number; st: Station[]; pullbackAt: number}> = ({t, st, pullbackAt}) => {
   // path line drawn as the camera travels
   const pts = st.map((s) => [CELL[s.n].x, CELL[s.n].y] as const);
-  const segs = pts.slice(0, -1).map((p, i) => {
-    const q = pts[i + 1];
+  const segs = pts.slice(0, -1).map((a, i) => {
+    const b = pts[i + 1];
+    const horiz = a[1] === b[1];
+    const dir = horiz ? Math.sign(b[0] - a[0]) : Math.sign(b[1] - a[1]);
+    const p: [number, number] = horiz ? [a[0] + dir * 475, a[1]] : [a[0], a[1] + dir * 450];
+    const q: [number, number] = horiz ? [b[0] - dir * 475, b[1]] : [b[0], b[1] - dir * 450];
     const depart = st[i].end - MOVE_OUT;
     const arrive = st[i + 1].start + ARRIVE;
     const u = inOut(Math.min(1, Math.max(0, (t - depart) / (arrive - depart))));
-    const len = Math.hypot(q[0] - p[0], q[1] - p[1]);
-    return {p, q, u, len};
+    return {p, q, u, dir, horiz};
   });
   const tint = '#efe3ef';
   const tiles: React.ReactNode[] = [];
@@ -99,9 +102,9 @@ const Sheet: React.FC<{t: number; st: Station[]; pullbackAt: number}> = ({t, st,
           src={staticFile('shared/paper.png')}
           style={{
             position: 'absolute',
-            left: c * 1080,
+            left: c * (WORLD_W / 2),
             top: r * TH,
-            width: 1080,
+            width: WORLD_W / 2,
             height: TH,
             objectFit: 'cover',
             transform: `scale(${c % 2 ? -1 : 1}, ${r % 2 ? -1 : 1})`,
@@ -127,6 +130,12 @@ const Sheet: React.FC<{t: number; st: Station[]; pullbackAt: number}> = ({t, st,
             opacity={0.55 * (s.u > 0 ? 1 : 0)}
           />
         ))}
+        {segs.map((s, i) => {
+          const tx = s.p[0] + (s.q[0] - s.p[0]) * s.u;
+          const ty = s.p[1] + (s.q[1] - s.p[1]) * s.u;
+          const d = s.horiz ? `M${tx - s.dir * 34} ${ty - 30} L${tx} ${ty} L${tx - s.dir * 34} ${ty + 30}` : `M${tx - 30} ${ty - s.dir * 34} L${tx} ${ty} L${tx + 30} ${ty - s.dir * 34}`;
+          return <path key={`a${i}`} d={d} fill="none" stroke={C.purple} strokeWidth={9} strokeLinecap="round" strokeLinejoin="round" opacity={s.u > 0.02 ? 0.7 : 0} />;
+        })}
       </svg>
       {st.map((s, i) => (
         <div key={i} style={{position: 'absolute', left: CELL[s.n].x - 540, top: CELL[s.n].y - 480, width: 1080, height: 960}}>

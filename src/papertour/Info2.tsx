@@ -327,11 +327,11 @@ const Row: React.FC<{at: number; y: number; label: string; sub?: string; childre
     <Svg at={at} x={-300} y={y} w={240} h={170}>
       {children}
     </Svg>
-    <Label at={at + 0.15} x={150} y={y - (sub ? 22 : 0)} size={52}>
+    <Label at={at + 0.15} x={130} y={y - (sub ? 22 : 0)} size={52}>
       {label}
     </Label>
     {sub && (
-      <Label at={at + 0.3} x={150} y={y + 34} size={36} color={C.mute} weight={700}>
+      <Label at={at + 0.3} x={130} y={y + 34} size={36} color={C.mute} weight={700}>
         {sub}
       </Label>
     )}
