@@ -15,7 +15,7 @@ const L = {
 export const MON_PULLBACK = 50.4;
 export const MON_SECONDS = 56;
 
-const Svg: React.FC<{at: number; x?: number; y?: number; w: number; h: number; children: React.ReactNode}> = ({at, x = 0, y = 0, w, h, children}) => (
+export const Svg: React.FC<{at: number; x?: number; y?: number; w: number; h: number; children: React.ReactNode}> = ({at, x = 0, y = 0, w, h, children}) => (
   <Rise at={at} x={x} y={y} cfg={POP}>
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{overflow: 'visible'}}>
       {children}
@@ -305,7 +305,7 @@ const S7 = () => {
 };
 
 // ---------------------------------------------------------------- 8 Manetrust call to action
-const Chip: React.FC<{at: number; y: number; icon: 'doc' | 'bars' | 'plan'; children: string}> = ({at, y, icon, children}) => (
+export const Chip: React.FC<{at: number; y: number; icon: 'doc' | 'bars' | 'plan'; children: string}> = ({at, y, icon, children}) => (
   <Rise at={at} y={y} cfg={POP} style={{width: 820}}>
     <div style={{display: 'flex', alignItems: 'center', gap: 28, background: '#fff', borderRadius: 30, padding: '20px 36px', boxShadow: '0 16px 40px rgba(0,0,0,0.2)', borderLeft: `18px solid ${C.purple}`}}>
       <svg width={74} height={74} viewBox="0 0 74 74">
