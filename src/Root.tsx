@@ -2,6 +2,7 @@ import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
 import {CreditVideo, CREDIT_SECONDS} from './credit/CreditVideo';
 import {ManetrustVideo, MT_SECONDS} from './manetrust/ManetrustVideo';
+import {MondayVideo, MON_SECONDS} from './papertour/Monday';
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Composition id="MondayTax" component={MondayVideo} durationInFrames={Math.round(MON_SECONDS * 30)} fps={30} width={1080} height={1920} />
     </>
   );
 };
