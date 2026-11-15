@@ -493,10 +493,10 @@ const CUE = { s1a: 0.28, s1b: 3.80, doc: 7.15, a: 9.81, b: 12.88, c: 16.54, writ
   wh1: 6.6, wh2: 9.2, wh3: 20.3, wh4: 22.4, wh5: 33.6, wh6: 40.7, wh7: 45.6, wh8: 53.2 };
 function buildPage() {
   // B1: shop 40 against shop 1, the chicken tastes different
-  shop(1290, 270, 1.5, 'SHOP 40', CUE.s1a + 0.1); chicken(1290, 470, 1.2, CUE.s1a + 0.8, { col: PU });
-  figure(800, 420, 1.0, 'thumbs', CUE.s1a + 1.3, { hair: 'hat' });
-  shop(320, 270, 1.5, 'SHOP 1', CUE.s1b + 0.1); chicken(320, 470, 1.2, CUE.s1b + 0.8, { col: GRY2 });
-  TXT('=', 800, 230, 90, { f: 'KB', align: 'center' }, CUE.s1b + 1.6, 0.3); MST(line(740, 270, 860, 150), { w: 12, col: PU, amp: 1 }, CUE.s1b + 1.9, 0.2);
+  shop(1290, 270, 1.5, 'SHOP 40', CUE.s1a + 0.1); chicken(1290, 530, 1.2, CUE.s1a + 0.8, { col: PU });
+  figure(800, 470, 1.0, 'thumbs', CUE.s1a + 1.3, { hair: 'hat' });
+  shop(320, 270, 1.5, 'SHOP 1', CUE.s1b + 0.1); chicken(320, 530, 1.2, CUE.s1b + 0.8, { col: GRY2 });
+  TXT('=', 800, 160, 90, { f: 'KB', align: 'center' }, CUE.s1b + 1.6, 0.3); MST(line(750, 190, 850, 60), { w: 12, col: PU, amp: 1 }, CUE.s1b + 1.9, 0.2);
   // B2: one missing document
   ribbon(700, 660, 700, 90, 'ONE MISSING DOCUMENT', 50, CUE.doc, { fill: PU, td: 0.9, tcol: W_ });
   docIcon(1290, 560, 150, 190, CUE.doc + 0.4, 3, { dash: [10, 8] }); TXT('?', 1365, 700, 110, { f: 'KB', align: 'center', col: '#5a005a' }, CUE.doc + 1.0, 0.3);
@@ -522,8 +522,8 @@ function buildPage() {
   tallyIcon(280, 2070, 0.55, CUE.sa + 3.4); TXT('STOCK COUNT', 400, 2090, 44, { f: 'KB', align: 'left', jit: 0.5 }, CUE.sa + 3.5, 0.7);
   fatArrow(740, 1760, 840, CUE.sb + 0.1, { h: 24, hh: 30, hl: 28 });
   [0, 1, 2].forEach(i => { const cx = 950 + i * 190; shop(cx, 1740, 0.6, '', CUE.sb + 0.4 + i * 0.35); docIcon(cx - 30, 1610, 60, 70, CUE.sb + 0.9 + i * 0.35, 2); });
-  TXT('SAME SHEET', 1140, 1900, 54, { f: 'KB', align: 'center', jit: 0.5 }, CUE.sb + 1.0, 0.8);
-  const bw = 120; const wx = 980, rx = 1250, by = 2120;
+  TXT('SAME SHEET', 1140, 1880, 54, { f: 'KB', align: 'center', jit: 0.5 }, CUE.sb + 1.0, 0.8);
+  const bw = 120; const wx = 980, rx = 1250, by = 2170;
   MRK([rrect(wx, by - 150, bw, 150, 6)], { col: GRY, w: 10, edge: false }, CUE.sc, 0.2); INK_(rrect(wx, by - 150, bw, 150, 6), { closed: true, w: 2.4, amp: 0.4, passes: 1, dash: [8, 6] }, CUE.sc, 0.3);
   MRK([rrect(wx, by - 70, bw, 70, 6)], { col: GRYD, w: 10 }, CUE.sc + 0.3, 0.3); INK_(rrect(wx, by - 70, bw, 70, 6), { closed: true, w: 3, amp: 0.4 }, CUE.sc + 0.3, 0.3);
   TXT('WASTE', wx + 60, by + 52, 44, { f: 'KB', align: 'center', jit: 0.5 }, CUE.sc + 0.4, 0.4); inkArrow([[wx + 60, by - 190], [wx + 60, by - 160]], { w: 4, amp: 0.2, col: PU }, CUE.sc + 0.6, 0.2);

@@ -498,16 +498,16 @@ function buildPage() {
   // B2: Kunle wants to be the one
   ribbon(800, 690, 400, 90, 'THE ONE', 58, CUE.wants, { fill: PU, td: 0.5, tcol: W_ });
   figure(520, 880, 0.95, 'point', CUE.wants + 0.5, { hair: 'cap' });
-  MST([[900, 860], [920, 800], [800, 830], [780, 780], [850, 790], [900, 740], [930, 800]], { w: 14, col: PU, amp: 1 }, CUE.wants + 1.0, 0.6);
+  coin(950, 860, 44, CUE.wants + 1.0, 0.5); TXT('THE LOAN', 950, 960, 44, { f: 'KB', align: 'center', jit: 0.5 }, CUE.wants + 1.4, 0.5);
   // B3: not just another tailor: the mend-guarantee
   box(130, 1010, 1340, 640, 7.0, 0.45);
   TXT('NOT JUST ANOTHER TAILOR', 800, 1090, 56, { f: 'KB', align: 'center', jit: 0.6 }, CUE.a + 0.2, 1.6);
   figure(1230, 1450, 0.95, 'tape', CUE.a + 1.2, { hair: 'cap' });
   shirt(360, 1290, 1.5, CUE.b + 0.2);
   ribbon(420, 1470, 520, 80, 'MEND-GUARANTEE', 40, CUE.b + 1.0, { fill: PU, td: 0.5, tcol: W_ });
-  tapeIcon(700, 1260, 0.9, CUE.c + 0.3); TXT('REFIT', 700, 1320, 44, { f: 'KB', align: 'center', jit: 0.5 }, CUE.c + 0.5, 0.4);
-  needle(850, 1250, 0.9, CUE.c + 1.2); TXT('REPAIR', 850, 1320, 44, { f: 'KB', align: 'center', jit: 0.5 }, CUE.c + 1.4, 0.5);
-  scissors(1000, 1245, 0.8, CUE.c + 2.1); TXT('ADJUST', 1000, 1320, 44, { f: 'KB', align: 'center', jit: 0.5 }, CUE.c + 2.3, 0.5);
+  tapeIcon(640, 1260, 0.9, CUE.c + 0.3); TXT('REFIT', 640, 1330, 44, { f: 'KB', align: 'center', jit: 0.5 }, CUE.c + 0.5, 0.4);
+  needle(860, 1250, 0.9, CUE.c + 1.2); TXT('REPAIR', 860, 1330, 44, { f: 'KB', align: 'center', jit: 0.5 }, CUE.c + 1.4, 0.5);
+  scissors(1070, 1245, 0.8, CUE.c + 2.1); TXT('ADJUST', 1070, 1330, 44, { f: 'KB', align: 'center', jit: 0.5 }, CUE.c + 2.3, 0.5);
   ribbon(850, 1570, 520, 76, 'NO LABOUR COST', 42, CUE.c + 2.8, { fill: PU, td: 0.5, tcol: W_ });
   // B4: customers return and bring friends
   shop(360, 1830, 1.1, 'KUNLE', CUE.cust);
@@ -517,7 +517,7 @@ function buildPage() {
   dots(1000, 1810, 4, 1, 90, 0, [], CUE.cust + 2.3, 0.3); TXT('AND THEIR FRIENDS', 1130, 1950, 54, { f: 'KB', align: 'center', jit: 0.5 }, CUE.cust + 2.4, 1.0);
   // B5: the edge, and the banker who has never seen it
   ribbon(420, 2130, 400, 84, 'HIS EDGE', 52, CUE.edge, { fill: PU, td: 0.4, tcol: W_ });
-  bank(420, 2300, 1.1, CUE.banker); TXT('?', 420, 2230, 150, { f: 'KB', align: 'center', col: '#5a005a' }, CUE.banker + 0.8, 0.4);
+  bank(380, 2300, 1.1, CUE.banker); TXT('?', 600, 2350, 150, { f: 'KB', align: 'center', col: '#5a005a' }, CUE.banker + 0.8, 0.4);
   TXT('NEVER SEEN IT', 420, 2430, 50, { f: 'KB', align: 'center', jit: 0.5 }, CUE.banker + 0.6, 0.9);
   // B6: a plan makes the edge visible
   docIcon(920, 2080, 480, 360, CUE.plan, 0); TXT('BUSINESS PLAN', 1160, 2150, 46, { f: 'KB', align: 'center', jit: 0.5 }, CUE.plan + 0.3, 0.8);
@@ -536,7 +536,7 @@ const CAM = [
   [17.0, 800, 1890, 0.95, 'whip'], [19.8, 800, 1930, 0.98],
   [20.1, 800, 2300, 0.95], [26.1, 800, 2340, 0.95],
   [26.6, 800, 2700, 1.0], [30.2, 800, 2760, 1.0],
-  [33.6, 800, 1582, 0.455], [35.6, 800, 1582, 0.455]];
+  [33.6, 800, 1605, 0.44], [35.6, 800, 1605, 0.44]];
 
 
 const toScreen = (c, x, y) => [(x - c.x) * c.z + W / 2, (y - c.y) * c.z + H / 2];
