@@ -1,3 +1,5 @@
 node_modules
 out
 lemo/*/audio/bgm.wav
+lemo/*/*.mp4
+lemo/*/poster.jpg
