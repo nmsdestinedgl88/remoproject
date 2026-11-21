@@ -277,8 +277,14 @@ const EndCard: React.FC<{t: number}> = ({t}) => {
   const tx = A(t, 84.6, 85.4);
   return (<>
     <Img src={staticFile('mv/logo.png')} style={{position: 'absolute', left: 290, top: 150, width: 500, transform: `scale(${0.88 + 0.12 * lp})`, opacity: lp, filter: 'drop-shadow(0 16px 22px rgba(51,40,51,0.22))'}} />
-    <div style={{position: 'absolute', left: 140, top: 900, width: 420, height: 560, borderRadius: 44, background: HOT, transform: `translateY(${(1 - c1) * 700}px) rotate(${-14 + (1 - c1) * 12}deg)`, opacity: c1, boxShadow: '0 24px 40px rgba(51,40,51,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><div style={{color: PALE, fontFamily: H, fontSize: 62, lineHeight: 1.12, textAlign: 'center', fontWeight: 400, transform: 'rotate(-0deg)'}}>BUSINESS<br />PLAN</div></div>
-    <div style={{position: 'absolute', left: 500, top: 1000, width: 440, height: 560, borderRadius: 44, background: '#666', transform: `translateY(${(1 - c2) * 700}px) rotate(${14 - (1 - c2) * 12}deg)`, opacity: c2, boxShadow: '0 24px 40px rgba(51,40,51,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><div style={{color: PALE, fontFamily: H, fontSize: 62, lineHeight: 1.12, textAlign: 'center', fontWeight: 400}}>SETUP<br />GUIDE</div></div>
+    <div style={{position: 'absolute', left: 120, top: 880, width: 440, height: 590, borderRadius: 26, overflow: 'hidden', transform: `translateY(${(1 - c1) * 800}px) rotate(${-9 + (1 - c1) * 10}deg)`, opacity: c1, boxShadow: '0 28px 50px rgba(51,40,51,0.38)'}}>
+      <Img src={staticFile('mv/cover-plan.jpg')} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+      <div style={{position: 'absolute', top: 0, bottom: 0, width: 90, left: -140 + A(t, 82.6, 83.6, 0, 700, IO), background: 'linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,0.28), rgba(255,255,255,0))', transform: 'skewX(-12deg)'}} />
+    </div>
+    <div style={{position: 'absolute', left: 520, top: 960, width: 440, height: 590, borderRadius: 26, overflow: 'hidden', transform: `translateY(${(1 - c2) * 800}px) rotate(${9 - (1 - c2) * 10}deg)`, opacity: c2, boxShadow: '0 28px 50px rgba(51,40,51,0.38)'}}>
+      <Img src={staticFile('mv/cover-guide.jpg')} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+      <div style={{position: 'absolute', top: 0, bottom: 0, width: 90, left: -140 + A(t, 83.8, 84.8, 0, 700, IO), background: 'linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,0.28), rgba(255,255,255,0))', transform: 'skewX(-12deg)'}} />
+    </div>
     <div style={{position: 'absolute', left: 0, right: 0, top: 1580, textAlign: 'center', fontFamily: H, fontWeight: 800, fontSize: 74, lineHeight: 1.12, color: '#111', opacity: tx}}>
       <div><span style={{display: 'inline-block', position: 'relative', padding: '0 24px', marginRight: 16, color: '#fff'}}><span style={{position: 'absolute', inset: '4px 0 0 0', background: HOT, transformOrigin: '0 50%', transform: `scaleX(${dm})`, borderRadius: 4}} /><span style={{position: 'relative'}}>DM</span></span>US FOR YOUR</div>
       <div>CUSTOM PLAN AND</div><div>GUIDE</div>
