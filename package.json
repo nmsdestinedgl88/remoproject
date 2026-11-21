@@ -5,7 +5,8 @@
   "scripts": {
     "studio": "remotion studio",
     "build": "remotion render HelloWorld out/HelloWorld.mp4",
-    "still": "remotion still HelloWorld out/frame0.png --frame=0"
+    "still": "remotion still HelloWorld out/frame0.png --frame=0",
+    "render:mt": "remotion render ManetrustVideo out/ManetrustVideo.mp4 --codec h264 --crf 17"
   },
   "dependencies": {
     "@remotion/cli": "4.0.250",
