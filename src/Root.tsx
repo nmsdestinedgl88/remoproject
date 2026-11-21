@@ -1,5 +1,6 @@
 import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
+import {ConsoleAd, CONSOLE_FRAMES} from './console/ConsoleAd';
 import {CreditVideo, CREDIT_SECONDS} from './credit/CreditVideo';
 
 export const RemotionRoot: React.FC = () => {
@@ -21,6 +22,7 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Composition id="ConsoleAd" component={ConsoleAd} durationInFrames={CONSOLE_FRAMES} fps={30} width={1080} height={1920} />
     </>
   );
 };
