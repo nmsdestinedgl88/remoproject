@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1080, height=1920"/>
+<link rel="stylesheet" href="assets/common.css"/>
+<script src="assets/gsap.min.js"></script><script src="assets/icons.js"></script>
+<style>
+ #q{position:absolute;left:540px;top:780px;transform:translate(-50%,-50%);font:900 880px/1 var(--d);color:var(--purple);-webkit-text-stroke:10px var(--ink);paint-order:stroke fill}
+ .shard{position:absolute;width:34px;height:34px;border:4px solid var(--ink);margin:-17px 0 0 -17px}
+ #truck{left:540px;top:900px}
+ .tw{position:absolute;font:900 15px var(--d);color:var(--paper);letter-spacing:.06em}
+ .pin{position:absolute;width:0;height:0}
+ .pin svg{position:absolute;left:-34px;top:-92px;overflow:visible}
+ .plabel{position:absolute;font:600 36px/1 var(--m);color:var(--ink);white-space:nowrap}
+ .card{position:absolute;width:456px;height:100px;background:var(--top);border:5px solid var(--ink);box-shadow:8px 8px 0 var(--ink);display:flex;align-items:center;gap:16px;padding:0 18px;backface-visibility:hidden}
+ .card b{font:900 40px/.95 var(--d);color:var(--ink);white-space:pre;letter-spacing:-.01em}
+ .card i{flex:none;width:50px;height:50px;background:var(--purple);border:4px solid var(--ink);display:grid;place-items:center;color:#fff;font:900 26px var(--d);font-style:normal}
+ #logo{position:absolute;left:240px;top:360px;width:600px}
+ #wm{position:absolute;left:540px;top:935px;transform:translateX(-50%);font:900 92px/.95 var(--d);color:var(--ink);text-align:center;letter-spacing:-.02em;white-space:nowrap}
+ #wm em{font-style:normal;color:var(--purple);display:block;font-size:80px}
+</style></head>
+<body>
+<div id="root" data-composition-id="s2" data-start="0" data-duration="22.5" data-width="1080" data-height="1920">
+ <div id="stage" class="clip" data-start="0" data-duration="22.5" data-track-index="0" style="position:absolute;inset:0">
+  <div id="q">?</div>
+  <div id="shards"></div>
+  <div id="truck" class="ico"></div>
+  <div class="disp" id="whatif" style="left:540px;top:1290px;font-size:150px">WHAT IF?</div>
+  <svg id="map" class="abs" style="left:0;top:0;width:1080px;height:1920px;overflow:visible" viewBox="0 0 1080 1920">
+   <g id="mapg"><path id="africa" fill="#F6F2F6" stroke="#333333" stroke-width="6" stroke-linejoin="round"/><path id="mada" fill="#F6F2F6" stroke="#333333" stroke-width="5" stroke-linejoin="round"/></g>
+   <g id="net" fill="none" stroke="#B455B4" stroke-width="8" stroke-linecap="round" style="filter:drop-shadow(0 0 10px rgba(180,85,180,.9))"></g>
+  </svg>
+  <div id="pins"></div><div id="cards"></div>
+  <img id="logo" src="assets/dhf_logo_s.png"/>
+  <div id="wm">DANGOTE<em>HOME FINANCE</em></div>
+  <div class="chip" id="acq" style="left:540px;top:1210px;background:var(--purple);font-size:44px">CUSTOMER ACQUISITION MACHINE</div>
+ </div>
+ <div id="grain"></div><div id="vig"></div>
+</div>
+<script>
+const I=window.DHF_ICONS, SVG=(n,s,a,b)=>I.svg(n,s,a,b);
+let seed=7; const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+const tl=gsap.timeline({paused:true});
+const E_OUT='expo.out',E_IN='power3.in',E_IO='power3.inOut';
+const FILM0=27.0, V=t=>t-FILM0; // film seconds -> local
+/* ---- map ---- */
+const MX0=160,MY0=285,MW=760,LON0=-18.5,LON1=52,LAT0=37.6,LAT1=-35.2;
+const px=(lon,lat)=>[MX0+(lon-LON0)/(LON1-LON0)*MW, MY0+(LAT0-lat)/(LAT0-LAT1)*MW*(LAT0-LAT1)/(LON1-LON0)];
+const AFR=[[-5.9,35.8],[-2,35.1],[3,36.8],[10,37.3],[11,33.2],[15,32.3],[19.5,30.4],[22,32.9],[25,31.8],[32,31.2],[34.2,27.8],[35.6,23.5],[37.2,19.8],[39.2,15.5],[43.2,12.6],[51.3,11.8],[49.6,6.5],[46,2],[42,-1],[40.2,-3],[39.2,-8],[40.6,-15],[35.2,-20.4],[35.5,-24],[32.9,-26.5],[32.6,-28.8],[30,-31.4],[27.2,-33.7],[20,-34.8],[18.4,-34],[16.6,-28.6],[14.5,-22.6],[11.8,-17.2],[13.6,-11.8],[12.2,-6],[9.2,-1.2],[9.8,3.6],[6,4.3],[2,6.3],[-2,4.8],[-7.5,4.4],[-11.5,6.8],[-13.2,8.5],[-16.8,13.8],[-17,21],[-13,27.5],[-9.8,29.5],[-9.6,31.2],[-6.8,34]];
+const MAD=[[49.3,-12],[50.4,-15.5],[49.3,-18.5],[47.2,-24.8],[44.4,-25],[43.3,-21.5],[44.4,-16.2],[47.7,-14.1]];
+const pathOf=a=>'M'+a.map(p=>px(p[0],p[1]).map(v=>v.toFixed(1)).join(',')).join(' L')+' Z';
+document.getElementById('africa').setAttribute('d',pathOf(AFR)); document.getElementById('mada').setAttribute('d',pathOf(MAD));
+/* ---- pins and cards, in voiceover order, dropped on the spoken name (film seconds) ---- */
+const BANKS=[
+ {c:'NIGERIA',b:'ABBEY\nBANK',ll:[7.5,9.1],lab:[18,-62],al:'left',k:'AB',t:35.74},
+ {c:'SOUTH AFRICA',b:'SA HOME\nLOANS',ll:[24,-29.2],lab:[24,-64],al:'left',k:'SA',t:37.48},
+ {c:'TANZANIA',b:'FIRST HOUSING\nFINANCE',ll:[35.2,-6.4],lab:[22,-54],al:'left',k:'FH',t:39.67},
+ {c:'ZAMBIA',b:'ZAMBIAN\nHOME LOANS',ll:[27.8,-14.8],lab:[22,-20],al:'left',k:'ZH',t:42.07},
+ {c:'CONGO',b:'BCH',ll:[15.3,-4.3],lab:[-22,-62],al:'right',k:'BC',t:43.52},
+ {c:'GHANA',b:'GGB\nBANK',ll:[-1.2,7.4],lab:[-22,-62],al:'right',k:'GG',t:45.18}];
+const cardX=[72,552], cardY=[1196,1314,1432];
+BANKS.forEach((o,i)=>{
+ const [x,y]=px(...o.ll); o.xy=[x,y];
+ const pin=document.createElement('div'); pin.className='pin'; pin.style.left=x+'px'; pin.style.top=y+'px';
+ pin.innerHTML=`<svg width="68" height="92" viewBox="0 0 68 92"><path d="M34 90 C34 90 4 56 4 32 A30 30 0 0 1 64 32 C64 56 34 90 34 90Z" fill="#800080" stroke="#333333" stroke-width="5" stroke-linejoin="round"/><circle cx="34" cy="32" r="11" fill="#E9E2E9" stroke="#333333" stroke-width="4"/></svg>`;
+ const lb=document.createElement('div'); lb.className='plabel'; lb.textContent=o.c; lb.style.left=o.lab[0]+'px'; lb.style.top=o.lab[1]+'px'; if(o.al==='right') lb.style.transform='translateX(-100%)';
+ lb.style.background='var(--paper)'; lb.style.padding='2px 8px'; lb.style.border='3px solid var(--ink)';
+ pin.appendChild(lb); document.getElementById('pins').appendChild(pin); o.pin=pin; o.lb=lb;
+ const card=document.createElement('div'); card.className='card'; card.style.left=cardX[i%2]+'px'; card.style.top=cardY[Math.floor(i/2)]+'px';
+ card.innerHTML=`<i>${o.k}</i><b>${o.b}</b>`; document.getElementById('cards').appendChild(card); o.card=card;
+ const t=V(o.t)-0.12;
+ tl.fromTo(pin,{y:-420,opacity:0},{y:0,opacity:1,duration:.5,ease:'bounce.out'},t);
+ tl.fromTo(lb,{opacity:0,y:10},{opacity:1,y:0,duration:.25,ease:E_OUT},t+.35);
+ tl.fromTo(card,{rotationY:-90,transformPerspective:900,opacity:0},{rotationY:0,opacity:1,duration:.38,ease:'back.out(1.6)'},t+.3);
+});
+/* ---- shot 1: ? -> shards -> truck (VO 27.21-30.72: "What if Dangote stopped waiting for customers and started creating them") ---- */
+const sh=document.getElementById('shards'), SH=[], cols=['#800080','#333333','#B455B4','#D9B3D9'];
+for(let i=0;i<46;i++){ const d=document.createElement('div'); d.className='shard'; d.style.background=cols[i%4];
+ const a=rnd()*Math.PI*2, r=rnd()*190; const sx=540+Math.cos(a)*r*0.8, sy=700+Math.sin(a)*r*1.2;
+ const ex=540+Math.cos(a)*(380+rnd()*280), ey=780+Math.sin(a)*(480+rnd()*360); const tx=540-150+rnd()*300, ty=900-90+rnd()*190;
+ d.style.left=sx+'px'; d.style.top=sy+'px'; d.style.opacity=0; sh.appendChild(d); SH.push({d,sx,sy,ex,ey,tx,ty}); }
+const truck=document.getElementById('truck');
+truck.innerHTML=`<div style="position:relative;width:420px;height:420px">${SVG('truck',420)}<div class="tw" style="top:111px;left:21px;width:245px;font-size:36px;text-align:center">DANGOTE</div></div>`;
+tl.fromTo('#q',{scale:.45,rotation:-30},{scale:1,rotation:0,duration:.8,ease:'elastic.out(1,0.45)'},0.0);
+tl.fromTo('#whatif',{opacity:0,y:60},{opacity:1,y:0,duration:.45,ease:E_OUT},0.35);
+tl.to('#q',{scale:1.07,duration:.22,yoyo:true,repeat:7,ease:'sine.inOut'},0.9);
+tl.to('#q',{rotation:360,duration:.6,ease:E_IO},2.0);
+tl.to('#q',{opacity:0,scale:.9,duration:.06},2.58);
+tl.to('#whatif',{opacity:0,y:-40,duration:.3,ease:E_IN},2.3);
+SH.forEach((s,i)=>{
+ tl.set(s.d,{opacity:1,x:0,y:0},2.58);
+ tl.to(s.d,{x:s.ex-s.sx,y:s.ey-s.sy,rotation:(i%2?1:-1)*(120+i*7),duration:.5,ease:'power3.out'},2.58);
+ tl.to(s.d,{x:s.tx-s.sx,y:s.ty-s.sy,rotation:0,duration:.5,ease:E_IO},3.2);
+ tl.to(s.d,{opacity:0,duration:.1},3.65);
+});
+tl.fromTo(truck,{opacity:0,scale:.55,x:0},{opacity:1,scale:1,duration:.25,ease:E_OUT},3.6);
+tl.to(truck,{x:900,scale:1.5,duration:.55,ease:'power2.in'},4.0);
+tl.set(truck,{opacity:0},4.6);
+/* ---- shot 2: the map (VO 31.44 "acquires mortgage banks across the continent") ---- */
+tl.fromTo('#mapg',{opacity:0,scale:.92,transformOrigin:'540px 650px'},{opacity:1,scale:1,duration:.6,ease:E_OUT},V(31.3));
+/* ---- shot 3: network + logo (VO 47.07 "These are customer acquisition machines") ---- */
+const net=document.getElementById('net'), pairs=[[0,5],[5,4],[4,3],[3,2],[2,1],[1,0],[0,4],[4,2],[5,3],[1,3]], L=[];
+pairs.forEach(([a,b])=>{ const A=BANKS[a].xy,B=BANKS[b].xy; const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+ ln.setAttribute('x1',A[0]);ln.setAttribute('y1',A[1]);ln.setAttribute('x2',B[0]);ln.setAttribute('y2',B[1]);
+ const len=Math.hypot(A[0]-B[0],A[1]-B[1]); ln.setAttribute('stroke-dasharray',len); ln.setAttribute('stroke-dashoffset',len); net.appendChild(ln); L.push({ln,len}); });
+const tN=V(46.6);
+L.forEach((o,i)=>tl.to(o.ln,{attr:{'stroke-dashoffset':0},duration:.55,ease:'power2.out'},tN+i*0.05));
+const cen=BANKS.reduce((s,o)=>[s[0]+o.xy[0]/6,s[1]+o.xy[1]/6],[0,0]); const dx=540-cen[0], dy=640-cen[1];
+const tM=V(47.5);
+BANKS.forEach(o=>{ tl.to(o.pin,{x:cen[0]-o.xy[0]+dx,y:cen[1]-o.xy[1]+dy,scale:.3,opacity:0,duration:.6,ease:E_IO},tM); tl.to(o.lb,{opacity:0,duration:.2},tM-.05); });
+L.forEach(o=>tl.to(o.ln,{opacity:0,duration:.4,ease:E_IN},tM+.2));
+tl.to('#net',{scale:.15,transformOrigin:'540px 640px',duration:.6,ease:E_IO},tM);
+tl.to('#mapg',{opacity:.08,duration:.5},tM);
+BANKS.forEach((o,i)=>tl.to(o.card,{opacity:0,y:60,duration:.3,ease:E_IN},V(46.3)+i*0.04));
+gsap.set('#logo',{xPercent:0}); 
+tl.fromTo('#logo',{opacity:0,scale:.5},{opacity:1,scale:1,duration:.6,ease:'back.out(1.7)'},V(47.95));
+tl.fromTo('#wm',{opacity:0,y:30},{opacity:1,y:0,duration:.5,ease:E_OUT},V(48.15));
+gsap.set('#acq',{xPercent:-50,yPercent:-50});
+tl.fromTo('#acq',{opacity:0,x:-460},{opacity:1,x:0,duration:.5,ease:E_OUT},V(48.4));
+tl.to('#logo',{filter:'drop-shadow(0 0 26px rgba(180,85,180,.8))',duration:.5,ease:'sine.out'},V(48.3));
+window.__timelines=window.__timelines||{}; window.__timelines['s2']=tl; tl.seek(0);
+</script></body></html>

@@ -1,0 +1,7 @@
+frames/
+clips/
+audio/*.wav
+audio/*.mp3
+hf/.hyperframes/
+hf/renders/
+npm-install.log

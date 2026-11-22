@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1080, height=1920"/>
+<link rel="stylesheet" href="assets/common.css"/>
+<script src="assets/gsap.min.js"></script><script src="assets/icons.js"></script>
+<style>
+ #ringg{position:absolute;left:540px;top:760px;width:0;height:0}
+ .node{position:absolute;width:220px;height:200px;background:var(--paper);border:6px solid var(--ink);box-shadow:8px 8px 0 var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+ .node span{font:600 36px/1 var(--m);color:var(--ink);letter-spacing:.01em}
+ .node.red{background:var(--red)} 
+ .coin{position:absolute;width:64px;height:64px}
+ #house{position:absolute;width:96px;height:96px}
+ #bag{position:absolute;left:0;top:0}
+ .final{position:absolute;left:540px;transform:translateX(-50%);font:900 78px/1 var(--d);color:var(--ink);text-align:center;white-space:nowrap}
+ .final em{font-style:normal;color:var(--purple)}
+</style></head>
+<body>
+<div id="root" data-composition-id="s4" data-start="0" data-duration="13.7" data-width="1080" data-height="1920">
+ <div id="stage" class="clip" data-start="0" data-duration="13.7" data-track-index="0" style="position:absolute;inset:0">
+  <svg class="abs" style="left:0;top:0;width:1080px;height:1920px;overflow:visible" viewBox="0 0 1080 1920">
+   <defs><marker id="ah" markerUnits="userSpaceOnUse" markerWidth="34" markerHeight="34" refX="22" refY="17" orient="auto"><path d="M0 0 L34 17 L0 34 Z" fill="#800080"/></marker></defs>
+   <g id="ringsvg" transform="translate(540 760)">
+     <circle id="ring" r="320" fill="none" stroke="#17121F" stroke-width="6" stroke-dasharray="4 18" stroke-linecap="round" opacity=".55"/>
+     <path id="ptrack" d="M-55.6,315.1 A320,320 0 1 0 0,-320" fill="none" stroke="#B455B4" stroke-width="12" stroke-linecap="round" stroke-dasharray="26 22" opacity="0" style="filter:drop-shadow(0 0 10px rgba(180,85,180,.85))"/>
+     <path id="barrow" d="M70,316 C130,316 160,300 170,262" fill="none" opacity="0" stroke="#800080" stroke-width="12" stroke-linecap="round" marker-end="url(#ah)"/>
+   </g>
+  </svg>
+  <div id="ringg"></div>
+  <div class="chip" id="cDefault" style="left:540px;top:300px;background:var(--red);color:#fff">DEFAULT</div>
+  <div class="chip" id="cPaid" style="left:812px;top:1085px;background:var(--green);color:#fff">LENDER PAID</div>
+  <div class="chip" id="cOwner" style="left:484px;top:1240px;background:var(--green);color:#fff">NEW OWNER</div>
+  <div class="chip" id="cPay" style="left:410px;top:610px;background:var(--purple);color:#fff;font-size:42px">PAYMENTS CONTINUE</div>
+  <div class="final" id="f1" style="top:1335px">CEMENT SOLD.</div>
+  <div class="final" id="f2" style="top:1418px"><em>CAPITAL RECYCLED.</em></div>
+ </div>
+ <div id="grain"></div><div id="vig"></div>
+</div>
+<script>
+const I=window.DHF_ICONS, SVG=(n,s,a,b)=>I.svg(n,s,a,b);
+const tl=gsap.timeline({paused:true});
+const R=320, rad=d=>d*Math.PI/180, pos=a=>[R*Math.cos(rad(a)),R*Math.sin(rad(a))];
+const N=[
+ {id:'borrower',a:-90,cap:'BORROWER',ic:SVG('person',100)},
+ {id:'fund',a:-30,cap:'DHF FUND',ic:SVG('fund',100)},
+ {id:'bank',a:30,cap:'EURO BANK',ic:SVG('bank',100)},
+ {id:'buyer',a:100,cap:'NEW BUYER',ic:SVG('person',100,'#800080')},
+ {id:'auction',a:160,cap:'AUCTION',ic:SVG('gavel',100)}];
+const ringg=document.getElementById('ringg');
+N.forEach(n=>{ const [x,y]=pos(n.a); const d=document.createElement('div'); d.className='node'; d.id='n_'+n.id; d.innerHTML=n.ic+'<span>'+n.cap+'</span>';
+ d.style.left=x+'px'; d.style.top=y+'px'; ringg.appendChild(d); n.el=d; gsap.set(d,{xPercent:-50,yPercent:-50}); });
+// centre cement bag
+const bag=document.createElement('div'); bag.id='bag'; bag.innerHTML=SVG('bag',230); ringg.appendChild(bag); gsap.set(bag,{xPercent:-50,yPercent:-50});
+// coins
+const coins=[]; for(let i=0;i<6;i++){ const c=document.createElement('div'); c.className='coin'; c.innerHTML=SVG('coin',64); ringg.appendChild(c); gsap.set(c,{xPercent:-50,yPercent:-50,opacity:0}); coins.push(c); }
+// house on a pivot
+const piv=document.createElement('div'); piv.style.cssText='position:absolute;left:0;top:0;width:0;height:0'; const hs=document.createElement('div'); hs.id='house'; hs.innerHTML=SVG('house',96);
+piv.appendChild(hs); ringg.appendChild(piv); gsap.set(hs,{left:0,top:-R,xPercent:-50,yPercent:-50,opacity:0});
+// payment track path (right side, from buyer 90 CCW to fund -20) and buyer->bank arrow
+const arc=(a0,a1,r)=>{ const p0=[r*Math.cos(rad(a0)),r*Math.sin(rad(a0))], p1=[r*Math.cos(rad(a1)),r*Math.sin(rad(a1))]; return `M${p0[0].toFixed(1)},${p0[1].toFixed(1)} A${r},${r} 0 0 ${a1>a0?1:0} ${p1[0].toFixed(1)},${p1[1].toFixed(1)}`; };
+
+const E_OUT='expo.out', E_IN='power3.in', E_IO='power3.inOut';
+/* ---- timeline, local seconds (film = 75.2 + t). VO: 75.57 defaults · 77.16 DHF pays the lender · 79.04 auctioned to a new buyer · 81.36 buyer continues · 83.40 cement already sold · 85.18 capital recycled · 87.01 cycle continues ---- */
+tl.fromTo('#ringg',{rotation:-120,scale:.8,opacity:.25},{rotation:0,scale:1,opacity:1,duration:.95,ease:E_OUT},0);
+tl.fromTo('#ringsvg',{rotation:-120,scale:.8,opacity:0,svgOrigin:'540 760'},{rotation:0,scale:1,opacity:1,svgOrigin:'540 760',duration:.95,ease:E_OUT},0);
+N.forEach(n=>{ tl.fromTo(n.el,{rotation:120},{rotation:0,duration:.95,ease:E_OUT},0); });
+tl.fromTo(bag,{rotation:120,scale:.7},{rotation:0,scale:1,duration:.7,ease:'back.out(1.7)'},.25);
+gsap.set('#n_buyer',{opacity:0});
+N.filter(n=>n.id!=='buyer').forEach((n,i)=>tl.from(n.el,{scale:.5,opacity:0,duration:.35,ease:'back.out(1.8)'},.55+i*.09));
+/* 0.9 DEFAULT */
+tl.to('#n_borrower',{backgroundColor:'#333333',duration:.12},.9); tl.to('#n_borrower span',{color:'#E9E2E9',duration:.1},.9);
+for(let k=0;k<7;k++) tl.to('#n_borrower',{x:(k%2?-1:1)*16,duration:.05,ease:'none'},.9+k*.055); tl.to('#n_borrower',{x:0,duration:.05},1.3);
+tl.fromTo('#cDefault',{opacity:0,scale:1.25},{opacity:1,scale:1,duration:.22,ease:E_OUT},.95);
+/* 1.9 fund pays: coins fund -> bank */
+tl.to('#n_fund',{scale:1.16,duration:.2,yoyo:true,repeat:3,ease:'sine.inOut'},1.9);
+const pf=pos(-30), pb=pos(30);
+coins.forEach((c,i)=>{ const t0=2.0+i*.15; tl.set(c,{x:pf[0],y:pf[1],opacity:0},t0); tl.to(c,{opacity:1,duration:.05},t0);
+ tl.to(c,{x:pb[0],y:pb[1],duration:.8,ease:'power2.inOut'},t0); tl.to(c,{opacity:0,scale:.5,duration:.1},t0+.8); });
+tl.to('#n_bank',{backgroundColor:'#D9B3D9',scale:1.1,duration:.18,yoyo:true,repeat:1,ease:'sine.inOut'},2.8);
+tl.fromTo('#cPaid',{opacity:0,scale:1.25},{opacity:1,scale:1,duration:.22,ease:E_OUT},2.7);
+tl.to('#cDefault',{opacity:0,y:-30,duration:.25,ease:E_IN},3.5);
+tl.to('#n_borrower',{backgroundColor:'#E9E2E9',duration:.3},3.6); tl.to('#n_borrower span',{color:'#333333',duration:.3},3.6);
+/* 3.84 property slides borrower -> auction block */
+tl.set(hs,{opacity:1},3.8);
+tl.fromTo(piv,{rotation:0},{rotation:-120,duration:1.4,ease:E_IO},3.84);
+tl.fromTo(hs,{rotation:0},{rotation:120,duration:1.4,ease:E_IO},3.84);
+tl.to('#n_auction',{scale:1.12,duration:.16,yoyo:true,repeat:1},5.2);
+tl.to(hs,{scale:.4,opacity:0,duration:.25,ease:E_IN},5.35);
+tl.to('#cPaid',{opacity:0,duration:.2},4.6);
+/* 5.3 new owner */
+tl.fromTo('#n_buyer',{opacity:0,scale:.6},{opacity:1,scale:1,duration:.45,ease:'back.out(1.6)'},5.3);
+tl.to('#n_buyer',{backgroundColor:'#D9B3D9',duration:.2},5.5);
+tl.fromTo('#cOwner',{opacity:0,scale:1.25},{opacity:1,scale:1,duration:.22,ease:E_OUT},5.55);
+/* 6.16 buyer continues the payment: arrow loops to the track, track flows forward */
+const ba=document.getElementById('barrow'); const bl=ba.getTotalLength(); ba.setAttribute('stroke-dasharray',bl); ba.setAttribute('stroke-dashoffset',bl);
+tl.set(ba,{opacity:1},6.2);
+tl.to(ba,{attr:{'stroke-dashoffset':0},duration:.5,ease:'power2.out'},6.2);
+tl.to('#ptrack',{opacity:1,duration:.2},6.7);
+tl.fromTo('#ptrack',{attr:{'stroke-dashoffset':0}},{attr:{'stroke-dashoffset':-300},duration:6.5,ease:'none'},6.7);
+tl.fromTo('#cPay',{opacity:0,scale:1.25},{opacity:1,scale:1,duration:.22,ease:E_OUT},6.45);
+tl.to('#cOwner',{opacity:0,duration:.2,ease:E_IN},7.2);
+/* 8.2 cement already sold: the bag is unshaken, the ring glows */
+tl.to(bag,{scale:1.14,duration:.35,yoyo:true,repeat:3,ease:'sine.inOut'},8.2);
+tl.to('#ring',{stroke:'#800080',opacity:1,strokeWidth:9,duration:.4},8.2);
+tl.fromTo('#f1',{opacity:0,y:40},{opacity:1,y:0,duration:.4,ease:E_OUT},8.3);
+/* 9.98 capital recycled: coins circle the ring; second line */
+const piv2=document.createElement('div'); piv2.style.cssText='position:absolute;left:0;top:0;width:0;height:0'; ringg.appendChild(piv2);
+const lc=[]; for(let i=0;i<3;i++){ const c=document.createElement('div'); c.className='coin'; c.innerHTML=SVG('coin',64); piv2.appendChild(c); gsap.set(c,{left:0,top:-R,xPercent:-50,yPercent:-50,opacity:0,rotation:i*120}); lc.push(c); }
+tl.set(lc,{opacity:1},9.98); tl.fromTo(piv2,{rotation:0},{rotation:360,duration:2.4,ease:'power1.inOut'},9.98);
+lc.forEach((c,i)=>{ gsap.set(c,{rotation:0}); });
+tl.fromTo('#f2',{opacity:0,y:40},{opacity:1,y:0,duration:.4,ease:E_OUT},10.0);
+tl.set(lc,{opacity:0},12.4);
+/* 11.81 the cycle continues */
+tl.to('#ringg',{scale:1.03,duration:.35,yoyo:true,repeat:1,ease:'sine.inOut',transformOrigin:'0 0'},11.8);
+window.__timelines=window.__timelines||{}; window.__timelines['s4']=tl; tl.seek(0);
+</script></body></html>
