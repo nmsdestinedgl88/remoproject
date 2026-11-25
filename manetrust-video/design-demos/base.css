@@ -1,0 +1,5 @@
+:root{--p:#800080;--p2:#a64da6;--p3:#e9d2e9;--c:#333333;--c2:#6b6b6b;--w:#fafafa}
+*{margin:0;box-sizing:border-box}
+body{background:#999;display:flex;gap:40px;padding:40px;width:max-content}
+.f{width:1080px;height:1920px;position:relative;overflow:hidden;background:url(../assets/paper.png) center/cover;font-family:Inter,sans-serif;color:var(--c)}
+.logo{position:absolute;left:50%;transform:translateX(-50%);bottom:80px;width:220px}
