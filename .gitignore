@@ -6,3 +6,4 @@ lv/videos/*/renders/
 lv/videos/*/.hyperframes/
 lv/videos/*/node_modules/
 lv/*.wav
+lv/videos/*/render.log
