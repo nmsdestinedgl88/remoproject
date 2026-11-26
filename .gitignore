@@ -1,2 +1,8 @@
 node_modules
 out
+lv/node_modules/
+lv/__pycache__/
+lv/videos/*/renders/
+lv/videos/*/.hyperframes/
+lv/videos/*/node_modules/
+lv/*.wav
